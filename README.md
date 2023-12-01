@@ -1,1 +1,1 @@
-# CorePlanetMusicPlayer
+# PlanetMusicPlayer
