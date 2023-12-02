@@ -33,6 +33,7 @@ namespace PlanetMusicPlayer
 
         private void goToDevPage_Button_Click(object sender, RoutedEventArgs e)
         {
+            
             Frame.Navigate(typeof(DevPage));
         }
     }

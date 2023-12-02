@@ -17,19 +17,31 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <muxc:MenuBar>
-            <muxc:MenuBarItem Title="文件">
-                <MenuFlyoutItem Text="打开本地文件"/>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <muxc:MenuBar>
+                <muxc:MenuBarItem Title="文件">
+                    <MenuFlyoutItem Text="打开本地文件"/>
 
-                <MenuFlyoutItem Text="刷新音乐库" Click="MenuBar_File_RefreshLibrary"/>
-                <MenuFlyoutItem Text="管理音乐库索引"/>
-            </muxc:MenuBarItem>
-        </muxc:MenuBar>
-        <CommandBar Grid.Row="1" DefaultLabelPosition="Right">
+                    <MenuFlyoutItem Text="刷新音乐库" Click="MenuBar_File_RefreshLibrary"/>
+                    <MenuFlyoutItem Text="管理音乐库索引"/>
+                </muxc:MenuBarItem>
+            </muxc:MenuBar>
+            <TextBlock Grid.Column="1" VerticalAlignment="Center" Name="TopBar_CurrentPosition"/>
+            <Slider VerticalAlignment="Center" Margin="8,0,8,0" Grid.Column="2" Name="TopBar_PostionSlider" PointerReleased="TopBar_PostionSlider_PointerReleased" Tapped="TopBar_PostionSlider_Tapped"/>
+            <TextBlock Grid.Column="3" VerticalAlignment="Center" Name="TopBar_TotalPosition"/>
+        </Grid>
+        <CommandBar Grid.Row="1" DefaultLabelPosition="Right" HorizontalContentAlignment="Stretch">
+            
             <AppBarButton Icon="Play" Label="播放" Click="Main_CommandBar_Play"/>
             <AppBarButton Icon="Pause" Label="暂停" Click="Main_CommandBar_Pause"/>
-            <AppBarButton Icon="Previous" Label="上一曲"/>
-            <AppBarButton Icon="Next" Label="下一曲"/>
+            <AppBarButton Icon="Previous" Label="上一曲" Click="Main_CommandBar_Previous"/>
+            <AppBarButton Icon="Next" Label="下一曲" Click="Main_CommandBar_Next"/>
             <CommandBar.SecondaryCommands>
                 <AppBarButton Icon="Setting" Label="Settings">
                     <AppBarButton.KeyboardAccelerators>

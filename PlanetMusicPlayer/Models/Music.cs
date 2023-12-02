@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Media.Core;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.UI.Xaml.Controls;
@@ -22,6 +23,7 @@ namespace PlanetMusicPlayer.Models
         public String Duration { get; set; }//长度
 
         public StorageFile file { get; set; }
+        public MediaSource source { get; set; }
         public BitmapImage cover { get; set; }
     }
     
@@ -29,8 +31,8 @@ namespace PlanetMusicPlayer.Models
     {
         public static async Task<Music> GetMusicPropertiesAsync(Music music)
         {
-            ++LibraryManager.gotPropertyCount;
-            Debug.WriteLine(LibraryManager.gotPropertyCount+"||"+ Library.LocalLibraryMusic.Count);
+            
+            //Debug.WriteLine(LibraryManager.gotPropertyCount+"||"+ Library.LocalLibraryMusic.Count);
             if (music.file == null)
             {
                 if (LibraryManager.gotPropertyCount == Library.LocalLibraryMusic.Count)
@@ -40,6 +42,9 @@ namespace PlanetMusicPlayer.Models
                 }
                 return music;
             }
+            if (music.Album!="未知专辑"|| music.Artist != "未知艺术家")
+                return music;
+            ++LibraryManager.gotPropertyCount;
             StorageFile file = music.file;
             StorageItemContentProperties storageItemContentProperties = file.Properties;
             MusicProperties musicProperties = await storageItemContentProperties.GetMusicPropertiesAsync(); // 音频属性
@@ -54,7 +59,7 @@ namespace PlanetMusicPlayer.Models
             if (!string.IsNullOrEmpty(musicProperties.Artist))
                 music.Artist = musicProperties.Artist;
             else
-                music.Album = "未知艺术家";
+                music.Artist = "未知艺术家";
             music.Year = musicProperties.Year;
             music.Bitrate = musicProperties.Bitrate;
             music.Duration = musicProperties.Duration.ToString().Substring(3, 5);
@@ -67,5 +72,6 @@ namespace PlanetMusicPlayer.Models
             }
             return music;
         }
+
     }
 }

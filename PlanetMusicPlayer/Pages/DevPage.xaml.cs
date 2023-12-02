@@ -24,14 +24,34 @@ namespace PlanetMusicPlayer.Pages
     /// </summary>
     public sealed partial class DevPage : Page
     {
+        public static DispatcherTimer timer = new DispatcherTimer();
         public DevPage()
         {
             this.InitializeComponent();
+            
+            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Tick += Timer_Tick;
+            TopBar_PostionSlider.AddHandler(UIElement.PointerReleasedEvent /*哪个事件*/, new PointerEventHandler(TopBar_PostionSlider_PointerReleased) /*使用哪个函数处理*/, true /*如果在之前处理，是否还使用函数*/);
+            PlayQueue.normalList.OnChanging += NormalList_OnChanging;
+            
         }
 
-        private void libraryListView_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        private void NormalList_OnChanging(object sender, EventListEventArgs<Music> e)
         {
-            
+            playQueueListView.ItemsSource = null;
+            if (PlayCore.ShufflePlayMode == PlayCore.ShufflePlayModeEnum.None)
+                playQueueListView.ItemsSource = PlayQueue.normalList;
+            else
+                playQueueListView.ItemsSource = PlayQueue.shuffleList;
+            playQueueListView.SelectedIndex = PlayQueue.currentMusicIndex;
+        }
+
+        private void Timer_Tick(object sender, object e)
+        {
+            TopBar_PostionSlider.Maximum = PlayCore.MainMediaPlayer.MediaPlayer.NaturalDuration.TotalSeconds;
+            TopBar_PostionSlider.Value = PlayCore.MainMediaPlayer.MediaPlayer.Position.TotalSeconds;
+            TopBar_CurrentPosition.Text = PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Substring(3, 5);
+            TopBar_TotalPosition.Text = PlayCore.MainMediaPlayer.MediaPlayer.NaturalDuration.ToString().Substring(3, 5); 
         }
 
         private void MenuBar_File_RefreshLibrary(object sender, RoutedEventArgs e)
@@ -47,13 +67,16 @@ namespace PlanetMusicPlayer.Pages
                 playQueueListView.ItemsSource = PlayQueue.normalList;
             else
                 playQueueListView.ItemsSource = PlayQueue.shuffleList;
-            Debug.WriteLine(Library.LocalLibraryMusic.Count);
+            playQueueListView.SelectedIndex = PlayQueue.currentMusicIndex;
+            //Debug.WriteLine(Library.LocalLibraryMusic.Count);
         }
 
         private void Library_CommandBar_Play(object sender, RoutedEventArgs e)
         {
             PlayCore.PlayMusic((Music)libraryListView.SelectedItem,Library.LocalLibraryMusic,libraryListView.SelectedIndex);
+            
         }
+
 
         private void Main_CommandBar_Pause(object sender, RoutedEventArgs e)
         {
@@ -63,6 +86,28 @@ namespace PlanetMusicPlayer.Pages
         private void Main_CommandBar_Play(object sender, RoutedEventArgs e)
         {
             PlayCore.PlayMusic();
+        }
+
+        private void Main_CommandBar_Previous(object sender, RoutedEventArgs e)
+        {
+            PlayCore.PreviousMusic();
+        }
+
+        private void Main_CommandBar_Next(object sender, RoutedEventArgs e)
+        {
+            PlayCore.NextMusic();
+        }
+
+       
+
+        private void TopBar_PostionSlider_PointerReleased(object sender, PointerRoutedEventArgs e)
+        {
+            PlayCore.MainMediaPlayer.MediaPlayer.Position = TimeSpan.FromSeconds(TopBar_PostionSlider.Value);
+        }
+
+        private void TopBar_PostionSlider_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            PlayCore.MainMediaPlayer.MediaPlayer.Position = TimeSpan.FromSeconds(TopBar_PostionSlider.Value);
         }
     }
 }

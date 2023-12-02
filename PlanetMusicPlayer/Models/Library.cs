@@ -4,13 +4,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Media.Core;
 using Windows.Storage;
 
 namespace PlanetMusicPlayer.Models
 {
     public class Library
     {
-        public static List<Music> LocalLibraryMusic = new List<Music>();
+        public static EventList<Music> LocalLibraryMusic = new EventList<Music>();
     }
 
     public class LibraryManager
@@ -50,7 +51,7 @@ namespace PlanetMusicPlayer.Models
                     string fileSuffix = fileName.Substring(fileName.LastIndexOf("."));
                     if (fileSuffix == ".mp3" || fileSuffix == ".flac" || fileSuffix == ".wma" || fileSuffix == ".m4a" || fileSuffix == ".ac3" || fileSuffix == ".aac")
                     {
-                        Music music = new Music { Title = fileName, Artist = "未知艺术家", Album = "未知专辑", Bitrate = 0, Year = 0, Duration = "", file = (StorageFile)item };
+                        Music music = new Music { Title = fileName, Artist = "未知艺术家", Album = "未知专辑", Bitrate = 0, Year = 0, Duration = "", file = (StorageFile)item,source= MediaSource.CreateFromStorageFile((StorageFile)item) };
                         Library.LocalLibraryMusic.Add(music);
                     }
                 }

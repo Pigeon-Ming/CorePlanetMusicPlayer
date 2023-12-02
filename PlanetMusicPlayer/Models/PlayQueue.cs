@@ -8,8 +8,8 @@ namespace PlanetMusicPlayer.Models
 {
     public class PlayQueue
     {
-        public static List<Music> normalList = new List<Music>();
-        public static List<Music> shuffleList = new List<Music>();
+        public static EventList<Music> normalList = new EventList<Music>();
+        public static EventList<Music> shuffleList = new EventList<Music>();
         public static int currentMusicIndex = 0;
     }
 

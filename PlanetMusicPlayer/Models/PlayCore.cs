@@ -1,9 +1,12 @@
-﻿using System;
+﻿using PlanetMusicPlayer.Pages;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Core;
 using Windows.Media.Audio;
 using Windows.Media.Core;
 using Windows.Media.Playback;
@@ -11,6 +14,7 @@ using Windows.Media.Streaming.Adaptive;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
+using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 
 namespace PlanetMusicPlayer.Models
@@ -21,19 +25,21 @@ namespace PlanetMusicPlayer.Models
         public static AudioGraph MainAudioGraph;
         static MediaSourceAudioInputNode mediaSourceInputNode;
         
-        public static Music CurrentMusic = new Music();
+        public static Music CurrentMusic { get; set; }
         public enum LoopPlayModeEnum {None,All, Reverse, Single};
         public enum ShufflePlayModeEnum {None,All,NoRepeat};
         public static LoopPlayModeEnum LoopPlayMode = LoopPlayModeEnum.None;
         public static ShufflePlayModeEnum ShufflePlayMode = ShufflePlayModeEnum.None;
-
+        public static bool firstPlay = true;
+        
         /*----------
          数据处理
          ----------*/
-        public static void PlayMusic(Music music,List<Music>newPlayQueue,int musicIndexInPlayQueue)
+        public static void PlayMusic(Music music,EventList<Music>newPlayQueue,int musicIndexInPlayQueue)
         {
-            PlayQueue.normalList = newPlayQueue;
             PlayQueue.currentMusicIndex = musicIndexInPlayQueue;
+            PlayQueue.normalList.SetItems(newPlayQueue);
+            
             if (true)
                 PlayMusic_MediaPlayerElement(music);
             else
@@ -55,8 +61,6 @@ namespace PlanetMusicPlayer.Models
         public static void NextMusic()
         {
             if (PlayQueue.normalList.Count == 0) return;
-
-            Music music = CurrentMusic;
             int index = 0;
             if(ShufflePlayMode == ShufflePlayModeEnum.None)
             {
@@ -64,7 +68,7 @@ namespace PlanetMusicPlayer.Models
                 {
                     case LoopPlayModeEnum.None:
                         if (PlayQueue.currentMusicIndex != PlayQueue.normalList.Count - 1)
-                            index = PlayQueue.normalList.Count + 1;
+                            index = PlayQueue.currentMusicIndex + 1;
                         break;
                     case LoopPlayModeEnum.All:
 
@@ -79,6 +83,8 @@ namespace PlanetMusicPlayer.Models
                         index = PlayQueue.currentMusicIndex;
                         break;
                 }
+                Debug.WriteLine("Here:"+index.ToString());
+                PlayMusic(PlayQueue.normalList[index], PlayQueue.normalList, index);
             }
             else
             {   
@@ -86,7 +92,7 @@ namespace PlanetMusicPlayer.Models
                 {
                     case LoopPlayModeEnum.None:
                         if (PlayQueue.currentMusicIndex != PlayQueue.shuffleList.Count - 1)
-                            index = PlayQueue.shuffleList.Count + 1;
+                            index = PlayQueue.currentMusicIndex + 1;
                         break;
                     case LoopPlayModeEnum.All:
                         if (PlayQueue.currentMusicIndex == PlayQueue.shuffleList.Count - 1)
@@ -104,6 +110,62 @@ namespace PlanetMusicPlayer.Models
                         index = PlayQueue.currentMusicIndex;
                         break;
                 }
+                PlayMusic(PlayQueue.shuffleList[index], PlayQueue.shuffleList, index);
+            }
+            
+        }
+        public static void PreviousMusic()
+        {
+            if (PlayQueue.normalList.Count == 0) return;
+            int index = 0;
+            if (ShufflePlayMode == ShufflePlayModeEnum.None)
+            {
+                switch (LoopPlayMode)
+                {
+                    case LoopPlayModeEnum.None:
+                        if (PlayQueue.currentMusicIndex != 0)
+                            index = PlayQueue.currentMusicIndex - 1;
+                        break;
+                    case LoopPlayModeEnum.All:
+
+                        break;
+                    case LoopPlayModeEnum.Reverse:
+                        if (PlayQueue.currentMusicIndex == PlayQueue.normalList.Count - 1)
+                            index = 0;
+                        else
+                            index = PlayQueue.normalList.Count + 1;
+                        break;
+                    case LoopPlayModeEnum.Single:
+                        index = PlayQueue.currentMusicIndex;
+                        break;
+                }
+                PlayMusic(PlayQueue.normalList[index], PlayQueue.normalList, index);
+            }
+            else
+            {
+                switch (LoopPlayMode)
+                {
+                    case LoopPlayModeEnum.None:
+                        if (PlayQueue.currentMusicIndex != PlayQueue.shuffleList.Count - 1)
+                            index = PlayQueue.currentMusicIndex - 1;
+                        break;
+                    case LoopPlayModeEnum.All:
+                        if (PlayQueue.currentMusicIndex == PlayQueue.shuffleList.Count - 1)
+                            index = 0;
+                        else
+                            index = PlayQueue.shuffleList.Count + 1;
+                        break;
+                    case LoopPlayModeEnum.Reverse:
+                        if (PlayQueue.currentMusicIndex == PlayQueue.shuffleList.Count - 1)
+                            index = 0;
+                        else
+                            index = PlayQueue.currentMusicIndex + 1;
+                        break;
+                    case LoopPlayModeEnum.Single:
+                        index = PlayQueue.currentMusicIndex;
+                        break;
+                }
+                PlayMusic(PlayQueue.shuffleList[index],PlayQueue.shuffleList,index);
             }
             
         }
@@ -126,7 +188,7 @@ namespace PlanetMusicPlayer.Models
         /*----------
          MediaPlayerElement
          ----------*/
-        private static void InitMediaPlayerElement()
+        public static void InitMediaPlayerElement()
         {
             MainMediaPlayer.MediaPlayer.SystemMediaTransportControls.IsPauseEnabled = true;
             MainMediaPlayer.MediaPlayer.SystemMediaTransportControls.IsPlayEnabled = true;
@@ -136,31 +198,56 @@ namespace PlanetMusicPlayer.Models
             MainMediaPlayer.MediaPlayer.CommandManager.PreviousBehavior.EnablingRule = MediaCommandEnablingRule.Always;
             MainMediaPlayer.MediaPlayer.CommandManager.NextReceived += CommandManager_NextReceived;
             MainMediaPlayer.MediaPlayer.CommandManager.PreviousReceived += CommandManager_PreviousReceived;
+            MainMediaPlayer.MediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
+            
+        }
+
+        private static void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
+        {
+            Debug.WriteLine("MeidaEnded");
+            NextMusic();
         }
 
         private static void CommandManager_PreviousReceived(MediaPlaybackCommandManager sender, MediaPlaybackCommandManagerPreviousReceivedEventArgs args)
         {
-            
+            PreviousMusic();
         }
 
         private static void CommandManager_NextReceived(MediaPlaybackCommandManager sender, MediaPlaybackCommandManagerNextReceivedEventArgs args)
         {
-            
+            NextMusic();
         }
 
         private static async Task PlayMusic_MediaPlayerElement(Music music)
         {
+            
             MediaPlaybackItem playbackItem;
             StorageFile file = music.file;
-            playbackItem = new MediaPlaybackItem(MediaSource.CreateFromStorageFile(file));
+            Debug.WriteLine("Here!||"+music.file.Path);
+            playbackItem = new MediaPlaybackItem(music.source);
+            Debug.WriteLine("Here!!");
             music = await MusicManager.GetMusicPropertiesAsync(music);
-
+            Debug.WriteLine("Here!!!");
             CurrentMusic = music;
+            Debug.WriteLine("Here!!!!");
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                MainMediaPlayer.Source = playbackItem;
+                PlayCore.MainMediaPlayer.MediaPlayer.Play();
+                Debug.WriteLine("Here!!!!！");
             
-            PlayCore.MainMediaPlayer.Source = playbackItem;
-            PlayCore.MainMediaPlayer.MediaPlayer.Play();
-            RefreshSMTC(playbackItem, music);
             
+                RefreshSMTC(playbackItem, music);
+                if (firstPlay)
+                {
+                    firstPlay = false;
+                    DevPage.timer.Start();
+                   InitMediaPlayerElement();
+                }
+            });
+            
+            
+                
         }
         /*----------
          AudioGraph
