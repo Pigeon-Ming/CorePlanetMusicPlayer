@@ -44,10 +44,13 @@ namespace PlanetMusicPlayer.Pages
             else
                 playQueueListView.ItemsSource = PlayQueue.shuffleList;
             playQueueListView.SelectedIndex = PlayQueue.currentMusicIndex;
+
+            
         }
 
         private void Timer_Tick(object sender, object e)
         {
+            Main_CommandBar_MusicMessage.Text = "正在播放：" + PlayCore.CurrentMusic.Title + " - " + PlayCore.CurrentMusic.Artist;
             TopBar_PostionSlider.Maximum = PlayCore.MainMediaPlayer.MediaPlayer.NaturalDuration.TotalSeconds;
             TopBar_PostionSlider.Value = PlayCore.MainMediaPlayer.MediaPlayer.Position.TotalSeconds;
             TopBar_CurrentPosition.Text = PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Substring(3, 5);
@@ -102,12 +105,19 @@ namespace PlanetMusicPlayer.Pages
 
         private void TopBar_PostionSlider_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            PlayCore.MainMediaPlayer.MediaPlayer.Position = TimeSpan.FromSeconds(TopBar_PostionSlider.Value);
+            if(PlayCore.MainMediaPlayer.MediaPlayer!=null)
+                PlayCore.MainMediaPlayer.MediaPlayer.Position = TimeSpan.FromSeconds(TopBar_PostionSlider.Value);
         }
 
         private void TopBar_PostionSlider_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            PlayCore.MainMediaPlayer.MediaPlayer.Position = TimeSpan.FromSeconds(TopBar_PostionSlider.Value);
+            if (PlayCore.MainMediaPlayer.MediaPlayer != null)
+                PlayCore.MainMediaPlayer.MediaPlayer.Position = TimeSpan.FromSeconds(TopBar_PostionSlider.Value);
+        }
+
+        private void MenuBar_DevTool_Lyric_Click(object sender, RoutedEventArgs e)
+        {
+            _ = MultiWindowManager.CreateWindowAsync("歌词工具", typeof(DevLyricPage));
         }
     }
 }

@@ -119,6 +119,12 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\DevControls\LyricControls\ScrollingLyricControl.xaml.cs">
+      <DependentUpon>ScrollingLyricControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\DevControls\LyricControls\Text2LyricControl.xaml.cs">
+      <DependentUpon>Text2LyricControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -126,10 +132,15 @@
     <Compile Include="Models\Artist.cs" />
     <Compile Include="Models\EventList.cs" />
     <Compile Include="Models\Library.cs" />
+    <Compile Include="Models\Lyric.cs" />
+    <Compile Include="Models\MultiWindow.cs" />
     <Compile Include="Models\Music.cs" />
     <Compile Include="Models\PlayCore.cs" />
     <Compile Include="Models\Playlist.cs" />
     <Compile Include="Models\PlayQueue.cs" />
+    <Compile Include="Pages\DevLyricPage.xaml.cs">
+      <DependentUpon>DevLyricPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\DevPage.xaml.cs">
       <DependentUpon>DevPage.xaml</DependentUpon>
     </Compile>
@@ -155,6 +166,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\DevControls\LyricControls\ScrollingLyricControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\DevControls\LyricControls\Text2LyricControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dictionaries\StringDictionaries\Pages\DevPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -162,6 +181,10 @@
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\DevLyricPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\DevPage.xaml">
       <SubType>Designer</SubType>
@@ -176,9 +199,7 @@
       <Version>2.8.6</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Controls\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

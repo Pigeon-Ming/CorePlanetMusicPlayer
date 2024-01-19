@@ -35,6 +35,8 @@ namespace PlanetMusicPlayer.Models
         /*----------
          数据处理
          ----------*/
+
+
         public static void PlayMusic(Music music,EventList<Music>newPlayQueue,int musicIndexInPlayQueue)
         {
             PlayQueue.currentMusicIndex = musicIndexInPlayQueue;

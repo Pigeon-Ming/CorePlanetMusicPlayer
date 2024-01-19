@@ -1,5 +1,5 @@
-﻿using PlanetMusicPlayer.Models;
-using PlanetMusicPlayer.Pages;
+﻿using PlanetMusicPlayer.Controls.DevControls.LyricControls;
+using PlanetMusicPlayer.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,26 +15,25 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x804 上介绍了“空白页”项模板
+// https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
-namespace PlanetMusicPlayer
+namespace PlanetMusicPlayer.Pages
 {
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class MainPage : Page
+    public sealed partial class DevLyricPage : Page
     {
-        public MainPage()
+        public DevLyricPage()
         {
             this.InitializeComponent();
-            LibraryManager.ReloadLibraryAsync();
-            MultiWindowManager.InitMultiWindowManager();
         }
 
-        private void goToDevPage_Button_Click(object sender, RoutedEventArgs e)
+        private async void ScrollingLyric_OpenFile_Click(object sender, RoutedEventArgs e)
         {
-            
-            Frame.Navigate(typeof(DevPage));
+            List<Lyric> lyrics = await LyricManager.LoadFromLRCFileAndProcessAsync();
+            ScrollingLyricControlGrid.Children.Clear();
+            ScrollingLyricControlGrid.Children.Add(new ScrollingLyricControl(lyrics));
         }
     }
 }

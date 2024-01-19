@@ -31,13 +31,18 @@
                     <MenuFlyoutItem Text="刷新音乐库" Click="MenuBar_File_RefreshLibrary"/>
                     <MenuFlyoutItem Text="管理音乐库索引"/>
                 </muxc:MenuBarItem>
+                <muxc:MenuBarItem Title="开发工具">
+                    <MenuFlyoutItem Text="歌词工具" Name="MenuBar_DevTool_Lyric" Click="MenuBar_DevTool_Lyric_Click"/>
+                </muxc:MenuBarItem>
             </muxc:MenuBar>
             <TextBlock Grid.Column="1" VerticalAlignment="Center" Name="TopBar_CurrentPosition"/>
             <Slider VerticalAlignment="Center" Margin="8,0,8,0" Grid.Column="2" Name="TopBar_PostionSlider" PointerReleased="TopBar_PostionSlider_PointerReleased" Tapped="TopBar_PostionSlider_Tapped"/>
             <TextBlock Grid.Column="3" VerticalAlignment="Center" Name="TopBar_TotalPosition"/>
         </Grid>
         <CommandBar Grid.Row="1" DefaultLabelPosition="Right" HorizontalContentAlignment="Stretch">
-            
+            <CommandBar.Content>
+                <TextBlock VerticalAlignment="Stretch" Margin="8" TextAlignment="Center" Name="Main_CommandBar_MusicMessage"/>
+            </CommandBar.Content>
             <AppBarButton Icon="Play" Label="播放" Click="Main_CommandBar_Play"/>
             <AppBarButton Icon="Pause" Label="暂停" Click="Main_CommandBar_Pause"/>
             <AppBarButton Icon="Previous" Label="上一曲" Click="Main_CommandBar_Previous"/>
@@ -51,7 +56,7 @@
             </CommandBar.SecondaryCommands>
 
         </CommandBar>
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="2" Margin="8">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
@@ -67,7 +72,7 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <TextBlock Text="音乐库"/>
-                <CommandBar DefaultLabelPosition="Right">
+                <CommandBar Grid.Row="1" DefaultLabelPosition="Right" HorizontalAlignment="Left">
                     <AppBarButton Label="播放选中项" Icon="Play" Click="Library_CommandBar_Play"/>
                     <AppBarButton Label="加入播放队列" Icon="Add"/>
                 </CommandBar>
@@ -88,7 +93,7 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <TextBlock Text="播放队列"/>
-                <CommandBar DefaultLabelPosition="Right">
+                <CommandBar Grid.Row="1" HorizontalAlignment="Left" DefaultLabelPosition="Right">
                     <AppBarButton Icon="Delete" Label="移除选中项"/>
                 </CommandBar>
                 <ListView Grid.Row="2" Name="playQueueListView">
