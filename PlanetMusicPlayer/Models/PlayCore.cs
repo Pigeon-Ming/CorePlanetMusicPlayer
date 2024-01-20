@@ -41,6 +41,7 @@ namespace PlanetMusicPlayer.Models
         {
             PlayQueue.currentMusicIndex = musicIndexInPlayQueue;
             PlayQueue.normalList.SetItems(newPlayQueue);
+            //PlayQueue.normalList = newPlayQueue;
             
             if (true)
                 PlayMusic_MediaPlayerElement(music);
@@ -62,10 +63,15 @@ namespace PlanetMusicPlayer.Models
 
         public static void NextMusic()
         {
-            if (PlayQueue.normalList.Count == 0) return;
+            
             int index = 0;
-            if(ShufflePlayMode == ShufflePlayModeEnum.None)
+            Debug.WriteLine("Here?");
+            if (ShufflePlayMode == ShufflePlayModeEnum.None)
             {
+                Debug.WriteLine("Here??"+ LoopPlayMode.ToString());
+                Debug.WriteLine("PlayQueueCount" + PlayQueue.normalList.Count);
+                if (PlayQueue.normalList.ToList<Music>().Count == 0) return;
+                
                 switch (LoopPlayMode)
                 {
                     case LoopPlayModeEnum.None:
@@ -225,18 +231,18 @@ namespace PlanetMusicPlayer.Models
             
             MediaPlaybackItem playbackItem;
             StorageFile file = music.file;
-            Debug.WriteLine("Here!||"+music.file.Path);
+            //Debug.WriteLine("Here!||"+music.file.Path);
             playbackItem = new MediaPlaybackItem(music.source);
-            Debug.WriteLine("Here!!");
+            //Debug.WriteLine("Here!!");
             music = await MusicManager.GetMusicPropertiesAsync(music);
-            Debug.WriteLine("Here!!!");
+            //Debug.WriteLine("Here!!!");
             CurrentMusic = music;
-            Debug.WriteLine("Here!!!!");
+            //Debug.WriteLine("Here!!!!");
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 MainMediaPlayer.Source = playbackItem;
                 PlayCore.MainMediaPlayer.MediaPlayer.Play();
-                Debug.WriteLine("Here!!!!！");
+                //Debug.WriteLine("Here!!!!！");
             
             
                 RefreshSMTC(playbackItem, music);

@@ -29,6 +29,7 @@ namespace PlanetMusicPlayer
             this.InitializeComponent();
             LibraryManager.ReloadLibraryAsync();
             MultiWindowManager.InitMultiWindowManager();
+
         }
 
         private void goToDevPage_Button_Click(object sender, RoutedEventArgs e)

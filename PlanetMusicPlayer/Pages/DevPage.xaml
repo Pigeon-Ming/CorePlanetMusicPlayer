@@ -37,7 +37,7 @@
             </muxc:MenuBar>
             <TextBlock Grid.Column="1" VerticalAlignment="Center" Name="TopBar_CurrentPosition"/>
             <Slider VerticalAlignment="Center" Margin="8,0,8,0" Grid.Column="2" Name="TopBar_PostionSlider" PointerReleased="TopBar_PostionSlider_PointerReleased" Tapped="TopBar_PostionSlider_Tapped"/>
-            <TextBlock Grid.Column="3" VerticalAlignment="Center" Name="TopBar_TotalPosition"/>
+            <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="0,0,8,0" Name="TopBar_TotalPosition"/>
         </Grid>
         <CommandBar Grid.Row="1" DefaultLabelPosition="Right" HorizontalContentAlignment="Stretch">
             <CommandBar.Content>
@@ -56,90 +56,84 @@
             </CommandBar.SecondaryCommands>
 
         </CommandBar>
-        <Grid Grid.Row="2" Margin="8">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <Grid Padding="8">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <TextBlock Text="音乐库"/>
-                <CommandBar Grid.Row="1" DefaultLabelPosition="Right" HorizontalAlignment="Left">
-                    <AppBarButton Label="播放选中项" Icon="Play" Click="Library_CommandBar_Play"/>
-                    <AppBarButton Label="加入播放队列" Icon="Add"/>
-                </CommandBar>
-                <ListView Grid.Row="2" Name="libraryListView">
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="models:Music">
-                            <Grid>
-                                <TextBlock Text="{Binding Title}"/>
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </Grid>
-            <Grid Grid.Row="0" Grid.Column="1" Padding="8">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <TextBlock Text="播放队列"/>
-                <CommandBar Grid.Row="1" HorizontalAlignment="Left" DefaultLabelPosition="Right">
-                    <AppBarButton Icon="Delete" Label="移除选中项"/>
-                </CommandBar>
-                <ListView Grid.Row="2" Name="playQueueListView">
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="models:Music">
-                            <Grid>
-                                <TextBlock Text="{Binding Title}"/>
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </Grid>
-            <Grid Grid.Row="1" Padding="8">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <TextBlock Text="专辑"/>
-                <ListView Grid.Row="2" Name="albumsListView">
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="models:Album">
-                            <Grid>
-                                <TextBlock Text="{Binding Name}"/>
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </Grid>
-            <Grid Grid.Row="1" Grid.Column="1" Padding="8">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <TextBlock Text="艺术家"/>
-                <ListView Grid.Row="2" Name="artistsListView">
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="models:Artist">
-                            <Grid>
-                                <TextBlock Text="{Binding Name}"/>
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </Grid>
-        </Grid>
+        <Pivot Grid.Row="2">
+            <PivotItem Header="音乐库">
+                <Grid Padding="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <CommandBar Grid.Row="0" DefaultLabelPosition="Right" HorizontalAlignment="Left">
+                        <AppBarButton Label="播放选中项" Icon="Play" Click="Library_CommandBar_Play"/>
+                        <AppBarButton Label="加入播放队列" Icon="Add"/>
+                    </CommandBar>
+                    <ListView Grid.Row="1" Name="libraryListView">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Music">
+                                <Grid>
+                                    <TextBlock Text="{Binding Title}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </PivotItem>
+            <PivotItem Header="播放队列">
+                <Grid Grid.Row="0" Grid.Column="1" Padding="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <CommandBar Grid.Row="0" HorizontalAlignment="Left" DefaultLabelPosition="Right">
+                        <AppBarButton Icon="Delete" Label="移除选中项"/>
+                        <AppBarButton Icon="Refresh" Label="刷新" Name="PlayQueue_Refresh" Click="PlayQueue_Refresh_Click"/>
+                    </CommandBar>
+                    <ListView Grid.Row="1" Name="playQueueListView">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Music">
+                                <Grid>
+                                    <TextBlock Text="{Binding Title}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </PivotItem>
+            <PivotItem Header="专辑">
+                <Grid Grid.Row="1" Padding="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <ListView Grid.Row="1" Name="albumsListView">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Album">
+                                <Grid>
+                                    <TextBlock Text="{Binding Name}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </PivotItem>
+            <PivotItem Header="艺术家">
+                <Grid Grid.Row="1" Grid.Column="1" Padding="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <ListView Grid.Row="1" Name="artistsListView">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Artist">
+                                <Grid>
+                                    <TextBlock Text="{Binding Name}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </PivotItem>
+        </Pivot>
+        
     </Grid>
 </Page>

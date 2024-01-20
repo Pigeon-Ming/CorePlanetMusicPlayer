@@ -39,6 +39,7 @@ namespace PlanetMusicPlayer.Pages
 
         private void ScrollingLyric_ReadEmbeddedLyrics_Click(object sender, RoutedEventArgs e)
         {
+            if (PlayCore.CurrentMusic==null) return;
             List<Lyric> lyrics = LyricManager.LoadFromMusicFile(PlayCore.CurrentMusic);
             ScrollingLyricControlGrid.Children.Clear();
             ScrollingLyricControlGrid.Children.Add(new ScrollingLyricControl(lyrics));

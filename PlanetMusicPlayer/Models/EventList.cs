@@ -22,9 +22,9 @@ namespace PlanetMusicPlayer.Models
         public void SetItems(EventList<T>items)
         {
             //items.CopyTo(base.ToArray());
-            base.Clear();
+            //base.Clear();
             base.AddRange(items);
-            if (OnChanging != null && items.Count!=0)
+            if (OnChanging != null)
             {
                 OnChanging.Invoke(this, new EventListEventArgs<T>(items[0], this.Count));
             }

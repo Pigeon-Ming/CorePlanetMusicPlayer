@@ -119,5 +119,18 @@ namespace PlanetMusicPlayer.Pages
         {
             _ = MultiWindowManager.CreateWindowAsync("歌词工具", typeof(DevLyricPage));
         }
+
+        
+
+        private void PlayQueue_Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            playQueueListView.ItemsSource = null;
+            Debug.WriteLine("PlayQueueCount"+PlayQueue.normalList.Count);
+            if (PlayCore.ShufflePlayMode == PlayCore.ShufflePlayModeEnum.None)
+                playQueueListView.ItemsSource = PlayQueue.normalList;
+            else
+                playQueueListView.ItemsSource = PlayQueue.shuffleList;
+            playQueueListView.SelectedIndex = PlayQueue.currentMusicIndex;
+        }
     }
 }

@@ -9,7 +9,7 @@
 
   <Identity
     Name="414fd706-719a-4af0-9a63-6cf997585bd6"
-    Publisher="CN=zouqi"
+    Publisher="CN=Pigeon_Ming"
     Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="414fd706-719a-4af0-9a63-6cf997585bd6" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>

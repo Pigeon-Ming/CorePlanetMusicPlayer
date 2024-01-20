@@ -72,6 +72,7 @@ namespace PlanetMusicPlayer.Models
 
         public static List<Lyric> LoadFromMusicFile(Music music)
         {
+            if (PlayCore.CurrentMusic == null) return new List<Lyric>();
             UwpStorageFileAbstraction uwpStorageFileAbstraction = new UwpStorageFileAbstraction(music.file);
             File.IFileAbstraction fileAbstraction = uwpStorageFileAbstraction;
             TagLib.File file = TagLib.File.Create(fileAbstraction, ReadStyle.Average);
