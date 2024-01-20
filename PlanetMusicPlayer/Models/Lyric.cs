@@ -1,9 +1,11 @@
-﻿using System;
+﻿using PlanetMusicPlayer.Models.Taglib;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TagLib;
 
 namespace PlanetMusicPlayer.Models
 {
@@ -40,7 +42,7 @@ namespace PlanetMusicPlayer.Models
                 Debug.WriteLine(TextContent_DoseBracket_Index + "|" + TextContent_LineFeed_Index + "\n" + TextContent);
                 if (TextContent_LineFeed_Index == -1&& TextContent_LineFeed_Index + 1<TextContent.Length-1) break;
                 //Debug.WriteLine(TextContent_DoseBracket_Index+"|"+TextContent_LineFeed_Index+"\n"+TextContent);
-                TextContent = TextContent.Substring(TextContent_LineFeed_Index+1);
+                TextContent = TextContent.Substring(TextContent_LineFeed_Index+2);
             }
             return lyrics;
         }
@@ -68,34 +70,47 @@ namespace PlanetMusicPlayer.Models
             return ProcessLyrics(fileContent); 
         }
 
-        public static int GetCurrentLyricIndex(List<Lyric>lyrics)
+        public static List<Lyric> LoadFromMusicFile(Music music)
+        {
+            UwpStorageFileAbstraction uwpStorageFileAbstraction = new UwpStorageFileAbstraction(music.file);
+            File.IFileAbstraction fileAbstraction = uwpStorageFileAbstraction;
+            TagLib.File file = TagLib.File.Create(fileAbstraction, ReadStyle.Average);
+            string lyricContent = file.Tag.Lyrics;
+            return ProcessLyrics(lyricContent);
+        }
+
+        public static int GetCurrentLyricIndex(List<Lyric>lyrics,int currentLyricIndex)
         {
             //Debug.WriteLine(lyrics[0].Time);
-            int currentLyricIndex = -1;
+            //int  = -1;
             if (lyrics.Count > 0)
             {
 
                 for (int i = 0; i < lyrics.Count; i++)
                 {
-                    Debug.WriteLine("|"+lyrics[i].Time.Substring(1, 5) + "|" + PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Substring(3, 5));
-                    if (lyrics[i].Time.Substring(1, 5) == PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Substring(3, 5) /*&& CurrentLyricIndex != i*/)
+                    Debug.WriteLine("|"+lyrics[i].Time.Substring(0, 5) + "|" + PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Substring(3, 5));
+                    if (lyrics[i].Time.Substring(0, 5) == PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Substring(3, 5) /*&& CurrentLyricIndex != i*/)
                     {
                         //Debug.WriteLine(lyrics[i].Time.Substring(6, 1) + "|" + PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Substring(9, 1));
-                        if (PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Length < 10)
-                        {
+                        //if (PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Length < 10)
+                        //{
 
-                            currentLyricIndex = i;
-                            continue;
-                        }
-                        if (Convert.ToInt32(lyrics[i].Time.Substring(7, 1)) >= Convert.ToInt32(PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Substring(9, 1)) /*&& isanimationover == true*/)
+
+                        //    continue;
+                        //}
+                        currentLyricIndex = i;
+                        if (Convert.ToInt32(lyrics[i].Time.Substring(6, 1)) >= Convert.ToInt32(PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Substring(9, 1)) /*&& isanimationover == true*/)
                         {
                             currentLyricIndex = i;
-
+                            
                         }
+                        
                     }
                 }
             }
             return currentLyricIndex;
         }
+
+        
     }
 }

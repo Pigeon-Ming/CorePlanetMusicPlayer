@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -32,6 +33,13 @@ namespace PlanetMusicPlayer.Pages
         private async void ScrollingLyric_OpenFile_Click(object sender, RoutedEventArgs e)
         {
             List<Lyric> lyrics = await LyricManager.LoadFromLRCFileAndProcessAsync();
+            ScrollingLyricControlGrid.Children.Clear();
+            ScrollingLyricControlGrid.Children.Add(new ScrollingLyricControl(lyrics));
+        }
+
+        private void ScrollingLyric_ReadEmbeddedLyrics_Click(object sender, RoutedEventArgs e)
+        {
+            List<Lyric> lyrics = LyricManager.LoadFromMusicFile(PlayCore.CurrentMusic);
             ScrollingLyricControlGrid.Children.Clear();
             ScrollingLyricControlGrid.Children.Add(new ScrollingLyricControl(lyrics));
         }

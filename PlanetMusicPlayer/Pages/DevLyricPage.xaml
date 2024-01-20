@@ -19,7 +19,10 @@
                         <RowDefinition Height="auto"/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <Button Content="打开.lrc文件" Name="ScrollingLyric_OpenFile" Click="ScrollingLyric_OpenFile_Click"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="打开.lrc文件" Name="ScrollingLyric_OpenFile" Click="ScrollingLyric_OpenFile_Click"/>
+                        <Button Content="载入内嵌歌词" Name="ScrollingLyric_ReadEmbeddedLyrics" Click="ScrollingLyric_ReadEmbeddedLyrics_Click"/>
+                    </StackPanel>
                     <Grid Grid.Row="1" Name="ScrollingLyricControlGrid">
                         
                     </Grid>

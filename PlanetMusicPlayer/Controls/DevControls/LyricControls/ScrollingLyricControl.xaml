@@ -10,7 +10,7 @@
     d:DesignWidth="400" Unloaded="UserControl_Unloaded">
 
     <Grid>
-        <ScrollViewer Name="ContentScrollViewer" VerticalScrollBarVisibility="Hidden" SizeChanged="lyricScrollViewer_SizeChanged" Height="500">
+        <ScrollViewer Name="ContentScrollViewer" VerticalScrollBarVisibility="Hidden" SizeChanged="lyricScrollViewer_SizeChanged">
             <StackPanel Name="ContentStackPanel">
                 <TextBlock/>
             </StackPanel>

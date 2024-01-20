@@ -26,6 +26,7 @@ namespace PlanetMusicPlayer.Controls.DevControls.LyricControls
     {
         List<Lyric> lyrics = new List<Lyric>();
         DispatcherTimer timer = new DispatcherTimer();
+        DispatcherTimer indexTimer = new DispatcherTimer();
         public ScrollingLyricControl(List<Lyric>lyrics)
         {
             this.InitializeComponent();
@@ -34,9 +35,20 @@ namespace PlanetMusicPlayer.Controls.DevControls.LyricControls
             AddLyrics();
 
 
-            timer.Interval = TimeSpan.FromMilliseconds(500);
+            timer.Interval = TimeSpan.FromSeconds(0.75);
             timer.Tick += Timer_Tick;
             timer.Start();
+
+            indexTimer.Interval = TimeSpan.FromSeconds(0.5);
+            indexTimer.Tick += IndexTimer_Tick; ;
+            indexTimer.Start();
+        }
+
+        private void IndexTimer_Tick(object sender, object e)
+        {
+            newLyricIndex = LyricManager.GetCurrentLyricIndex(lyrics,CurrentIndex);
+
+
         }
 
         void AddLyrics()
@@ -60,18 +72,17 @@ namespace PlanetMusicPlayer.Controls.DevControls.LyricControls
         }
 
         public int CurrentIndex = -1;
+        public int newLyricIndex = -1;
+        
 
         private void Timer_Tick(object sender, object e)
         {
-            int newLyricIndex = LyricManager.GetCurrentLyricIndex(lyrics);
-            Debug.WriteLine(CurrentIndex+"|");
-            if (CurrentIndex != newLyricIndex)
+            
+            Debug.WriteLine(CurrentIndex+"|"+newLyricIndex);
+            if (CurrentIndex != newLyricIndex && newLyricIndex != -1)
             {
-                if (newLyricIndex == -1)
-                    return;
                 CurrentIndex = newLyricIndex;
                 ScrollLyricAsync();
-                
                 Animation_ScrollToLyric();
             }
         }

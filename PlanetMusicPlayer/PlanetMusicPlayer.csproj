@@ -138,6 +138,7 @@
     <Compile Include="Models\PlayCore.cs" />
     <Compile Include="Models\Playlist.cs" />
     <Compile Include="Models\PlayQueue.cs" />
+    <Compile Include="Models\Taglib\UwpStorageFileAbstraction.cs" />
     <Compile Include="Pages\DevLyricPage.xaml.cs">
       <DependentUpon>DevLyricPage.xaml</DependentUpon>
     </Compile>
@@ -197,6 +198,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
       <Version>2.8.6</Version>
+    </PackageReference>
+    <PackageReference Include="TagLibSharp">
+      <Version>2.3.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup />

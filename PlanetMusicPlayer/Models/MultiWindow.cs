@@ -40,8 +40,7 @@ namespace PlanetMusicPlayer.Models
             ElementCompositionPreview.SetAppWindowContent(multiWindow.window, appWindowContentFrame);
             multiWindow.window.Title = windowTitle;
             multiWindow.WindowID = CurrentWindowID++;
-            
-            await multiWindow.window.TryShowAsync();
+            multiWindow.window.TryShowAsync();
             multiWindows.Add(multiWindow);
             return multiWindow.WindowID;
         }

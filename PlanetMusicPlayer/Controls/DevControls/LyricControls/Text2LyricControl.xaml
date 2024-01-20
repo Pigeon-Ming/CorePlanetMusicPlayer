@@ -33,6 +33,7 @@
         <StackPanel Grid.Row="2" Orientation="Horizontal">
             <Button Content="转换" Name="Convert_Button" Click="Convert_Button_Click"/>
             <Button Content="载入lrc文件" Name="LoadFile_Button" Click="LoadFile_Button_Click"/>
+            <Button Content="尝试载入内嵌歌词" Name="LoadEmbeddedLyrics_Button" Click="LoadEmbeddedLyrics_Button_Click"/>
             <Button Content="清除" Name="Clear_Button" Click="Clear_Button_Click"/>
         </StackPanel>
     </Grid>

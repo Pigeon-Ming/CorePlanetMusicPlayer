@@ -48,5 +48,12 @@ namespace PlanetMusicPlayer.Controls.DevControls.LyricControls
         {
             
         }
+
+        private void LoadEmbeddedLyrics_Button_Click(object sender, RoutedEventArgs e)
+        {
+            lyrics = LyricManager.LoadFromMusicFile(PlayCore.CurrentMusic);
+            ResultListView.ItemsSource = null;
+            ResultListView.ItemsSource = lyrics;
+        }
     }
 }
