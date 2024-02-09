@@ -1,4 +1,4 @@
-﻿using PlanetMusicPlayer.Models;
+﻿using CorePlanetMusicPlayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -59,6 +59,7 @@ namespace PlanetMusicPlayer.Pages
 
         private void MenuBar_File_RefreshLibrary(object sender, RoutedEventArgs e)
         {
+            
             libraryListView.ItemsSource = null;
             libraryListView.ItemsSource = Library.LocalLibraryMusic;
             albumsListView.ItemsSource = null;
@@ -77,7 +78,8 @@ namespace PlanetMusicPlayer.Pages
         private void Library_CommandBar_Play(object sender, RoutedEventArgs e)
         {
             PlayCore.PlayMusic((Music)libraryListView.SelectedItem,Library.LocalLibraryMusic,libraryListView.SelectedIndex);
-            
+            DevPage.timer.Start();
+
         }
 
 

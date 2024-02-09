@@ -1,13 +1,12 @@
-﻿using PlanetMusicPlayer.Models.Taglib;
+﻿using CorePlanetMusicPlayer.Models.Taglib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using TagLib;
 
-namespace PlanetMusicPlayer.Models
+namespace CorePlanetMusicPlayer.Models
 {
     public class Lyric
     {

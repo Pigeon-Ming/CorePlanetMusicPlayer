@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlanetMusicPlayer.Models
+namespace CorePlanetMusicPlayer.Models
 {
     public class EventList<T>:List<T>
     {

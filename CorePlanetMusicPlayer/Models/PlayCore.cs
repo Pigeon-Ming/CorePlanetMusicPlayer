@@ -1,4 +1,4 @@
-﻿using PlanetMusicPlayer.Pages;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,7 +17,7 @@ using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 
-namespace PlanetMusicPlayer.Models
+namespace CorePlanetMusicPlayer.Models
 {
     public class PlayCore
     {
@@ -249,7 +249,7 @@ namespace PlanetMusicPlayer.Models
                 if (firstPlay)
                 {
                     firstPlay = false;
-                    DevPage.timer.Start();
+                    
                    InitMediaPlayerElement();
                 }
             });

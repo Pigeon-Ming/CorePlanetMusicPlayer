@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Windows.Media.Core;
 using Windows.Storage;
 
-namespace PlanetMusicPlayer.Models
+namespace CorePlanetMusicPlayer.Models
 {
     public class Library
     {

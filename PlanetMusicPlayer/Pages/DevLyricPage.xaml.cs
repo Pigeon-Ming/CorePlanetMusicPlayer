@@ -1,5 +1,5 @@
-﻿using PlanetMusicPlayer.Controls.DevControls.LyricControls;
-using PlanetMusicPlayer.Models;
+﻿using CorePlanetMusicPlayer.Models;
+using PlanetMusicPlayer.Controls.DevControls.LyricControls;
 using System;
 using System.Collections.Generic;
 using System.IO;

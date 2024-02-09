@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 
-namespace PlanetMusicPlayer.Models.Taglib
+namespace CorePlanetMusicPlayer.Models.Taglib
 {
     //Copy from https://github.com/mono/taglib-sharp/issues/177
 

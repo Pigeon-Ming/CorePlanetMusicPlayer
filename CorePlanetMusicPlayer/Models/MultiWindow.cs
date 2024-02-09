@@ -12,7 +12,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 
-namespace PlanetMusicPlayer.Models
+namespace CorePlanetMusicPlayer.Models
 {
     public class MultiWindow
     {

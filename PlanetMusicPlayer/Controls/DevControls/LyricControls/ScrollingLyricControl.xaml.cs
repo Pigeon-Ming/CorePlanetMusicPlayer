@@ -1,4 +1,4 @@
-﻿using PlanetMusicPlayer.Models;
+﻿using CorePlanetMusicPlayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
