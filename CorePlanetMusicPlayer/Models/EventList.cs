@@ -29,7 +29,18 @@ namespace CorePlanetMusicPlayer.Models
                 OnChanging.Invoke(this, new EventListEventArgs<T>(items[0], this.Count));
             }
         }
+
+        public static EventList<T> ListToEventList(List<T> list)
+        {
+            EventList<T> eventList = new EventList<T>();
+            for (int i = 0; i < list.Count; i++)
+            {
+                eventList.Add(list[i]);
+            }
+            return eventList;
+        }
     }
+
 
     public class EventListEventArgs<T> : EventArgs
     {

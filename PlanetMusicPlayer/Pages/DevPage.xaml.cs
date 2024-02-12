@@ -134,5 +134,12 @@ namespace PlanetMusicPlayer.Pages
                 playQueueListView.ItemsSource = PlayQueue.shuffleList;
             playQueueListView.SelectedIndex = PlayQueue.currentMusicIndex;
         }
+
+        private void albumsListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            _ = MultiWindowManager.CreateWindowAsync("专辑-"+((Album)albumsListView.SelectedItem).Name, new AlbumViewPage((Album)albumsListView.SelectedItem));
+            //Debug.WriteLine(((Album)albumsListView.SelectedItem).Name);
+            //Frame.Navigate(typeof(AlbumViewPage), ((Album)albumsListView.SelectedItem));
+        }
     }
 }

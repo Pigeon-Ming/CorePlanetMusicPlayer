@@ -44,7 +44,7 @@ namespace CorePlanetMusicPlayer.Models
             }
             if (music.Album!="未知专辑"|| music.Artist != "未知艺术家")
                 return music;
-            ++LibraryManager.gotPropertyCount;
+            
             StorageFile file = music.file;
             StorageItemContentProperties storageItemContentProperties = file.Properties;
             MusicProperties musicProperties = await storageItemContentProperties.GetMusicPropertiesAsync(); // 音频属性
@@ -64,11 +64,26 @@ namespace CorePlanetMusicPlayer.Models
             music.Bitrate = musicProperties.Bitrate;
             music.Duration = musicProperties.Duration.ToString().Substring(3, 5);
             music.TrackNumber = musicProperties.TrackNumber;
-
+            ++LibraryManager.gotPropertyCount;
             if (LibraryManager.gotPropertyCount == Library.LocalLibraryMusic.Count)
             {
                 AlbumManager.ClassifyAlbum();
                 ArtistManager.ClassifyArtist();
+            }
+            
+            return music;
+        }
+
+        public static async Task<Music> GetMusicCoverAsync(Music music)
+        {
+            StorageFile file = music.file;
+            StorageItemThumbnail thumbnail = await file.GetThumbnailAsync(ThumbnailMode.MusicView);
+            music.cover = new BitmapImage();
+            if (thumbnail != null)
+            {
+                
+                music.cover.SetSource(thumbnail);
+                
             }
             return music;
         }

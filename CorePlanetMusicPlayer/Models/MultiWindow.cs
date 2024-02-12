@@ -44,5 +44,17 @@ namespace CorePlanetMusicPlayer.Models
             multiWindows.Add(multiWindow);
             return multiWindow.WindowID;
         }
+
+        public static async Task<int> CreateWindowAsync(String windowTitle, Page page)
+        {
+            MultiWindow multiWindow = new MultiWindow();
+            multiWindow.window = await AppWindow.TryCreateAsync();
+            ElementCompositionPreview.SetAppWindowContent(multiWindow.window, page);
+            multiWindow.window.Title = windowTitle;
+            multiWindow.WindowID = CurrentWindowID++;
+            multiWindow.window.TryShowAsync();
+            multiWindows.Add(multiWindow);
+            return multiWindow.WindowID;
+        }
     }
 }

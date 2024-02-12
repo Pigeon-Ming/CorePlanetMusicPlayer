@@ -18,6 +18,7 @@ namespace CorePlanetMusicPlayer.Models
 
         public static async Task ClassifyAlbum()//待优化
         {
+            Albums.Clear();
             List<string> Name = new List<string>();
             for (int i = 0; i < Library.LocalLibraryMusic.Count; i++)
             {

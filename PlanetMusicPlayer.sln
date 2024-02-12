@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33403.182
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlanetMusicPlayer", "PlanetMusicPlayer\PlanetMusicPlayer.csproj", "{B378BA3C-A3B2-4F9A-82F6-0885208ACD14}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlanetMusicPlayer.WinUI2", "PlanetMusicPlayer\PlanetMusicPlayer.WinUI2.csproj", "{B378BA3C-A3B2-4F9A-82F6-0885208ACD14}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorePlanetMusicPlayer", "CorePlanetMusicPlayer\CorePlanetMusicPlayer.csproj", "{8D954000-1C41-436D-87B8-902BAAB568F9}"
 EndProject

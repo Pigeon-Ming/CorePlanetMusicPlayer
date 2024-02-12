@@ -127,6 +127,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\BasicMusicListControl.xaml.cs">
+      <DependentUpon>BasicMusicListControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\DevControls\LyricControls\ScrollingLyricControl.xaml.cs">
       <DependentUpon>ScrollingLyricControl.xaml</DependentUpon>
     </Compile>
@@ -135,6 +138,9 @@
     </Compile>
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\AlbumViewPage.xaml.cs">
+      <DependentUpon>AlbumViewPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\DevLyricPage.xaml.cs">
       <DependentUpon>DevLyricPage.xaml</DependentUpon>
@@ -164,6 +170,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\BasicMusicListControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\DevControls\LyricControls\ScrollingLyricControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -179,6 +189,10 @@
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\AlbumViewPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\DevLyricPage.xaml">
       <SubType>Designer</SubType>
