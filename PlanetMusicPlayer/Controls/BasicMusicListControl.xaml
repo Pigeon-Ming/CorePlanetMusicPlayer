@@ -10,7 +10,7 @@
     d:DesignWidth="400" Unloaded="UserControl_Unloaded">
 
     <Grid>
-        <ListView x:Name="MainListView" ItemClick="MainListView_ItemClick" IsItemClickEnabled="True">
+        <ListView x:Name="MainListView" RightTapped="MainListView_RightTapped" DoubleTapped="MainListView_DoubleTapped" SelectionChanged="MainListView_SelectionChanged">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Music">
                     <Grid Height="42" Padding="4" Margin="-12,2,-8,2" CornerRadius="4">
@@ -35,6 +35,57 @@
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
+            <ListView.ContextFlyout>
+                <MenuFlyout x:Name="rightClickMenu" >
+                    <MenuFlyoutItem Text="" Name="rightClickMenu_MusicName" MaxWidth="300">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xEC4F;" />
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutItem Text="播放" Name="rightClickMenu_Play" Click="{x:Bind viewModel.Menu_Play}">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE102;" />
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutItem Text="下一曲播放" Name="rightClickMenu_PlayNext" Click="{x:Bind viewModel.Menu_PlayNext}">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE011;" />
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutItem Text="加入播放队列" Name="rightClickMenu_AddToPlayQueue" Click="{x:Bind viewModel.Menu_AddToPlayQueue}">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE14C;" />
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutSeparator/>
+                    <!--<MenuFlyoutItem Text="查看专辑" Name="rightClickMenu_Album" Click="rightClickMenu_Album_Click">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE93C;" />
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutItem Text="查看艺术家" Name="rightClickMenu_Artist" Click="rightClickMenu_Artist_Click">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xF8B2;" />
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>-->
+                    <MenuFlyoutSeparator/>
+                    <MenuFlyoutItem Text="保存到播放列表" Name="rightClickMenu_SaveToPlaylist" Click="{x:Bind viewModel.Menu_AddToPlaylist}">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE728;" />
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>
+                    <!--<MenuFlyoutItem Name="item_removeFromPlaylist" Text="从播放列表中移除" Foreground="Red"  Click="rightClickMenu_removeFromPlaylist_Click">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE107;" Foreground="Red"/>
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>-->
+                    <!--<MenuFlyoutItem Text="详情信息" Name="rightClickMenu_Detail" Click="rightClickMenu_Detail_Click">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE142;" />
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>-->
+                </MenuFlyout>
+            </ListView.ContextFlyout>
         </ListView>
     </Grid>
 </UserControl>

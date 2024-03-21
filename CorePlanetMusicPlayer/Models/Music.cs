@@ -88,5 +88,11 @@ namespace CorePlanetMusicPlayer.Models
             return music;
         }
 
+        public static Music FindMusicByFileName(String searchName)
+        {
+            Music music = Library.LocalLibraryMusic.Find(x => x.file.Name == searchName);
+            return music;
+        }
+
     }
 }
