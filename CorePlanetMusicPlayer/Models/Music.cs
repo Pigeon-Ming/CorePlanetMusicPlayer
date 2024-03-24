@@ -88,5 +88,19 @@ namespace CorePlanetMusicPlayer.Models
             return music;
         }
 
+        public static async Task<Music> GetMusicHDCoverAsync(Music music)
+        {
+            StorageFile file = music.file;
+            StorageItemThumbnail thumbnail = await file.GetThumbnailAsync(ThumbnailMode.SingleItem);
+            music.cover = new BitmapImage();
+            if (thumbnail != null)
+            {
+
+                music.cover.SetSource(thumbnail);
+
+            }
+            return music;
+        }
+
     }
 }

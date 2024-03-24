@@ -39,6 +39,16 @@ namespace CorePlanetMusicPlayer.Models
             }
             return eventList;
         }
+
+        public static List<T> EventListToList(EventList<T> eventList)
+        {
+            List<T> list = new List<T>();
+            for (int i = 0; i < eventList.Count; i++)
+            {
+                list.Add(eventList[i]);
+            }
+            return list;
+        }
     }
 
 

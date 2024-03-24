@@ -48,5 +48,10 @@ namespace CorePlanetMusicPlayer.Models
 
             //AllData.LibraryInitOver = true;
         }//对专辑进行分类
+
+        public static Album FindAlbumByName(String Name)
+        {
+            return Albums.Find(x => x.Name.Contains(Name));
+        }
     }
 }

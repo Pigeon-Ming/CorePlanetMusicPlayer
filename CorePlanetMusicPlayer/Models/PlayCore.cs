@@ -49,6 +49,18 @@ namespace CorePlanetMusicPlayer.Models
                 PlayMusic_AudioGraph(music);
         }
 
+        public static void PlayMusic(Music music, List<Music> newPlayQueue, int musicIndexInPlayQueue)
+        {
+            PlayQueue.currentMusicIndex = musicIndexInPlayQueue;
+            PlayQueue.normalList.SetItems(EventList<Music>.ListToEventList(newPlayQueue));
+            //PlayQueue.normalList = newPlayQueue;
+
+            if (true)
+                PlayMusic_MediaPlayerElement(music);
+            else
+                PlayMusic_AudioGraph(music);
+        }
+
         public static void PlayMusic()
         {
             if (MainMediaPlayer.MediaPlayer != null)

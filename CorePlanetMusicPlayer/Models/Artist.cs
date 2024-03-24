@@ -71,5 +71,54 @@ namespace CorePlanetMusicPlayer.Models
             //    AllData.allArtistName.Add(AllData.Artists[i].Name);
             //}
         }//对艺术家进行分类
+
+        public static Artist FindArtistByName(String Name)
+        {
+            return Artists.Find(x => x.Name.Contains(Name));
+        }
+
+        public static List<Album> GetArtistAlbums(Artist artist)
+        {
+            List<String>albumNames = new List<String>();
+            List<Album> albums = new List<Album>();
+            for (int i=0;i<artist.IncludeMusic.Count;i++)
+            {
+                if (albumNames.IndexOf(artist.IncludeMusic[i].Album) == -1)
+                {
+                    albumNames.Add(artist.IncludeMusic[i].Album);
+                    albums.Add(AlbumManager.FindAlbumByName(artist.IncludeMusic[i].Album));
+                }
+            }
+            return albums;
+        }
+
+        public static List<Artist> DivideArtist(String fullArtistName)
+        {
+            List<Artist> artists = new List<Artist>();
+            List<String> ArtistNames = new List<string>();
+            while (true)
+            {
+                if (fullArtistName.IndexOf(";") != -1)
+                {
+                    ArtistNames.Add(fullArtistName.Substring(0, fullArtistName.IndexOf(";")));
+                    if (fullArtistName.IndexOf("; ") == -1)
+                    {
+                        fullArtistName = fullArtistName.Substring(fullArtistName.IndexOf(";") + 1, fullArtistName.Length - fullArtistName.IndexOf(";") - 1);
+                    }
+                    else
+                    {
+                        fullArtistName = fullArtistName.Substring(fullArtistName.IndexOf(";") + 2, fullArtistName.Length - fullArtistName.IndexOf(";") - 2);
+                    }
+                }
+                else
+                {
+                    ArtistNames.Add(fullArtistName);
+                    break;
+                }
+            }
+            for (int i = 0; i < ArtistNames.Count; i++)
+                artists.Add(FindArtistByName(ArtistNames[i]));
+            return artists;
+        }
     }
 }
