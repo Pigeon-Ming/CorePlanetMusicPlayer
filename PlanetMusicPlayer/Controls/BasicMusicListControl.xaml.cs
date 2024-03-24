@@ -1,4 +1,5 @@
 ﻿using CorePlanetMusicPlayer.Models;
+using PlanetMusicPlayer.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,13 +21,16 @@ namespace PlanetMusicPlayer.Controls
 {
     public sealed partial class BasicMusicListControl : UserControl
     {
-
+        public MusicListViewModel viewModel { get; set;}
         public ListView mainListView { get { return MainListView; }}
+        public List<Music>MusicList { get; set; }
 
-        public BasicMusicListControl(List<Music>MusicList)
+        public BasicMusicListControl(List<Music>musicList)
         {
             this.InitializeComponent();
-            MainListView.ItemsSource = MusicList;
+            MainListView.ItemsSource = musicList;
+            this.MusicList = musicList;
+            viewModel = new MusicListViewModel(musicList, MainListView);
         }
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
@@ -37,6 +41,28 @@ namespace PlanetMusicPlayer.Controls
         private void MainListView_ItemClick(object sender, ItemClickEventArgs e)
         {
 
+        }
+
+        private void MainListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            
+            PlayCore.PlayMusic((Music)MainListView.SelectedItem,EventList<Music>.ListToEventList(MusicList),MainListView.SelectedIndex);
+        }
+
+        private void MainListView_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            viewModel.rightClickItem = (e.OriginalSource as FrameworkElement).DataContext as Music;
+            if (viewModel.rightClickItem == null)
+            {
+                rightClickMenu.Hide();
+                return;
+            }
+            rightClickMenu_MusicName.Text = viewModel.rightClickItem.Title;
+        }
+
+        private void MainListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            viewModel.selectedItem = (Music)MainListView.SelectedItem;
         }
     }
 }

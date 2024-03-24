@@ -34,7 +34,12 @@ namespace CorePlanetMusicPlayer.Models
                 if(TextContent.IndexOf("\r") - TextContent.IndexOf("]") - 1 <= 0)
                     lyric.Content = "";
                 else
+                {
                     lyric.Content = TextContent.Substring(TextContent_DoseBracket_Index + 1, TextContent.IndexOf("\r") - TextContent.IndexOf("]") - 1);
+                    lyric.Content = lyric.Content.Replace("「", "\n");
+                    lyric.Content = lyric.Content.Replace("」", "");
+                }
+                    
                 lyrics.Add(lyric);
                 TextContent_LineFeed_Index = TextContent.IndexOf("\r");
                 
@@ -81,8 +86,6 @@ namespace CorePlanetMusicPlayer.Models
 
         public static int GetCurrentLyricIndex(List<Lyric>lyrics,int currentLyricIndex)
         {
-            //Debug.WriteLine(lyrics[0].Time);
-            //int  = -1;
             if (lyrics.Count > 0)
             {
 
@@ -91,13 +94,6 @@ namespace CorePlanetMusicPlayer.Models
                     Debug.WriteLine("|"+lyrics[i].Time.Substring(0, 5) + "|" + PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Substring(3, 5));
                     if (lyrics[i].Time.Substring(0, 5) == PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Substring(3, 5) /*&& CurrentLyricIndex != i*/)
                     {
-                        //Debug.WriteLine(lyrics[i].Time.Substring(6, 1) + "|" + PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Substring(9, 1));
-                        //if (PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Length < 10)
-                        //{
-
-
-                        //    continue;
-                        //}
                         currentLyricIndex = i;
                         if (Convert.ToInt32(lyrics[i].Time.Substring(6, 1)) >= Convert.ToInt32(PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Substring(9, 1)) /*&& isanimationover == true*/)
                         {
