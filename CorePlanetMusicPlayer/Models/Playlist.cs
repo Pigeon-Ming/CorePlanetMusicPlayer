@@ -13,12 +13,15 @@ namespace CorePlanetMusicPlayer.Models
     {
         public String Name {  get; set; }
         public List<Music> includeMusic { get; set; }
+
+        public String Description {  get; set; }
     }
 
     public class JsonPlaylist
     {
         public String Name { get; set; }
         public List<String> includeMusic { get; set; }
+        public String Description { get; set; }
     }
 
     public class PlaylistManager
@@ -74,6 +77,7 @@ namespace CorePlanetMusicPlayer.Models
             {
                 playlist.includeMusic.Add(MusicManager.FindMusicByFileName(jsonPlayList.includeMusic[i]));
             }
+            playlist.Description = jsonPlayList.Description;
             return  playlist;
         }
 
@@ -90,7 +94,18 @@ namespace CorePlanetMusicPlayer.Models
                 return;
             }
             StorageFile file = await folder.GetFileAsync(playlist.Name + ".pmplist4");
-            await Windows.Storage.FileIO.WriteTextAsync(file, JsonSerializer.Serialize(new JsonPlaylist { Name = playlist.Name, includeMusic = list }));
+            await Windows.Storage.FileIO.WriteTextAsync(file, JsonSerializer.Serialize(new JsonPlaylist { Name = playlist.Name, includeMusic = list ,Description = playlist.Description}));
+        }
+
+        public static async Task RenamePlaylistAsync(String oldName,String newName)
+        {
+            StorageFolder folder = (StorageFolder)await Windows.Storage.ApplicationData.Current.LocalFolder.TryGetItemAsync("playlists");
+            if (folder == null)
+            {
+                return;
+            }
+            StorageFile file = await folder.GetFileAsync(oldName + ".pmplist4");
+            await file.RenameAsync(newName + ".pmplist4");
         }
     }
 

@@ -32,7 +32,11 @@ namespace CorePlanetMusicPlayer.Models
                 ForeachLibrary(itemsList);
             }
             for (int i = 0; i < Library.LocalLibraryMusic.Count; i++)
+            {
                 MusicManager.GetMusicPropertiesAsync(Library.LocalLibraryMusic[i]);
+                //MusicManager.GetMusicCoverAsync(Library.LocalLibraryMusic[i]);
+            }
+                
             
         }//重新载入音乐库
 

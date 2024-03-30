@@ -39,6 +39,18 @@ namespace CorePlanetMusicPlayer.Models
             }
         }
 
+        public static void AddMusicListToPlayQueue(List<Music> music)
+        {
+            if (PlayCore.ShufflePlayMode == PlayCore.ShufflePlayModeEnum.All || PlayCore.ShufflePlayMode == PlayCore.ShufflePlayModeEnum.NoRepeat)
+            {
+                PlayQueue.shuffleList.Concat(music);
+            }
+            else
+            {
+                PlayQueue.normalList.Concat(music);
+            }
+        }
+
         public void CreateShufflePlayQueue()
         {
             Random random = new Random();
