@@ -15,6 +15,7 @@ using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 using Windows.UI.Core;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace CorePlanetMusicPlayer.Models
@@ -230,7 +231,6 @@ namespace CorePlanetMusicPlayer.Models
         private static async void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
         {
             Debug.WriteLine("MeidaEnded");
-            await Task.Delay(500);
             NextMusic();
         }
 
@@ -246,7 +246,7 @@ namespace CorePlanetMusicPlayer.Models
 
         private static async Task PlayMusic_MediaPlayerElement(Music music)
         {
-            await MusicManager.GetMusicHDCoverAsync(music);
+            //await MusicManager.GetMusicHDCoverAsync(music);
             MediaPlaybackItem playbackItem;
             StorageFile file = music.file;
             playbackItem = new MediaPlaybackItem(music.source);

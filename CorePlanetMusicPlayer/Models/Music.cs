@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Windows.Media.Core;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
+using Windows.UI.Core;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -98,15 +100,24 @@ namespace CorePlanetMusicPlayer.Models
         {
             StorageFile file = music.file;
             StorageItemThumbnail thumbnail = await file.GetThumbnailAsync(ThumbnailMode.SingleItem);
-            music.cover = new BitmapImage();
-            if (thumbnail != null)
+
+            try
+            {
+                music.cover = new BitmapImage();
+                if (thumbnail != null)
+                {
+
+                    music.cover.SetSource(thumbnail);
+
+                }
+            }catch (Exception ex)
             {
 
-                music.cover.SetSource(thumbnail);
-
             }
+            
             return music;
         }
+
 
     }
 }
