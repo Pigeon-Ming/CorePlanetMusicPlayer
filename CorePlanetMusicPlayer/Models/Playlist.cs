@@ -77,7 +77,16 @@ namespace CorePlanetMusicPlayer.Models
             {
                 playlist.includeMusic.Add(MusicManager.FindMusicByFileName(jsonPlayList.includeMusic[i]));
             }
-            playlist.Description = jsonPlayList.Description;
+            if (!String.IsNullOrEmpty(jsonPlayList.Description))
+            {
+                playlist.Description = jsonPlayList.Description;
+            }
+            else
+            {
+                playlist.Description = "此播放列表没有添加描述。";
+            }
+            
+            
             return  playlist;
         }
 

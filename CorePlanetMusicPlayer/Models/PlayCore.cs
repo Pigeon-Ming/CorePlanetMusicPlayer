@@ -39,7 +39,7 @@ namespace CorePlanetMusicPlayer.Models
 
         public static void PlayMusic(Music music,EventList<Music>newPlayQueue,int musicIndexInPlayQueue)
         {
-            MusicManager.GetMusicHDCoverAsync(music);
+            
 
 
             PlayQueue.currentMusicIndex = musicIndexInPlayQueue;
@@ -227,9 +227,10 @@ namespace CorePlanetMusicPlayer.Models
             
         }
 
-        private static void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
+        private static async void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
         {
             Debug.WriteLine("MeidaEnded");
+            await Task.Delay(500);
             NextMusic();
         }
 
@@ -245,7 +246,7 @@ namespace CorePlanetMusicPlayer.Models
 
         private static async Task PlayMusic_MediaPlayerElement(Music music)
         {
-            
+            await MusicManager.GetMusicHDCoverAsync(music);
             MediaPlaybackItem playbackItem;
             StorageFile file = music.file;
             playbackItem = new MediaPlaybackItem(music.source);

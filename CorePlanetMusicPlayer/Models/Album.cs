@@ -15,6 +15,7 @@ namespace CorePlanetMusicPlayer.Models
     public class AlbumManager
     {
         public static List<Album> Albums = new List<Album>();
+        public static List<Album> AlbumSuggestions = new List<Album>();
 
         public static async Task ClassifyAlbum()//待优化
         {
@@ -37,21 +38,30 @@ namespace CorePlanetMusicPlayer.Models
                 else
                 {
                     Albums[Name.IndexOf(currentAlbumName)].IncludeMusic.Add(Library.LocalLibraryMusic[i]);
-                    //AllData.Albums[Name.IndexOf(currentAlbumName)].MusicCount++;
                 }
-                //AllData.AlbumsName = Name;
             }
-            //for (int i = 0; i < Albums.Count; i++)
-            //{
-            //    AllData.allAlbumName.Add(Albums[i].Name);
-            //}
+            Albums = Albums.OrderBy(x => x.Name).ToList();
+            GetAlbumSuggestions();
 
-            //AllData.LibraryInitOver = true;
+
         }//对专辑进行分类
 
         public static Album FindAlbumByName(String Name)
         {
             return Albums.Find(x => x.Name.Contains(Name));
+        }
+
+        public static void GetAlbumSuggestions()
+        {
+            Random random = new Random();
+            List<int> indexes = new List<int>();
+            for(int i=0;i<10;i++)
+            {
+                int index;
+                while(indexes.IndexOf(index = random.Next(Albums.Count - 1)) != -1) { }
+                indexes.Add(index);
+                AlbumSuggestions.Add(Albums[index]);
+            }
         }
     }
 }
