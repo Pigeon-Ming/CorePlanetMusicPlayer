@@ -37,5 +37,16 @@ namespace CorePlanetMusicPlayer.Models
             StorageFile storageFile = await storageFolder.GetFileAsync(Path);
             return storageFile;
         }
+
+        public static async Task createPMPFolder()
+        {
+            //StorageFolder folder = KnownFolders.MusicLibrary;
+            //if (folder.GetFolderAsync("PlanetMusicPlayer") != null)
+            //    folder = await folder.GetFolderAsync("PlanetMusicPlayer");
+            //else
+            //    folder = await folder.CreateFolderAsync("PlanetMusicPlayer");
+            //await folder.CreateFolderAsync("Artists");
+            //await folder.CreateFolderAsync("Albums");
+        }
     }
 }

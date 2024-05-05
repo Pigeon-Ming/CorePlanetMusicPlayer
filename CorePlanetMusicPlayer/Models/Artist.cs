@@ -16,7 +16,7 @@ namespace CorePlanetMusicPlayer.Models
     {
         public static List<Artist> Artists = new List<Artist>();
 
-
+        
 
         public static async Task ClassifyArtist()//待优化
         {
@@ -66,6 +66,7 @@ namespace CorePlanetMusicPlayer.Models
                     }
                 }
             }
+            Artists = Artists.OrderBy(x => x.Name).ToList();
             //for (int i = 0; i < Artists.Count; i++)
             //{
             //    AllData.allArtistName.Add(AllData.Artists[i].Name);

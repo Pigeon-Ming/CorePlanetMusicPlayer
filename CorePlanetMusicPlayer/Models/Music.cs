@@ -25,12 +25,42 @@ namespace CorePlanetMusicPlayer.Models
         public String Duration { get; set; }//长度
 
         public StorageFile file { get; set; }
-        public MediaSource source { get; set; }
+        //public MediaSource source { get; set; }
         public BitmapImage cover { get; set; }
     }
     
     public class MusicManager
     {
+
+        public static async Task SetMusicPropertiesAsync(Music music)
+        {
+            Windows.Storage.StorageFile file = music.file;
+            StorageItemContentProperties storageItemContentProperties = file.Properties;
+            MusicProperties musicProperties = await storageItemContentProperties.GetMusicPropertiesAsync(); // 音频属性
+            if (!string.IsNullOrEmpty(music.Title))
+            {
+                musicProperties.Title = music.Title;
+            }
+
+            if (!string.IsNullOrEmpty(music.Album))
+            {
+                musicProperties.Album = music.Album;
+            }
+            else
+            {
+                musicProperties.Album = "未知专辑";
+            }
+            if (!string.IsNullOrEmpty(music.Artist))
+            {
+                musicProperties.Artist = music.Artist;
+            }
+            else
+            {
+                musicProperties.Artist = "未知艺术家";
+            }
+            musicProperties.Year = music.Year;
+            await musicProperties.SavePropertiesAsync();
+        }
         public static async Task<Music> GetMusicPropertiesAsync(Music music)
         {
             
@@ -66,6 +96,9 @@ namespace CorePlanetMusicPlayer.Models
             music.Bitrate = musicProperties.Bitrate;
             music.Duration = musicProperties.Duration.ToString().Substring(3, 5);
             music.TrackNumber = musicProperties.TrackNumber;
+
+            
+
             ++LibraryManager.gotPropertyCount;
             if (LibraryManager.gotPropertyCount == Library.LocalLibraryMusic.Count)
             {
@@ -118,6 +151,6 @@ namespace CorePlanetMusicPlayer.Models
             return music;
         }
 
-
+        
     }
 }

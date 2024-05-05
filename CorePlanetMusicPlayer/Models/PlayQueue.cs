@@ -43,26 +43,33 @@ namespace CorePlanetMusicPlayer.Models
         {
             if (PlayCore.ShufflePlayMode == PlayCore.ShufflePlayModeEnum.All || PlayCore.ShufflePlayMode == PlayCore.ShufflePlayModeEnum.NoRepeat)
             {
-                PlayQueue.shuffleList.Concat(music);
+                PlayQueue.shuffleList.AddRange(music);
+                
             }
             else
             {
-                PlayQueue.normalList.Concat(music);
+                PlayQueue.normalList.AddRange(music);
+                
             }
         }
 
-        public void CreateShufflePlayQueue()
+        public static void CreateShufflePlayQueue()
         {
             Random random = new Random();
-            List<Music> normalList = PlayQueue.normalList;
+            PlayQueue.shuffleList.Clear();
+            List<Music> normalList = PlayQueue.normalList.ToList();
+            List<Music> newList = new List<Music>();
             int index=0;
             while(normalList.Count>0)
             {
                 index = random.Next(normalList.Count-1);
-                PlayQueue.shuffleList.Add(normalList[index]);
+                newList.Add(normalList[index]);
                 normalList.RemoveAt(index);
             }
-            
+
+            PlayQueue.shuffleList.SetItems(EventList<Music>.ListToEventList(newList));
+
+
         }
     }
 }

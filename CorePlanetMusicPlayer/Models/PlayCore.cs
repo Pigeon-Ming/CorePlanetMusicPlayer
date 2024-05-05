@@ -29,7 +29,7 @@ namespace CorePlanetMusicPlayer.Models
         public static Music CurrentMusic { get; set; }
         public enum LoopPlayModeEnum {None,All, Reverse, Single};
         public enum ShufflePlayModeEnum {None,All,NoRepeat};
-        public static LoopPlayModeEnum LoopPlayMode = LoopPlayModeEnum.None;
+        public static LoopPlayModeEnum LoopPlayMode = LoopPlayModeEnum.All;
         public static ShufflePlayModeEnum ShufflePlayMode = ShufflePlayModeEnum.None;
         public static bool firstPlay = true;
         
@@ -44,7 +44,19 @@ namespace CorePlanetMusicPlayer.Models
 
 
             PlayQueue.currentMusicIndex = musicIndexInPlayQueue;
-            PlayQueue.normalList.SetItems(newPlayQueue);
+            if (ShufflePlayMode==ShufflePlayModeEnum.None)
+            {
+                PlayQueue.normalList = newPlayQueue;
+                PlayQueue.normalList.Invoke();
+            }
+            else
+            {
+                PlayQueue.shuffleList = newPlayQueue;
+                PlayQueue.shuffleList.Invoke();
+            }
+            
+
+            
             //PlayQueue.normalList = newPlayQueue;
             
             if (true)
@@ -58,7 +70,10 @@ namespace CorePlanetMusicPlayer.Models
             MusicManager.GetMusicHDCoverAsync(music);
 
             PlayQueue.currentMusicIndex = musicIndexInPlayQueue;
-            PlayQueue.normalList.SetItems(EventList<Music>.ListToEventList(newPlayQueue));
+            if (ShufflePlayMode == ShufflePlayModeEnum.None)
+                PlayQueue.normalList.SetItems(EventList<Music>.ListToEventList(newPlayQueue));
+            else
+                PlayQueue.shuffleList.SetItems(EventList<Music>.ListToEventList(newPlayQueue));
             //PlayQueue.normalList = newPlayQueue;
 
             if (true)
@@ -83,11 +98,13 @@ namespace CorePlanetMusicPlayer.Models
         {
             
             int index = 0;
-            Debug.WriteLine("Here?");
+
+            Debug.WriteLine("当前播放模式："+ShufflePlayMode.ToString()+" - "+LoopPlayMode.ToString());
+
+
             if (ShufflePlayMode == ShufflePlayModeEnum.None)
             {
-                Debug.WriteLine("Here??"+ LoopPlayMode.ToString());
-                Debug.WriteLine("PlayQueueCount" + PlayQueue.normalList.Count);
+                
                 if (PlayQueue.normalList.ToList<Music>().Count == 0) return;
                 
                 switch (LoopPlayMode)
@@ -97,7 +114,10 @@ namespace CorePlanetMusicPlayer.Models
                             index = PlayQueue.currentMusicIndex + 1;
                         break;
                     case LoopPlayModeEnum.All:
-
+                        if (PlayQueue.currentMusicIndex != PlayQueue.normalList.Count - 1)
+                            index = PlayQueue.currentMusicIndex + 1;
+                        else
+                            index = 0;
                         break;
                     case LoopPlayModeEnum.Reverse:
                         if (PlayQueue.currentMusicIndex == 0)
@@ -107,6 +127,7 @@ namespace CorePlanetMusicPlayer.Models
                         break;
                     case LoopPlayModeEnum.Single:
                         index = PlayQueue.currentMusicIndex;
+                        Debug.WriteLine("到这里了");
                         break;
                 }
                 Debug.WriteLine("Here:"+index.ToString());
@@ -124,7 +145,7 @@ namespace CorePlanetMusicPlayer.Models
                         if (PlayQueue.currentMusicIndex == PlayQueue.shuffleList.Count - 1)
                             index = 0;
                         else
-                            index = PlayQueue.shuffleList.Count + 1;
+                            index = PlayQueue.currentMusicIndex + 1;
                         break;
                     case LoopPlayModeEnum.Reverse:
                         if (PlayQueue.currentMusicIndex == 0)
@@ -153,7 +174,10 @@ namespace CorePlanetMusicPlayer.Models
                             index = PlayQueue.currentMusicIndex - 1;
                         break;
                     case LoopPlayModeEnum.All:
-
+                        if (PlayQueue.currentMusicIndex != 0)
+                            index = PlayQueue.currentMusicIndex - 1;
+                        else
+                            index = PlayQueue.normalList.Count-1;
                         break;
                     case LoopPlayModeEnum.Reverse:
                         if (PlayQueue.currentMusicIndex == PlayQueue.normalList.Count - 1)
@@ -176,10 +200,10 @@ namespace CorePlanetMusicPlayer.Models
                             index = PlayQueue.currentMusicIndex - 1;
                         break;
                     case LoopPlayModeEnum.All:
-                        if (PlayQueue.currentMusicIndex == PlayQueue.shuffleList.Count - 1)
-                            index = 0;
+                        if (PlayQueue.currentMusicIndex == 0)
+                            index = PlayQueue.shuffleList.Count - 1;
                         else
-                            index = PlayQueue.shuffleList.Count + 1;
+                            index = PlayQueue.currentMusicIndex - 1;
                         break;
                     case LoopPlayModeEnum.Reverse:
                         if (PlayQueue.currentMusicIndex == PlayQueue.shuffleList.Count - 1)
@@ -228,7 +252,7 @@ namespace CorePlanetMusicPlayer.Models
             
         }
 
-        private static async void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
+        private static void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
         {
             Debug.WriteLine("MeidaEnded");
             NextMusic();
@@ -249,7 +273,9 @@ namespace CorePlanetMusicPlayer.Models
             //await MusicManager.GetMusicHDCoverAsync(music);
             MediaPlaybackItem playbackItem;
             StorageFile file = music.file;
-            playbackItem = new MediaPlaybackItem(music.source);
+            //if (music.source.State == MediaSourceState.Failed) return;
+            //Debug.WriteLine("MusicSourceState:"+music.source.State.ToString());
+            playbackItem = new MediaPlaybackItem(MediaSource.CreateFromStorageFile(file));
             music = await MusicManager.GetMusicPropertiesAsync(music);
             CurrentMusic = music;
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -266,9 +292,9 @@ namespace CorePlanetMusicPlayer.Models
                    InitMediaPlayerElement();
                 }
             });
+
+
             
-            
-                
         }
         /*----------
          AudioGraph

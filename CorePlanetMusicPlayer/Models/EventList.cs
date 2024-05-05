@@ -19,14 +19,67 @@ namespace CorePlanetMusicPlayer.Models
             }
         }
 
+
+        public new void Insert(int index,T item)
+        {
+            base.Insert(index,item);
+            if (OnChanging != null)
+            {
+                OnChanging.Invoke(this, new EventListEventArgs<T>(item, this.Count));
+            }
+        }
+
+        public void AddRange(List<T> item)
+        {
+            base.AddRange(item);
+            if (OnChanging != null)
+            {
+                OnChanging.Invoke(this, new EventListEventArgs<T>());
+            }
+        }
+
+        public void AddRangeAt(int index,List<T> item)
+        {
+            for(int i=0;i<item.Count;i++)
+                base.Insert(index++,item[i]);
+            if (OnChanging != null)
+            {
+                OnChanging.Invoke(this, new EventListEventArgs<T>());
+            }
+        }
+
+        public new void Clear()
+        {
+            base.Clear();
+            if (OnChanging != null)
+            {
+                OnChanging.Invoke(this, new EventListEventArgs<T>());
+            }
+        }
+
+        public new void RemoveAt(int index)
+        {
+            base.RemoveAt(index);
+            if (OnChanging != null)
+            {
+                OnChanging.Invoke(this, new EventListEventArgs<T>());
+            }
+        }
+
+        public void Invoke()
+        {
+            OnChanging.Invoke(this, new EventListEventArgs<T>());
+        }
+
         public void SetItems(EventList<T>items)
         {
             //items.CopyTo(base.ToArray());
             //base.Clear();
-            base.AddRange(items);
+            base.Clear();
+            base.AddRange(items.ToList());
             if (OnChanging != null)
             {
-                OnChanging.Invoke(this, new EventListEventArgs<T>(items[0], this.Count));
+                OnChanging.Invoke(this, new EventListEventArgs<T>());
             }
         }
 
@@ -60,6 +113,11 @@ namespace CorePlanetMusicPlayer.Models
         {
             Item = item;
             Index = index;
+        }
+
+        public EventListEventArgs()
+        {
+            
         }
         public T Item { get; set; }
         public int Index { get; set; }

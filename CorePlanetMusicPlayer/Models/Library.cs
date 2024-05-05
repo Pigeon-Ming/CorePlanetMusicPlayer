@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Foundation.Collections;
 using Windows.Media.Core;
 using Windows.Storage;
 
@@ -22,6 +23,8 @@ namespace CorePlanetMusicPlayer.Models
         public static async Task ReloadLibraryAsync()
         {
             Library.LocalLibraryMusic.Clear();
+            ArtistManager.Artists.Clear();
+            AlbumManager.Albums.Clear();
 
             StorageFolder folder = KnownFolders.MusicLibrary;
             IReadOnlyList<IStorageItem> itemsList = await folder.GetItemsAsync();
@@ -55,11 +58,30 @@ namespace CorePlanetMusicPlayer.Models
                     string fileSuffix = fileName.Substring(fileName.LastIndexOf("."));
                     if (fileSuffix == ".mp3" || fileSuffix == ".flac" || fileSuffix == ".wma" || fileSuffix == ".m4a" || fileSuffix == ".ac3" || fileSuffix == ".aac")
                     {
-                        Music music = new Music { Title = fileName, Artist = "未知艺术家", Album = "未知专辑", Bitrate = 0, Year = 0, Duration = "", file = (StorageFile)item,source= MediaSource.CreateFromStorageFile((StorageFile)item) };
+                        Music music = new Music { Title = fileName, Artist = "未知艺术家", Album = "未知专辑", Bitrate = 0, Year = 0, Duration = "", file = (StorageFile)item};
+                        
                         Library.LocalLibraryMusic.Add(music);
                     }
                 }
             }
         }//遍历文件夹
+
+        public static async Task AddFoldersAsync()
+        {
+            var myMusics = await Windows.Storage.StorageLibrary.GetLibraryAsync(Windows.Storage.KnownLibraryId.Music);
+            await myMusics.RequestAddFolderAsync();
+        }
+
+        public static async Task<List<StorageFolder>> GetFoldersAsync()
+        {
+            var myMusics = await Windows.Storage.StorageLibrary.GetLibraryAsync(Windows.Storage.KnownLibraryId.Music);
+            return myMusics.Folders.ToList();
+        }
+
+        public static async Task RemoveFolder(StorageFolder storageFolder)
+        {
+            var myMusics = await Windows.Storage.StorageLibrary.GetLibraryAsync(Windows.Storage.KnownLibraryId.Music);
+            await myMusics.RequestRemoveFolderAsync(storageFolder);
+        }
     }
 }
