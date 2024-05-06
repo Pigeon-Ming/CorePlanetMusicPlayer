@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,8 @@ namespace CorePlanetMusicPlayer.Models
             List<string> Name = new List<string>();
             for (int i = 0; i < Library.LocalLibraryMusic.Count; i++)
             {
+                Debug.WriteLine("i="+i);
+                Debug.WriteLine("artist="+ Library.LocalLibraryMusic[i].Artist);
                 List<string> currentArtistName = new List<string>();
                 //int currentArtistName_stringindex = 0;
                 string fullArtistName = Library.LocalLibraryMusic[i].Artist;
@@ -31,7 +34,7 @@ namespace CorePlanetMusicPlayer.Models
                     if (fullArtistName.IndexOf(";") != -1)
                     {
                         currentArtistName.Add(fullArtistName.Substring(0, fullArtistName.IndexOf(";")));
-                        if (fullArtistName.IndexOf("; ") == -1)
+                        if (fullArtistName.IndexOf(";") == -1)
                         {
                             fullArtistName = fullArtistName.Substring(fullArtistName.IndexOf(";") + 1, fullArtistName.Length - fullArtistName.IndexOf(";") - 1);
                         }

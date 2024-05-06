@@ -18,10 +18,11 @@ namespace CorePlanetMusicPlayer.Models
     public class LibraryManager
     {
         static Queue<StorageFolder> foreachFolderQueue = new Queue<StorageFolder>();
-        public static int gotPropertyCount = 0;
+        public static int gotPropertyCount { get; set; }
 
         public static async Task ReloadLibraryAsync()
         {
+            gotPropertyCount = 0;
             Library.LocalLibraryMusic.Clear();
             ArtistManager.Artists.Clear();
             AlbumManager.Albums.Clear();

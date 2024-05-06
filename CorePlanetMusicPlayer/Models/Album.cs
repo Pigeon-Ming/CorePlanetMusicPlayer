@@ -55,12 +55,20 @@ namespace CorePlanetMusicPlayer.Models
         {
             Random random = new Random();
             List<int> indexes = new List<int>();
-            for(int i=0;i<10;i++)
+            if (Albums.Count < 10)
             {
-                int index;
-                while(indexes.IndexOf(index = random.Next(Albums.Count - 1)) != -1) { }
-                indexes.Add(index);
-                AlbumSuggestions.Add(Albums[index]);
+                for (int i = 0; i < Albums.Count; i++)
+                    AlbumSuggestions.Add(Albums[i]);
+            }
+            else
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    int index;
+                    while (indexes.Contains(index = random.Next(Albums.Count - 1)) == true) { }
+                    indexes.Add(index);
+                    AlbumSuggestions.Add(Albums[index]);
+                }
             }
         }
     }

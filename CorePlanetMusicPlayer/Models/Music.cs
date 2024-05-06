@@ -64,9 +64,10 @@ namespace CorePlanetMusicPlayer.Models
         public static async Task<Music> GetMusicPropertiesAsync(Music music)
         {
             
-            //Debug.WriteLine(LibraryManager.gotPropertyCount+"||"+ Library.LocalLibraryMusic.Count);
+            Debug.WriteLine(LibraryManager.gotPropertyCount+"=>"+ Library.LocalLibraryMusic.Count);
             if (music.file == null)
             {
+                ++LibraryManager.gotPropertyCount;
                 if (LibraryManager.gotPropertyCount == Library.LocalLibraryMusic.Count)
                 {
                     AlbumManager.ClassifyAlbum();
@@ -75,7 +76,16 @@ namespace CorePlanetMusicPlayer.Models
                 return music;
             }
             if (music.Album!="未知专辑"|| music.Artist != "未知艺术家")
+            {
+                ++LibraryManager.gotPropertyCount;
+                if (LibraryManager.gotPropertyCount == Library.LocalLibraryMusic.Count)
+                {
+                    AlbumManager.ClassifyAlbum();
+                    ArtistManager.ClassifyArtist();
+                }
                 return music;
+            }
+                
             
             StorageFile file = music.file;
             StorageItemContentProperties storageItemContentProperties = file.Properties;
@@ -97,7 +107,7 @@ namespace CorePlanetMusicPlayer.Models
             music.Duration = musicProperties.Duration.ToString().Substring(3, 5);
             music.TrackNumber = musicProperties.TrackNumber;
 
-            
+
 
             ++LibraryManager.gotPropertyCount;
             if (LibraryManager.gotPropertyCount == Library.LocalLibraryMusic.Count)
@@ -105,7 +115,7 @@ namespace CorePlanetMusicPlayer.Models
                 AlbumManager.ClassifyAlbum();
                 ArtistManager.ClassifyArtist();
             }
-            
+
             return music;
         }
 
