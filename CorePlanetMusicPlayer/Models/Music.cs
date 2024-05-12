@@ -141,7 +141,9 @@ namespace CorePlanetMusicPlayer.Models
 
         public static async Task<Music> GetMusicHDCoverAsync(Music music)
         {
+            if (music == null) return music;
             StorageFile file = music.file;
+            if (music.file == null) return music;
             StorageItemThumbnail thumbnail = await file.GetThumbnailAsync(ThumbnailMode.SingleItem);
 
             try

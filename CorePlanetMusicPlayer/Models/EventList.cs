@@ -68,7 +68,8 @@ namespace CorePlanetMusicPlayer.Models
 
         public void Invoke()
         {
-            OnChanging.Invoke(this, new EventListEventArgs<T>());
+            if(OnChanging!=null)
+                OnChanging.Invoke(this, new EventListEventArgs<T>());
         }
 
         public void SetItems(EventList<T>items)

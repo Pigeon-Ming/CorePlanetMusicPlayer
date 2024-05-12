@@ -95,6 +95,7 @@ namespace CorePlanetMusicPlayer.Models
             List<String> list = new List<String>();
             for(int i = 0; i < playlist.includeMusic.Count; i++)
             {
+                if (playlist.includeMusic[i]==null|| playlist.includeMusic[i].file==null) continue;
                 list.Add(playlist.includeMusic[i].file.Name);
             }
             StorageFolder folder = (StorageFolder)await Windows.Storage.ApplicationData.Current.LocalFolder.TryGetItemAsync("playlists");
@@ -115,6 +116,52 @@ namespace CorePlanetMusicPlayer.Models
             }
             StorageFile file = await folder.GetFileAsync(oldName + ".pmplist4");
             await file.RenameAsync(newName + ".pmplist4");
+        }
+
+        public static async Task ExportPlaylistAsync(String PlaylistName)
+        {
+            Windows.Storage.StorageFolder storageFolder =
+                 (StorageFolder)await Windows.Storage.ApplicationData.Current.LocalFolder.TryGetItemAsync("playlists");
+
+            Windows.Storage.StorageFile file;
+
+            file = await storageFolder.GetFileAsync(PlaylistName + ".pmplist4");
+
+            var savePicker = new Windows.Storage.Pickers.FileSavePicker();
+            savePicker.SuggestedStartLocation =
+                Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
+            // Dropdown of file types the user can save the file as
+            savePicker.FileTypeChoices.Add("播放列表-PlanetMusicPlayer", new List<string>() { ".pmplist4" });
+            // Default file name if the user does not type one in or select a file to replace
+            savePicker.SuggestedFileName = PlaylistName;
+
+            StorageFile file1 = await savePicker.PickSaveFileAsync();
+            await Windows.Storage.FileIO.WriteTextAsync(file1, await Windows.Storage.FileIO.ReadTextAsync(file));
+        }
+
+        public static async Task<bool> ImportPlaylistAsync()
+        {
+            Windows.Storage.StorageFolder storageFolder =
+                 (StorageFolder)await Windows.Storage.ApplicationData.Current.LocalFolder.TryGetItemAsync("playlists");
+
+            Windows.Storage.StorageFile file1;
+            var picker = new Windows.Storage.Pickers.FileOpenPicker();
+            picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
+            picker.FileTypeFilter.Add(".pmplist4");
+
+            Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
+
+            if (file == null) return false;
+            if (string.IsNullOrEmpty(file.Path))
+            {
+                return false;
+            }
+
+            file1 = await storageFolder.CreateFileAsync(file.Name);
+
+            await Windows.Storage.FileIO.WriteTextAsync(file1, await Windows.Storage.FileIO.ReadTextAsync(file));
+            return true;
         }
     }
 

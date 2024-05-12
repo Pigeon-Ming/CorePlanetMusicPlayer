@@ -78,7 +78,10 @@ namespace CorePlanetMusicPlayer.Models
 
         public static Artist FindArtistByName(String Name)
         {
-            return Artists.Find(x => x.Name.Contains(Name));
+            if(!String.IsNullOrEmpty(Name))
+                return Artists.Find(x => x.Name.Contains(Name));
+            else
+                return new Artist { Name="未知艺术家"};
         }
 
         public static List<Album> GetArtistAlbums(Artist artist)

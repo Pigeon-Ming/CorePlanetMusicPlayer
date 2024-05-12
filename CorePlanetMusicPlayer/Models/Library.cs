@@ -67,10 +67,11 @@ namespace CorePlanetMusicPlayer.Models
             }
         }//遍历文件夹
 
-        public static async Task AddFoldersAsync()
+        public static async Task<bool> AddFoldersAsync()
         {
             var myMusics = await Windows.Storage.StorageLibrary.GetLibraryAsync(Windows.Storage.KnownLibraryId.Music);
-            await myMusics.RequestAddFolderAsync();
+            if (await myMusics.RequestAddFolderAsync() != null) return true;
+            else return false;
         }
 
         public static async Task<List<StorageFolder>> GetFoldersAsync()

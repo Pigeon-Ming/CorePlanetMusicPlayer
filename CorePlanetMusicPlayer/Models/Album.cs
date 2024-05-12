@@ -48,7 +48,10 @@ namespace CorePlanetMusicPlayer.Models
 
         public static Album FindAlbumByName(String Name)
         {
-            return Albums.Find(x => x.Name.Contains(Name));
+            if (!String.IsNullOrEmpty(Name))
+                return Albums.Find(x => x.Name.Contains(Name));
+            else
+                return new Album { Name = "未知专辑" };
         }
 
         public static void GetAlbumSuggestions()

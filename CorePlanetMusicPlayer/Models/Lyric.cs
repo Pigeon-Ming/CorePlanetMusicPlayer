@@ -27,6 +27,9 @@ namespace CorePlanetMusicPlayer.Models
             int TextContent_DoseBracket_Index = 0;
             int TextContent_LineFeed_Index = 0;
 
+            TextContent = TextContent.Replace("\n", "\r");
+            TextContent = TextContent.Replace("\r\r", "\r");
+
             while (!String.IsNullOrEmpty(TextContent))
             {
                 TextContent_DoseBracket_Index = TextContent.IndexOf("]");
@@ -38,17 +41,35 @@ namespace CorePlanetMusicPlayer.Models
                 else
                 {
                     lyric.Content = TextContent.Substring(TextContent_DoseBracket_Index + 1, TextContent.IndexOf("\r") - TextContent.IndexOf("]") - 1);
-                    lyric.Content = lyric.Content.Replace("「", "\n");
+                    lyric.Content = lyric.Content.Replace("「", "\r");
                     lyric.Content = lyric.Content.Replace("」", "");
                 }
                     
                 lyrics.Add(lyric);
                 TextContent_LineFeed_Index = TextContent.IndexOf("\r");
-                
+
                 //Debug.WriteLine(TextContent_DoseBracket_Index + "|" + TextContent_LineFeed_Index + "\n" + TextContent);
-                if (TextContent_LineFeed_Index == -1&& TextContent_LineFeed_Index + 1<TextContent.Length-1) break;
+                if (TextContent_LineFeed_Index == -1 && TextContent_LineFeed_Index + 1 < TextContent.Length - 1)
+                {
+                    TextContent_DoseBracket_Index = TextContent.IndexOf("]");
+                    if (TextContent_DoseBracket_Index == -1) break;
+                    lyric = new Lyric();
+                    lyric.Time = TextContent.Substring(1, TextContent_DoseBracket_Index - 1);
+                    if (TextContent.Length - TextContent.IndexOf("]") - 1 <= 0)
+                        lyric.Content = "";
+                    else
+                    {
+                        lyric.Content = TextContent.Substring(TextContent_DoseBracket_Index + 1, TextContent.Length - TextContent.IndexOf("]") - 1);
+                        lyric.Content = lyric.Content.Replace("「", "\r");
+                        lyric.Content = lyric.Content.Replace("」", "");
+                    }
+
+                    lyrics.Add(lyric);
+                    break;
+                }
+
                 //Debug.WriteLine(TextContent_DoseBracket_Index+"|"+TextContent_LineFeed_Index+"\n"+TextContent);
-                TextContent = TextContent.Substring(TextContent_LineFeed_Index+2);
+                TextContent = TextContent.Substring(TextContent_LineFeed_Index+1);
             }
             CurrentLyrics = lyrics; 
             return lyrics;

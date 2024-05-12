@@ -40,7 +40,8 @@ namespace CorePlanetMusicPlayer.Models
 
         public static void PlayMusic(Music music,EventList<Music>newPlayQueue,int musicIndexInPlayQueue)
         {
-            
+            if (music == null) return;
+            if (music.file == null) return;
 
 
             PlayQueue.currentMusicIndex = musicIndexInPlayQueue;
@@ -67,6 +68,9 @@ namespace CorePlanetMusicPlayer.Models
 
         public static void PlayMusic(Music music, List<Music> newPlayQueue, int musicIndexInPlayQueue)
         {
+            if (music == null) return;
+            if (music.file == null) return;
+
             MusicManager.GetMusicHDCoverAsync(music);
 
             PlayQueue.currentMusicIndex = musicIndexInPlayQueue;
