@@ -27,6 +27,7 @@ namespace CorePlanetMusicPlayer.Models
             int TextContent_DoseBracket_Index = 0;
             int TextContent_LineFeed_Index = 0;
 
+            if (String.IsNullOrEmpty(TextContent)) return new List<Lyric> { };
             TextContent = TextContent.Replace("\n", "\r");
             TextContent = TextContent.Replace("\r\r", "\r");
 
