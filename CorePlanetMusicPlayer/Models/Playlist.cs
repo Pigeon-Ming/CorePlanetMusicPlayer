@@ -46,11 +46,13 @@ namespace CorePlanetMusicPlayer.Models
                 return new List<Playlist>();
             }
             IReadOnlyList<IStorageItem> items = await folder.GetItemsAsync();
+
             foreach (IStorageItem item in items)
             {
                 Playlist playlist = new Playlist();
                 if(item is StorageFile)
                 {
+                    
                     string name = ((StorageFile)item).Name;
                     name = name.Substring(0, name.LastIndexOf("."));
                     playlist = await ReadPlaylistAsync(name);
@@ -69,6 +71,10 @@ namespace CorePlanetMusicPlayer.Models
             {
                 return playlist;
             }
+
+            var item = await folder.TryGetItemAsync(listName + ".pmplist4");
+            if (item == null)return playlist;
+
             StorageFile file = await folder.GetFileAsync(listName + ".pmplist4");
             string filecontent = await Windows.Storage.FileIO.ReadTextAsync(file);
             JsonPlaylist jsonPlayList = JsonSerializer.Deserialize<JsonPlaylist>(filecontent);
@@ -137,6 +143,19 @@ namespace CorePlanetMusicPlayer.Models
 
             StorageFile file1 = await savePicker.PickSaveFileAsync();
             await Windows.Storage.FileIO.WriteTextAsync(file1, await Windows.Storage.FileIO.ReadTextAsync(file));
+        }
+
+        public static async Task DeletePlaylistAsync(String playlistName)
+        {
+            Playlist playlist = new Playlist();
+            playlist.Name = playlistName;
+            StorageFolder folder = (StorageFolder)await Windows.Storage.ApplicationData.Current.LocalFolder.TryGetItemAsync("playlists");
+            if (folder == null)
+            {
+                return ;
+            }
+            StorageFile file = await folder.GetFileAsync(playlistName + ".pmplist4");
+            file.DeleteAsync();
         }
 
         public static async Task<bool> ImportPlaylistAsync()

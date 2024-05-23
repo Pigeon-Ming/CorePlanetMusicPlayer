@@ -130,6 +130,9 @@
     <Compile Include="Models\Lyric.cs" />
     <Compile Include="Models\MultiWindow.cs" />
     <Compile Include="Models\Music.cs" />
+    <Compile Include="Models\OnlineMessages\OnlineLyricManager.cs" />
+    <Compile Include="Models\OnlineMessages\OnlineMusicManager.cs" />
+    <Compile Include="Models\OnlineMessages\ResponseManager.cs" />
     <Compile Include="Models\PlayCore.cs" />
     <Compile Include="Models\Playlist.cs" />
     <Compile Include="Models\PlayQueue.cs" />
@@ -153,6 +156,7 @@
       <Version>1.0.38</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

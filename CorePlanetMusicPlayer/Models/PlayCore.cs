@@ -12,6 +12,7 @@ using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Media.Streaming.Adaptive;
 using Windows.Storage;
+using Windows.Storage.AccessCache;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 using Windows.UI.Core;
@@ -71,7 +72,7 @@ namespace CorePlanetMusicPlayer.Models
             if (music == null) return;
             if (music.file == null) return;
 
-            MusicManager.GetMusicHDCoverAsync(music);
+            
 
             PlayQueue.currentMusicIndex = musicIndexInPlayQueue;
             if (ShufflePlayMode == ShufflePlayModeEnum.None)
@@ -276,14 +277,31 @@ namespace CorePlanetMusicPlayer.Models
         {
             //await MusicManager.GetMusicHDCoverAsync(music);
             MediaPlaybackItem playbackItem;
-            StorageFile file = music.file;
+            StorageFile file;
+            if (!String.IsNullOrEmpty(music.Token))
+            {
+                if (StorageApplicationPermissions.FutureAccessList.ContainsItem(music.Token))
+                {
+                    file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(music.Token);
+                    Debug.WriteLine("从token获取文件");
+                }
+                else
+                    file = music.file;
+            }
+
+            else
+                file = music.file;
             //if (music.source.State == MediaSourceState.Failed) return;
             //Debug.WriteLine("MusicSourceState:"+music.source.State.ToString());
             playbackItem = new MediaPlaybackItem(MediaSource.CreateFromStorageFile(file));
-            music = await MusicManager.GetMusicPropertiesAsync(music);
+            music = await MusicManager.GetMusicPropertiesAsync_Single(music);
+            
             CurrentMusic = music;
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
+                CurrentMusic.cover = new Windows.UI.Xaml.Media.Imaging.BitmapImage();
+                CurrentMusic = await MusicManager.GetMusicHDCoverAsync(CurrentMusic);
                 MainMediaPlayer.Source = playbackItem;
                 PlayCore.MainMediaPlayer.MediaPlayer.Play();
             

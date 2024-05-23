@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TagLib;
 using Windows.Storage;
@@ -30,14 +31,25 @@ namespace CorePlanetMusicPlayer.Models
             if (String.IsNullOrEmpty(TextContent)) return new List<Lyric> { };
             TextContent = TextContent.Replace("\n", "\r");
             TextContent = TextContent.Replace("\r\r", "\r");
+            
+
 
             while (!String.IsNullOrEmpty(TextContent))
             {
                 TextContent_DoseBracket_Index = TextContent.IndexOf("]");
                 if (TextContent_DoseBracket_Index == -1) break;
                 Lyric lyric = new Lyric();
-                lyric.Time = TextContent.Substring(1,TextContent_DoseBracket_Index-1);
-                if(TextContent.IndexOf("\r") - TextContent.IndexOf("]") - 1 <= 0)
+                //String temp = TextContent.Substring(1, TextContent_DoseBracket_Index - 1);
+                //if (Regex.IsMatch(temp, @"^([0-5]?:[0-5]?\d.[0-9]?\d)$"))
+                //    lyric.Time = temp;
+                //else
+                //{
+                //    TextContent_LineFeed_Index = TextContent.IndexOf("\r");
+                //    TextContent = TextContent.Substring(TextContent_LineFeed_Index + 1);
+                //    continue;
+                //}
+                    
+                if (TextContent.IndexOf("\r") - TextContent.IndexOf("]") - 1 <= 0)
                     lyric.Content = "";
                 else
                 {
@@ -45,8 +57,16 @@ namespace CorePlanetMusicPlayer.Models
                     lyric.Content = lyric.Content.Replace("「", "\r");
                     lyric.Content = lyric.Content.Replace("」", "");
                 }
-                    
-                lyrics.Add(lyric);
+
+                if (lyrics.Count > 1 && lyrics[lyrics.Count - 1].Time == lyric.Time)
+                {
+                    lyrics[lyrics.Count - 1].Content = lyrics[lyrics.Count - 1].Content+"\n"+lyric.Content;
+                }
+                else
+                {
+                    lyrics.Add(lyric);
+                }
+                
                 TextContent_LineFeed_Index = TextContent.IndexOf("\r");
 
                 //Debug.WriteLine(TextContent_DoseBracket_Index + "|" + TextContent_LineFeed_Index + "\n" + TextContent);
@@ -64,8 +84,14 @@ namespace CorePlanetMusicPlayer.Models
                         lyric.Content = lyric.Content.Replace("「", "\r");
                         lyric.Content = lyric.Content.Replace("」", "");
                     }
-
-                    lyrics.Add(lyric);
+                    if (lyrics.Count > 1 && lyrics[lyrics.Count - 1].Time == lyric.Time)
+                    {
+                        lyrics[lyrics.Count - 1].Content = lyrics[lyrics.Count - 1].Content + "\n" + lyric.Content;
+                    }
+                    else
+                    {
+                        lyrics.Add(lyric);
+                    }
                     break;
                 }
 
@@ -73,6 +99,9 @@ namespace CorePlanetMusicPlayer.Models
                 TextContent = TextContent.Substring(TextContent_LineFeed_Index+1);
             }
             CurrentLyrics = lyrics; 
+
+            
+
             return lyrics;
         }
 
@@ -89,7 +118,7 @@ namespace CorePlanetMusicPlayer.Models
 
             Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
 
-            if (string.IsNullOrEmpty(file.Path))
+            if (file == null || string.IsNullOrEmpty(file.Path))
             {
                 return new List<Lyric>();
             }
@@ -128,6 +157,7 @@ namespace CorePlanetMusicPlayer.Models
         public static List<Lyric> LoadFromMusicFile(Music music)
         {
             if (PlayCore.CurrentMusic == null) return new List<Lyric>();
+            if (music.file.FileType == ".ac3" || music.file.FileType == ".m4a") return new List<Lyric>();
             UwpStorageFileAbstraction uwpStorageFileAbstraction = new UwpStorageFileAbstraction(music.file);
             File.IFileAbstraction fileAbstraction = uwpStorageFileAbstraction;
             TagLib.File file = TagLib.File.Create(fileAbstraction, ReadStyle.Average);

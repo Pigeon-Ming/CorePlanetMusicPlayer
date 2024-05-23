@@ -87,6 +87,7 @@ namespace CorePlanetMusicPlayer.Models
         public static EventList<T> ListToEventList(List<T> list)
         {
             EventList<T> eventList = new EventList<T>();
+            if (list == null) return null;
             for (int i = 0; i < list.Count; i++)
             {
                 eventList.Add(list[i]);

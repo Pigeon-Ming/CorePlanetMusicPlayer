@@ -34,14 +34,7 @@ namespace CorePlanetMusicPlayer.Models
                     if (fullArtistName.IndexOf(";") != -1)
                     {
                         currentArtistName.Add(fullArtistName.Substring(0, fullArtistName.IndexOf(";")));
-                        if (fullArtistName.IndexOf(";") == -1)
-                        {
-                            fullArtistName = fullArtistName.Substring(fullArtistName.IndexOf(";") + 1, fullArtistName.Length - fullArtistName.IndexOf(";") - 1);
-                        }
-                        else
-                        {
-                            fullArtistName = fullArtistName.Substring(fullArtistName.IndexOf(";") + 2, fullArtistName.Length - fullArtistName.IndexOf(";") - 2);
-                        }
+                        fullArtistName = fullArtistName.Substring(fullArtistName.IndexOf(";") + 2, fullArtistName.Length - fullArtistName.IndexOf(";") - 2);
                     }
                     else
                     {

@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Windows.Data.Json;
 using Windows.Media.Core;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
@@ -25,10 +28,28 @@ namespace CorePlanetMusicPlayer.Models
         public String Duration { get; set; }//长度
 
         public StorageFile file { get; set; }
+
+        public String Token {  get; set; }
         //public MediaSource source { get; set; }
         public BitmapImage cover { get; set; }
     }
-    
+
+    public class JsonMusic
+    {
+
+        public String Title { get; set; }
+        public String Artist { get; set; }
+        public String Album { get; set; }//专辑名称
+        public String Duration { get; set; }//长度
+
+        public String FilePath { get; set; }
+    }
+
+    public class JsonMusicList
+    {
+        public List<JsonMusic> list { get; set; } = new List<JsonMusic>();
+    }
+
     public class MusicManager
     {
 
@@ -61,6 +82,38 @@ namespace CorePlanetMusicPlayer.Models
             musicProperties.Year = music.Year;
             await musicProperties.SavePropertiesAsync();
         }
+
+        public static async Task<Music> GetMusicPropertiesAsync_Single(Music music)
+        {
+            StorageFile file = music.file;
+            StorageItemContentProperties storageItemContentProperties = file.Properties;
+            MusicProperties musicProperties = await storageItemContentProperties.GetMusicPropertiesAsync(); // 音频属性
+            if (!string.IsNullOrEmpty(musicProperties.Title))
+                music.Title = musicProperties.Title;
+            else
+                music.Title = music.file.Name;
+            if (!string.IsNullOrEmpty(musicProperties.Album))
+                music.Album = musicProperties.Album;
+            else
+                music.Album = "未知专辑";
+
+            if (!string.IsNullOrEmpty(musicProperties.Artist))
+                music.Artist = musicProperties.Artist;
+            else
+                music.Artist = "未知艺术家";
+            music.Year = musicProperties.Year;
+            music.Bitrate = musicProperties.Bitrate;
+            music.Duration = musicProperties.Duration.ToString().Substring(3, 5);
+            music.TrackNumber = musicProperties.TrackNumber;
+            //if (LibraryManager.gotPropertyCount == Library.LocalLibraryMusic.Count)
+            //{
+            //    AlbumManager.ClassifyAlbum();
+            //    ArtistManager.ClassifyArtist();
+            //    SetMusicPropertiesToJson();
+            //}
+
+            return music;
+        }
         public static async Task<Music> GetMusicPropertiesAsync(Music music)
         {
             
@@ -72,6 +125,7 @@ namespace CorePlanetMusicPlayer.Models
                 {
                     AlbumManager.ClassifyAlbum();
                     ArtistManager.ClassifyArtist();
+                    SetMusicPropertiesToJson();
                 }
                 return music;
             }
@@ -82,6 +136,7 @@ namespace CorePlanetMusicPlayer.Models
                 {
                     AlbumManager.ClassifyAlbum();
                     ArtistManager.ClassifyArtist();
+                    SetMusicPropertiesToJson();
                 }
                 return music;
             }
@@ -114,6 +169,7 @@ namespace CorePlanetMusicPlayer.Models
             {
                 AlbumManager.ClassifyAlbum();
                 ArtistManager.ClassifyArtist();
+                SetMusicPropertiesToJson();
             }
 
             return music;
@@ -163,6 +219,80 @@ namespace CorePlanetMusicPlayer.Models
             return music;
         }
 
-        
+        public static async Task SetMusicPropertiesToJson()
+        {
+            StorageFolder folder = Windows.Storage.ApplicationData.Current.LocalFolder;
+            StorageFile file = (StorageFile)await folder.TryGetItemAsync("MusicProperties.json");
+            if (file == null)
+                file = await folder.CreateFileAsync("MusicProperties.json");
+            List<JsonMusic> jsonMusicList = new List<JsonMusic>();
+            for(int i = 0; i < Library.LocalLibraryMusic.Count; i++)
+            {
+                jsonMusicList.Add(MusicToJsonMusic(Library.LocalLibraryMusic[i]));
+            }
+            //Debug.WriteLine();
+            await Windows.Storage.FileIO.WriteTextAsync(file, JsonSerializer.Serialize<List<JsonMusic>>(jsonMusicList));
+        }
+
+        public static async Task ReadMusicPropertiesFromJson()
+        {
+            StorageFolder folder = Windows.Storage.ApplicationData.Current.LocalFolder;
+            StorageFile file = (StorageFile)await folder.TryGetItemAsync("MusicProperties.json");
+            if (file == null)
+            {
+                LibraryManager.ReloadLibraryAsync();
+                return;
+            }
+            string filecontent = await Windows.Storage.FileIO.ReadTextAsync(file);
+            List<JsonMusic> jsonMusicList = new List<JsonMusic>();
+            JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions();
+            jsonSerializerOptions.IncludeFields = false;
+            try
+            {
+                jsonMusicList = JsonSerializer.Deserialize<List<JsonMusic>>(filecontent, jsonSerializerOptions);
+            }catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                LibraryManager.GetAllMusicInfo();
+                return;
+            }
+            for(int i=0;i<jsonMusicList.Count;i++)
+                Debug.WriteLine(jsonMusicList[i].FilePath);
+
+
+            for (int i = 0; i < Library.LocalLibraryMusic.Count; i++)
+            {
+                Debug.WriteLine("正在从Json数据中获取："+ Library.LocalLibraryMusic[i].file.Path+"的信息……");
+                JsonMusic jsonMusic = jsonMusicList.Find(x => x.FilePath.Contains(Library.LocalLibraryMusic[i].file.Path));
+                if (jsonMusic != null)
+                    SetPropertiesFromJsonMusic(Library.LocalLibraryMusic[i], jsonMusic);
+                else
+                    await GetMusicPropertiesAsync(Library.LocalLibraryMusic[i]);
+                GetMusicHDCoverAsync(Library.LocalLibraryMusic[i]);
+            }
+            AlbumManager.ClassifyAlbum();
+            ArtistManager.ClassifyArtist();
+    
+        }
+
+        public static JsonMusic MusicToJsonMusic(Music music)
+        {
+            JsonMusic jsonMusic = new JsonMusic();
+            jsonMusic.Title = music.Title;
+            jsonMusic.Artist = music.Artist;
+            jsonMusic.Album = music.Album;
+            jsonMusic.Duration = music.Duration;
+            if (music.file != null)
+                jsonMusic.FilePath = music.file.Path;
+            return jsonMusic;
+        }
+
+        public static void SetPropertiesFromJsonMusic(Music music,JsonMusic jsonMusic)
+        {
+            music.Title = jsonMusic.Title;
+            music.Artist = jsonMusic.Artist;
+            music.Album = jsonMusic.Album;
+            music.Duration = jsonMusic.Duration;
+        }
     }
 }

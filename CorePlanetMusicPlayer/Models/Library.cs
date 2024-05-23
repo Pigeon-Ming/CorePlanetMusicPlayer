@@ -4,9 +4,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TagLib.Ape;
 using Windows.Foundation.Collections;
 using Windows.Media.Core;
 using Windows.Storage;
+using Windows.Storage.AccessCache;
 
 namespace CorePlanetMusicPlayer.Models
 {
@@ -35,14 +37,45 @@ namespace CorePlanetMusicPlayer.Models
                 itemsList = await foreachFolderQueue.Dequeue().GetItemsAsync();
                 ForeachLibrary(itemsList);
             }
+
+            GetAllMusicInfo();
+        }//重新载入音乐库
+
+        public static void GetAllMusicInfo()
+        {
+            Debug.WriteLine("遍历文件获取音乐信息");
             for (int i = 0; i < Library.LocalLibraryMusic.Count; i++)
             {
                 MusicManager.GetMusicPropertiesAsync(Library.LocalLibraryMusic[i]);
                 MusicManager.GetMusicHDCoverAsync(Library.LocalLibraryMusic[i]);
             }
-                
+        }
+
+        public static async Task ReloadLibraryAsync_GetPropertiesFromJson()
+        {
+            Debug.WriteLine("使用Json获取音乐信息");
+            gotPropertyCount = 0;
+            Library.LocalLibraryMusic.Clear();
+            ArtistManager.Artists.Clear();
+            AlbumManager.Albums.Clear();
+            StorageFolder folder = KnownFolders.MusicLibrary;
+            IReadOnlyList<IStorageItem> itemsList = await folder.GetItemsAsync();
+            ForeachLibrary(itemsList);
+            while (foreachFolderQueue.Count != 0)
+            {
+                itemsList = await foreachFolderQueue.Dequeue().GetItemsAsync();
+                ForeachLibrary(itemsList);
+            }
             
-        }//重新载入音乐库
+            await MusicManager.ReadMusicPropertiesFromJson();
+            MusicManager.SetMusicPropertiesToJson();
+        }
+
+        //private static void ForeachLibraryByToken()
+        //{
+        //    for(int i)
+        //}
+
 
         private static void ForeachLibrary(IReadOnlyList<IStorageItem> itemsList)
         {
@@ -54,6 +87,7 @@ namespace CorePlanetMusicPlayer.Models
                 }
                 else
                 {
+                    
                     string fileName = item.Name;
                     //Debug.WriteLine(fileName+"|||"+fileName.Substring(fileName.LastIndexOf(".")));
                     string fileSuffix = fileName.Substring(fileName.LastIndexOf("."));
