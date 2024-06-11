@@ -41,14 +41,23 @@ namespace CorePlanetMusicPlayer.Models
                 Lyric lyric = new Lyric();
                 //String temp = TextContent.Substring(1, TextContent_DoseBracket_Index - 1);
                 //if (Regex.IsMatch(temp, @"^([0-5]?:[0-5]?\d.[0-9]?\d)$"))
-                //    lyric.Time = temp;
+                //    
                 //else
                 //{
                 //    TextContent_LineFeed_Index = TextContent.IndexOf("\r");
                 //    TextContent = TextContent.Substring(TextContent_LineFeed_Index + 1);
                 //    continue;
                 //}
-                    
+
+                TextContent_LineFeed_Index = TextContent.IndexOf("\r");
+                if (TextContent.IndexOf("[0") == -1 || TextContent.IndexOf("[0") > 0)
+                {
+                    TextContent = TextContent.Substring(TextContent_LineFeed_Index + 1);
+                    continue;
+                }
+                lyric.Time = TextContent.Substring(1, TextContent_DoseBracket_Index - 1);
+                
+
                 if (TextContent.IndexOf("\r") - TextContent.IndexOf("]") - 1 <= 0)
                     lyric.Content = "";
                 else
@@ -58,16 +67,9 @@ namespace CorePlanetMusicPlayer.Models
                     lyric.Content = lyric.Content.Replace("」", "");
                 }
 
-                if (lyrics.Count > 1 && lyrics[lyrics.Count - 1].Time == lyric.Time)
-                {
-                    lyrics[lyrics.Count - 1].Content = lyrics[lyrics.Count - 1].Content+"\n"+lyric.Content;
-                }
-                else
-                {
-                    lyrics.Add(lyric);
-                }
                 
-                TextContent_LineFeed_Index = TextContent.IndexOf("\r");
+                lyrics.Add(lyric);
+
 
                 //Debug.WriteLine(TextContent_DoseBracket_Index + "|" + TextContent_LineFeed_Index + "\n" + TextContent);
                 if (TextContent_LineFeed_Index == -1 && TextContent_LineFeed_Index + 1 < TextContent.Length - 1)
@@ -98,9 +100,20 @@ namespace CorePlanetMusicPlayer.Models
                 //Debug.WriteLine(TextContent_DoseBracket_Index+"|"+TextContent_LineFeed_Index+"\n"+TextContent);
                 TextContent = TextContent.Substring(TextContent_LineFeed_Index+1);
             }
-            CurrentLyrics = lyrics; 
+            CurrentLyrics = lyrics;
 
-            
+            for(int i = lyrics.Count - 1; i >= 0; i--)
+            {
+                for(int j = 0;j< i; j++)
+                {
+                    if (lyrics[i].Time == lyrics[j].Time)
+                    {
+                        lyrics[j].Content += "\n"+lyrics[i].Content;
+                        lyrics.Remove(lyrics[i]);
+                        break;
+                    }
+                }
+            }
 
             return lyrics;
         }

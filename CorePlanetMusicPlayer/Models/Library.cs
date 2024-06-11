@@ -22,7 +22,7 @@ namespace CorePlanetMusicPlayer.Models
         static Queue<StorageFolder> foreachFolderQueue = new Queue<StorageFolder>();
         public static int gotPropertyCount { get; set; }
 
-        public static async Task ReloadLibraryAsync()
+        public static async Task ReloadLibraryAsync(bool GetCover)
         {
             gotPropertyCount = 0;
             Library.LocalLibraryMusic.Clear();
@@ -38,20 +38,27 @@ namespace CorePlanetMusicPlayer.Models
                 ForeachLibrary(itemsList);
             }
 
-            GetAllMusicInfo();
+            GetAllMusicInfo(GetCover);
         }//重新载入音乐库
 
-        public static void GetAllMusicInfo()
+        public static async void GetAllMusicInfo(bool GetCover)
         {
             Debug.WriteLine("遍历文件获取音乐信息");
-            for (int i = 0; i < Library.LocalLibraryMusic.Count; i++)
-            {
-                MusicManager.GetMusicPropertiesAsync(Library.LocalLibraryMusic[i]);
-                MusicManager.GetMusicHDCoverAsync(Library.LocalLibraryMusic[i]);
-            }
+
+            if (GetCover)
+                for (int i = 0; i < Library.LocalLibraryMusic.Count; i++)
+                {
+                    await MusicManager.GetMusicPropertiesAsync(Library.LocalLibraryMusic[i]);
+                    await MusicManager.GetMusicCoverAsync_Taglib(Library.LocalLibraryMusic[i]);
+                }
+            else
+                for (int i = 0; i < Library.LocalLibraryMusic.Count; i++)
+                {
+                    await MusicManager.GetMusicPropertiesAsync(Library.LocalLibraryMusic[i]);
+                }
         }
 
-        public static async Task ReloadLibraryAsync_GetPropertiesFromJson()
+        public static async Task ReloadLibraryAsync_GetPropertiesFromJson(bool GetCover)
         {
             Debug.WriteLine("使用Json获取音乐信息");
             gotPropertyCount = 0;
@@ -67,7 +74,8 @@ namespace CorePlanetMusicPlayer.Models
                 ForeachLibrary(itemsList);
             }
             
-            await MusicManager.ReadMusicPropertiesFromJson();
+
+            await MusicManager.ReadMusicPropertiesFromJson(GetCover);
             MusicManager.SetMusicPropertiesToJson();
         }
 

@@ -52,8 +52,8 @@ namespace CorePlanetMusicPlayer.Models
                 Playlist playlist = new Playlist();
                 if(item is StorageFile)
                 {
-                    
                     string name = ((StorageFile)item).Name;
+                    if (name.IndexOf("[PrivateList]") != -1) continue;
                     name = name.Substring(0, name.LastIndexOf("."));
                     playlist = await ReadPlaylistAsync(name);
                     playlists.Add(playlist);
@@ -109,7 +109,11 @@ namespace CorePlanetMusicPlayer.Models
             {
                 return;
             }
-            StorageFile file = await folder.GetFileAsync(playlist.Name + ".pmplist4");
+            StorageFile file;
+            if (await folder.TryGetItemAsync(playlist.Name + ".pmplist4") != null)
+                file = await folder.GetFileAsync(playlist.Name + ".pmplist4");
+            else
+                file = await folder.CreateFileAsync(playlist.Name + ".pmplist4");
             await Windows.Storage.FileIO.WriteTextAsync(file, JsonSerializer.Serialize(new JsonPlaylist { Name = playlist.Name, includeMusic = list ,Description = playlist.Description}));
         }
 

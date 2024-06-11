@@ -1,4 +1,5 @@
 ﻿
+using CorePlanetMusicPlayer.Models.HotLyric;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -230,7 +231,22 @@ namespace CorePlanetMusicPlayer.Models
             MediaItemDisplayProperties props = playbackItem.GetDisplayProperties();
             props.Type = Windows.Media.MediaPlaybackType.Music;
             props.MusicProperties.Title = CurrentMusic.Title;
-            props.MusicProperties.Artist = CurrentMusic.Artist;
+
+            List<Artist> artistsList = ArtistManager.DivideArtist(CurrentMusic.Artist);
+
+
+            String artistString = CurrentMusic.Artist;
+            for(int i = 0; i < artistsList.Count; i++)
+            {
+                if (artistsList[i] == null) break;
+                ArtistConvertItem artistConvertItem = ArtistConvertItemManager.ConvertItems.Find(x => x.Name == artistsList[i].Name);
+                if (artistConvertItem != null)
+                    artistString = artistString.Replace(artistConvertItem.Name,artistConvertItem.ConvertTo);
+            }
+            
+            props.MusicProperties.Artist = artistString.Replace(";"," /").Replace("/ ","/");
+
+            Debug.WriteLine(props.MusicProperties.Artist);
             props.MusicProperties.AlbumTitle = CurrentMusic.Album;
             props.MusicProperties.TrackNumber = CurrentMusic.TrackNumber;
 
@@ -301,7 +317,7 @@ namespace CorePlanetMusicPlayer.Models
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
                 CurrentMusic.cover = new Windows.UI.Xaml.Media.Imaging.BitmapImage();
-                CurrentMusic = await MusicManager.GetMusicHDCoverAsync(CurrentMusic);
+                CurrentMusic = await MusicManager.GetMusicHDCoverAsync_Taglib(CurrentMusic);
                 MainMediaPlayer.Source = playbackItem;
                 PlayCore.MainMediaPlayer.MediaPlayer.Play();
             

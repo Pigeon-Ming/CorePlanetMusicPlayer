@@ -53,6 +53,8 @@ namespace CorePlanetMusicPlayer.Models
             }
         }
 
+
+
         public static void CreateShufflePlayQueue()
         {
             Random random = new Random();

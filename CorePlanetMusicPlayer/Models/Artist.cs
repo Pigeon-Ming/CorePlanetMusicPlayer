@@ -16,6 +16,7 @@ namespace CorePlanetMusicPlayer.Models
     public class ArtistManager
     {
         public static List<Artist> Artists = new List<Artist>();
+        public static List<Artist> ArtistSuggestions = new List<Artist>();
 
         
 
@@ -29,12 +30,13 @@ namespace CorePlanetMusicPlayer.Models
                 List<string> currentArtistName = new List<string>();
                 //int currentArtistName_stringindex = 0;
                 string fullArtistName = Library.LocalLibraryMusic[i].Artist;
+                fullArtistName.Replace(" ","");
                 while (true)
                 {
                     if (fullArtistName.IndexOf(";") != -1)
                     {
                         currentArtistName.Add(fullArtistName.Substring(0, fullArtistName.IndexOf(";")));
-                        fullArtistName = fullArtistName.Substring(fullArtistName.IndexOf(";") + 2, fullArtistName.Length - fullArtistName.IndexOf(";") - 2);
+                        fullArtistName = fullArtistName.Substring(fullArtistName.IndexOf(";") + 1, fullArtistName.Length - fullArtistName.IndexOf(";") - 1);
                     }
                     else
                     {
@@ -63,6 +65,7 @@ namespace CorePlanetMusicPlayer.Models
                 }
             }
             Artists = Artists.OrderBy(x => x.Name).ToList();
+            GetArtistSuggestions();
             //for (int i = 0; i < Artists.Count; i++)
             //{
             //    AllData.allArtistName.Add(AllData.Artists[i].Name);
@@ -72,7 +75,7 @@ namespace CorePlanetMusicPlayer.Models
         public static Artist FindArtistByName(String Name)
         {
             if(!String.IsNullOrEmpty(Name))
-                return Artists.Find(x => x.Name.Contains(Name));
+                return Artists.Find(x => x.Name == Name);
             else
                 return new Artist { Name="未知艺术家"};
         }
@@ -119,6 +122,27 @@ namespace CorePlanetMusicPlayer.Models
             for (int i = 0; i < ArtistNames.Count; i++)
                 artists.Add(FindArtistByName(ArtistNames[i]));
             return artists;
+        }
+
+        public static void GetArtistSuggestions()
+        {
+            Random random = new Random();
+            List<int> indexes = new List<int>();
+            if (Artists.Count < 10)
+            {
+                for (int i = 0; i < Artists.Count; i++)
+                    ArtistSuggestions.Add(Artists[i]);
+            }
+            else
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    int index;
+                    while (indexes.Contains(index = random.Next(Artists.Count - 1)) == true) { }
+                    indexes.Add(index);
+                    ArtistSuggestions.Add(Artists[index]);
+                }
+            }
         }
     }
 }

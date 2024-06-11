@@ -126,6 +126,7 @@
     <Compile Include="Models\Artist.cs" />
     <Compile Include="Models\EventList.cs" />
     <Compile Include="Models\FileManager.cs" />
+    <Compile Include="Models\HotLyric\ArtistConvertItem.cs" />
     <Compile Include="Models\Library.cs" />
     <Compile Include="Models\Lyric.cs" />
     <Compile Include="Models\MultiWindow.cs" />

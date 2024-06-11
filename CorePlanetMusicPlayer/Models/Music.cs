@@ -1,15 +1,19 @@
-﻿using System;
+﻿using CorePlanetMusicPlayer.Models.Taglib;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using TagLib;
 using Windows.Data.Json;
 using Windows.Media.Core;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
+using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -25,6 +29,7 @@ namespace CorePlanetMusicPlayer.Models
         public uint Bitrate { get; set; }//比特率
         public uint Year { get; set; }//年份
         public uint TrackNumber { get; set; }//专辑内音乐编号
+        public uint DiscNumber { get; set; }//专辑内音乐编号
         public String Duration { get; set; }//长度
 
         public StorageFile file { get; set; }
@@ -105,15 +110,47 @@ namespace CorePlanetMusicPlayer.Models
             music.Bitrate = musicProperties.Bitrate;
             music.Duration = musicProperties.Duration.ToString().Substring(3, 5);
             music.TrackNumber = musicProperties.TrackNumber;
-            //if (LibraryManager.gotPropertyCount == Library.LocalLibraryMusic.Count)
-            //{
-            //    AlbumManager.ClassifyAlbum();
-            //    ArtistManager.ClassifyArtist();
-            //    SetMusicPropertiesToJson();
-            //}
 
-            return music;
+            if (music.file.FileType == ".ac3" || music.file.FileType == ".m4a")
+            {
+                return music;
+            }
+            UwpStorageFileAbstraction uwpStorageFileAbstraction = new UwpStorageFileAbstraction(music.file);
+            TagLib.File.IFileAbstraction fileAbstraction = uwpStorageFileAbstraction;
+            TagLib.File _file;
+            try
+            {
+                _file = TagLib.File.Create(fileAbstraction, ReadStyle.Average);
+                music.DiscNumber = _file.Tag.Disc;
+            }
+            catch
+            {
+
+            }
+
+                //    IDictionary<string, object> extraProperties =
+                //await file.Properties.RetrievePropertiesAsync(properties);
+
+                //    if (extraProperties.ContainsKey("System.Music.DiscNumber"))
+                //    {
+
+                //        music.DiscNumber = Convert.ToUInt32(extraProperties["System.Music.DiscNumber"]);
+                //    }
+                //    else
+                //    {
+                //        music.DiscNumber = 1;
+                //    }
+                //if (LibraryManager.gotPropertyCount == Library.LocalLibraryMusic.Count)
+                //{
+                //    AlbumManager.ClassifyAlbum();
+                //    ArtistManager.ClassifyArtist();
+                //    SetMusicPropertiesToJson();
+                //}
+
+                return music;
         }
+
+        static List<String> properties = new List<String> { "System.Music.DiscNumber" };
         public static async Task<Music> GetMusicPropertiesAsync(Music music)
         {
             
@@ -164,6 +201,22 @@ namespace CorePlanetMusicPlayer.Models
 
 
 
+            //// 死活读不出来，鬼知道是什么问题
+            //IDictionary<string, object> extraProperties =
+            //    await file.Properties.RetrievePropertiesAsync(properties);
+
+            //Debug.WriteLine("DiscNumber:" + extraProperties["System.Music.DiscNumber"]);
+            //if (extraProperties.ContainsKey("System.Music.DiscNumber"))
+            //{
+               
+            //    music.DiscNumber = Convert.ToUInt32(extraProperties["System.Music.DiscNumber"]);
+            //}
+            //else
+            //{
+            //    music.DiscNumber = 1;
+            //}
+
+
             ++LibraryManager.gotPropertyCount;
             if (LibraryManager.gotPropertyCount == Library.LocalLibraryMusic.Count)
             {
@@ -189,6 +242,59 @@ namespace CorePlanetMusicPlayer.Models
             return music;
         }
 
+        public static async Task<Music> GetMusicCoverAsync_Taglib(Music music)
+        {
+            if (music.file.FileType == ".ac3" || music.file.FileType == ".m4a")
+            {
+                return await GetMusicHDCoverAsync(music);
+            }
+            UwpStorageFileAbstraction uwpStorageFileAbstraction = new UwpStorageFileAbstraction(music.file);
+            TagLib.File.IFileAbstraction fileAbstraction = uwpStorageFileAbstraction;
+            TagLib.File file;
+            try
+            {
+                file = TagLib.File.Create(fileAbstraction, ReadStyle.Average);
+            }
+            catch (Exception ex)
+            {
+                return await GetMusicHDCoverAsync(music);
+            }
+            BitmapImage bitmapImage = new BitmapImage();
+            InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream();
+            if (file.Tag.Pictures.Length <= 0) return await GetMusicHDCoverAsync(music);
+            await stream.WriteAsync(file.Tag.Pictures[0].Data.Data.AsBuffer());
+            stream.Seek(0);
+            await bitmapImage.SetSourceAsync(stream);
+            bitmapImage.DecodePixelHeight = 200;
+            bitmapImage.DecodePixelWidth = 200;
+            music.cover = bitmapImage;
+            return music;
+        }
+        public static async Task<Music> GetMusicHDCoverAsync_Taglib(Music music)
+        {
+            if(music.file.FileType == ".ac3" || music.file.FileType == ".m4a")
+            {
+                return await GetMusicHDCoverAsync(music);
+            }
+            UwpStorageFileAbstraction uwpStorageFileAbstraction = new UwpStorageFileAbstraction(music.file);
+            TagLib.File.IFileAbstraction fileAbstraction = uwpStorageFileAbstraction;
+            TagLib.File file;
+            try
+            {
+                file = TagLib.File.Create(fileAbstraction, ReadStyle.Average);
+            }catch (Exception ex)
+            {
+                return await GetMusicHDCoverAsync(music);
+            }
+            BitmapImage bitmapImage = new BitmapImage();
+            InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream();
+            if (file.Tag.Pictures.Length <= 0) return await GetMusicHDCoverAsync(music);
+            await stream.WriteAsync(file.Tag.Pictures[0].Data.Data.AsBuffer());
+            stream.Seek(0);
+            await bitmapImage.SetSourceAsync(stream);
+            music.cover = bitmapImage;
+            return music;
+        }
         public static Music FindMusicByFileName(String searchName)
         {
             Music music = Library.LocalLibraryMusic.Find(x => x.file.Name == searchName);
@@ -234,13 +340,13 @@ namespace CorePlanetMusicPlayer.Models
             await Windows.Storage.FileIO.WriteTextAsync(file, JsonSerializer.Serialize<List<JsonMusic>>(jsonMusicList));
         }
 
-        public static async Task ReadMusicPropertiesFromJson()
+        public static async Task ReadMusicPropertiesFromJson(bool GetCover)
         {
             StorageFolder folder = Windows.Storage.ApplicationData.Current.LocalFolder;
             StorageFile file = (StorageFile)await folder.TryGetItemAsync("MusicProperties.json");
             if (file == null)
             {
-                LibraryManager.ReloadLibraryAsync();
+                LibraryManager.ReloadLibraryAsync(GetCover);
                 return;
             }
             string filecontent = await Windows.Storage.FileIO.ReadTextAsync(file);
@@ -253,7 +359,7 @@ namespace CorePlanetMusicPlayer.Models
             }catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                LibraryManager.GetAllMusicInfo();
+                LibraryManager.GetAllMusicInfo(GetCover);
                 return;
             }
             for(int i=0;i<jsonMusicList.Count;i++)

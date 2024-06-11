@@ -42,7 +42,7 @@ namespace CorePlanetMusicPlayer.Models
             }
             Albums = Albums.OrderBy(x => x.Name).ToList();
             GetAlbumSuggestions();
-
+            
 
         }//对专辑进行分类
 
