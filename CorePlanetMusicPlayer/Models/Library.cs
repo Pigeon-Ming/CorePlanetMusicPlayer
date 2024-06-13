@@ -75,8 +75,8 @@ namespace CorePlanetMusicPlayer.Models
             }
             
 
-            await MusicManager.ReadMusicPropertiesFromJson(GetCover);
-            MusicManager.SetMusicPropertiesToJson();
+            MusicManager.ReadMusicPropertiesFromJson(GetCover);
+            //MusicManager.SetMusicPropertiesToJson();
         }
 
         //private static void ForeachLibraryByToken()

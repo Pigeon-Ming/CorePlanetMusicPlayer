@@ -5,8 +5,8 @@
 <p>使用CorePMP代码时，别忘了在关于界面展示CorePMP的仓库地址！</p>
 <p>祝您使用愉快！</p>
 <hr> 
-<a href="http://pigeon_ming.jsppc.asia/index.php/coreplanetmusicplayer">项目站点</a>
-<a href="http://pigeon_ming.jsppc.asia/index.php/planetmusicplayer">项目原型</a>
+<a href="http://pigeonming.top/index.php/coreplanetmusicplayer">项目站点</a>
+<a href="http://pigeonming.top/index.php/planetmusicplayer">查看示例程序</a>
 <hr>
 <h3>使用提示：</h3> 
 <p>进入程序后，点击“DevPage”按钮进入主界面，</p> 

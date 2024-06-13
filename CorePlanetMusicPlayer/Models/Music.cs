@@ -150,11 +150,11 @@ namespace CorePlanetMusicPlayer.Models
                 return music;
         }
 
-        static List<String> properties = new List<String> { "System.Music.DiscNumber" };
+        //static List<String> properties = new List<String> { "System.Music.DiscNumber" };
         public static async Task<Music> GetMusicPropertiesAsync(Music music)
         {
             
-            Debug.WriteLine(LibraryManager.gotPropertyCount+"=>"+ Library.LocalLibraryMusic.Count);
+            //Debug.WriteLine(LibraryManager.gotPropertyCount+"=>"+ Library.LocalLibraryMusic.Count);
             if (music.file == null)
             {
                 ++LibraryManager.gotPropertyCount;
@@ -362,13 +362,13 @@ namespace CorePlanetMusicPlayer.Models
                 LibraryManager.GetAllMusicInfo(GetCover);
                 return;
             }
-            for(int i=0;i<jsonMusicList.Count;i++)
-                Debug.WriteLine(jsonMusicList[i].FilePath);
+            //for(int i=0;i<jsonMusicList.Count;i++)
+            //    Debug.WriteLine(jsonMusicList[i].FilePath);
 
 
             for (int i = 0; i < Library.LocalLibraryMusic.Count; i++)
             {
-                Debug.WriteLine("正在从Json数据中获取："+ Library.LocalLibraryMusic[i].file.Path+"的信息……");
+                //Debug.WriteLine("正在从Json数据中获取："+ Library.LocalLibraryMusic[i].file.Path+"的信息……");
                 JsonMusic jsonMusic = jsonMusicList.Find(x => x.FilePath.Contains(Library.LocalLibraryMusic[i].file.Path));
                 if (jsonMusic != null)
                     SetPropertiesFromJsonMusic(Library.LocalLibraryMusic[i], jsonMusic);
