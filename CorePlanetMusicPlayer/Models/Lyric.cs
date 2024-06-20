@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using TagLib;
 using Windows.Storage;
+using Windows.UI.Xaml;
 
 namespace CorePlanetMusicPlayer.Models
 {
@@ -20,6 +22,39 @@ namespace CorePlanetMusicPlayer.Models
     {
         public static List<Lyric>CurrentLyrics = new List<Lyric>();
         public static String CurrentLyric = "";
+        public static DispatcherTimer LyricServiceTimer = new DispatcherTimer();
+        public static Music CurrentLyricMusic {  get; set; }
+
+        public static int CurrentLyricIndex { get; set; } = -1;
+
+        public static void StartLyricService()
+        {
+            LyricServiceTimer.Tick += LyricServiceTimer_Tick;
+            LyricServiceTimer.Start();
+        }
+
+        private static void LyricServiceTimer_Tick(object sender, object e)
+        {
+            if (CurrentLyricMusic != PlayCore.CurrentMusic)
+            {
+                CurrentLyricMusic = PlayCore.CurrentMusic;
+                TryAutoLoadLyricAsync();
+            }
+
+            CurrentLyricIndex = LyricManager.GetCurrentLyricIndex();
+            if (CurrentLyricIndex < CurrentLyrics.Count && CurrentLyricIndex > -1)
+                CurrentLyric = CurrentLyrics[CurrentLyricIndex].Content;
+            else
+                CurrentLyric = "没有找到歌词";
+        }
+
+        public static async Task TryAutoLoadLyricAsync()
+        {
+            LyricManager.CurrentLyrics = await LyricManager.AutoLoadFromLRCFileAndProcessAsync();
+            if (LyricManager.CurrentLyrics.Count == 0)
+                LyricManager.CurrentLyrics = LyricManager.LoadFromMusicFile(PlayCore.CurrentMusic);
+
+        }
 
         public static List<Lyric> ProcessLyrics(String TextContent)
         {
@@ -179,29 +214,28 @@ namespace CorePlanetMusicPlayer.Models
             return ProcessLyrics(lyricContent);
         }
 
-        public static int GetCurrentLyricIndex(List<Lyric>lyrics,int currentLyricIndex)
+        public static int GetCurrentLyricIndex()
         {
-            if (lyrics.Count > 0)
+            if (CurrentLyrics.Count > 0)
             {
 
-                for (int i = 0; i < lyrics.Count; i++)
+                for (int i = 0; i < CurrentLyrics.Count; i++)
                 {
-                    //Debug.WriteLine("|"+lyrics[i].Time.Substring(0, 5) + "|" + PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Substring(3, 5));
-                    if (lyrics[i].Time.Substring(0, 5) == PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Substring(3, 5) /*&& CurrentLyricIndex != i*/)
+                    //Debug.WriteLine("|"+CurrentLyrics[i].Time.Substring(0, 5) + "|" + PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Substring(3, 5));
+                    if (CurrentLyrics[i].Time.Substring(0, 5) == PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Substring(3, 5) /*&& CurrentLyricIndex != i*/)
                     {
-                        currentLyricIndex = i;
-                        if (Convert.ToInt32(lyrics[i].Time.Substring(6, 1)) >= Convert.ToInt32(PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Substring(6, 1)))
+                        CurrentLyricIndex = i;
+                        if (Convert.ToInt32(CurrentLyrics[i].Time.Substring(6, 1)) >= Convert.ToInt32(PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Substring(6, 1)))
                         {
-                            currentLyricIndex = i;
-                            
+                            CurrentLyricIndex = i;
                         }
-                        
+                        break;
                     }
                 }
             }
-            if(currentLyricIndex!=-1 && currentLyricIndex< CurrentLyrics.Count)
-            CurrentLyric = CurrentLyrics[currentLyricIndex].Content;
-            return currentLyricIndex;
+            if(CurrentLyricIndex!=-1 && CurrentLyricIndex< CurrentLyrics.Count)
+            CurrentLyric = CurrentLyrics[CurrentLyricIndex].Content;
+            return CurrentLyricIndex;
         }
 
         
