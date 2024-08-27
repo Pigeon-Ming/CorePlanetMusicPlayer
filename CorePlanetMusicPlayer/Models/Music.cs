@@ -264,7 +264,16 @@ namespace CorePlanetMusicPlayer.Models
             if (file.Tag.Pictures.Length <= 0) return await GetMusicHDCoverAsync(music);
             await stream.WriteAsync(file.Tag.Pictures[0].Data.Data.AsBuffer());
             stream.Seek(0);
-            await bitmapImage.SetSourceAsync(stream);
+            Debug.WriteLine(stream==null);
+            try
+            {
+                await bitmapImage.SetSourceAsync(stream);
+            }
+            catch
+            {
+                return await GetMusicHDCoverAsync(music);
+            }
+            Debug.WriteLine(stream == null);
             bitmapImage.DecodePixelHeight = 200;
             bitmapImage.DecodePixelWidth = 200;
             music.cover = bitmapImage;
@@ -272,6 +281,7 @@ namespace CorePlanetMusicPlayer.Models
         }
         public static async Task<Music> GetMusicHDCoverAsync_Taglib(Music music)
         {
+            if (music == null) return null;
             if(music.file.FileType == ".ac3" || music.file.FileType == ".m4a")
             {
                 return await GetMusicHDCoverAsync(music);
@@ -291,7 +301,14 @@ namespace CorePlanetMusicPlayer.Models
             if (file.Tag.Pictures.Length <= 0) return await GetMusicHDCoverAsync(music);
             await stream.WriteAsync(file.Tag.Pictures[0].Data.Data.AsBuffer());
             stream.Seek(0);
-            await bitmapImage.SetSourceAsync(stream);
+            try
+            {
+                await bitmapImage.SetSourceAsync(stream);
+            }
+            catch
+            {
+                return await GetMusicHDCoverAsync(music);
+            }
             music.cover = bitmapImage;
             return music;
         }

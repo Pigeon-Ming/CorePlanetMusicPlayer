@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Graphics.Imaging;
+using Windows.Storage;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace CorePlanetMusicPlayer.Models
 {
@@ -11,6 +16,8 @@ namespace CorePlanetMusicPlayer.Models
     {
         public String Name { get; set; }
         public List<Music> IncludeMusic { get; set; }
+        public String Profile { get; set; }
+        public BitmapImage ProfileImage { get; set; }
     }
 
     public class ArtistManager
@@ -30,7 +37,7 @@ namespace CorePlanetMusicPlayer.Models
                 List<string> currentArtistName = new List<string>();
                 //int currentArtistName_stringindex = 0;
                 string fullArtistName = Library.LocalLibraryMusic[i].Artist;
-                fullArtistName.Replace(" ","");
+                fullArtistName = fullArtistName.Replace("; ",";");
                 while (true)
                 {
                     if (fullArtistName.IndexOf(";") != -1)
@@ -66,10 +73,16 @@ namespace CorePlanetMusicPlayer.Models
             }
             Artists = Artists.OrderBy(x => x.Name).ToList();
             GetArtistSuggestions();
-            //for (int i = 0; i < Artists.Count; i++)
-            //{
-            //    AllData.allArtistName.Add(AllData.Artists[i].Name);
-            //}
+            if (await Windows.Storage.ApplicationData.Current.LocalFolder.TryGetItemAsync("artists") == null)
+            {
+                await GetArtistFolderAsync();
+                return;
+            }
+
+            for (int i = 0; i < Artists.Count; i++)
+            {
+                Artists[i].ProfileImage = await GetArtistImageAsync(Artists[i].Name);
+            }
         }//对艺术家进行分类
 
         public static Artist FindArtistByName(String Name)
@@ -124,7 +137,38 @@ namespace CorePlanetMusicPlayer.Models
             return artists;
         }
 
-        public static void GetArtistSuggestions()
+        public static async Task<StorageFolder> GetArtistFolderAsync()
+        {
+            StorageFolder folder = (StorageFolder)await Windows.Storage.ApplicationData.Current.LocalFolder.TryGetItemAsync("artists");
+            if (folder == null)
+            {
+                folder = await Windows.Storage.ApplicationData.Current.LocalFolder.CreateFolderAsync("artists");
+            }
+            return folder;
+        }
+
+        public static async Task<BitmapImage> GetArtistImageAsync(String ArtistName)
+        {
+            ArtistName = ArtistName.Replace("/", "").Replace("\\", "").Replace(":", "").Replace("*", "").Replace("?", "").Replace("\"", "").Replace("<","").Replace(">","").Replace("|","");
+            StorageFolder storageFolder = await GetArtistFolderAsync();
+            if (storageFolder == null) return null;
+            IStorageItem item = await storageFolder.TryGetItemAsync(ArtistName+".jpg");
+            if(item==null)
+                item = await storageFolder.TryGetItemAsync(ArtistName + ".png") as StorageFile;
+            if(item ==null)
+                return null;
+
+            var stream = await (item as StorageFile).OpenReadAsync();
+
+            BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
+            BitmapImage image = new BitmapImage();
+            image.SetSource(stream);
+
+            
+            return image;
+        }
+
+        public static async void GetArtistSuggestions()
         {
             Random random = new Random();
             List<int> indexes = new List<int>();
@@ -140,9 +184,41 @@ namespace CorePlanetMusicPlayer.Models
                     int index;
                     while (indexes.Contains(index = random.Next(Artists.Count - 1)) == true) { }
                     indexes.Add(index);
+                    
                     ArtistSuggestions.Add(Artists[index]);
                 }
             }
+            GetSuggestionsArtistImageAsync();
+        }
+
+        public static async Task GetSuggestionsArtistImageAsync()
+        {
+            for(int i = 0; i < ArtistSuggestions.Count; i++)
+            {
+                if (ArtistSuggestions[i].ProfileImage==null)
+                    ArtistSuggestions[i].ProfileImage = await GetArtistImageAsync(ArtistSuggestions[i].Name);
+            }
+                
+        }
+
+        public static async Task SetArtistImageAsync(Artist artist)
+        {
+            var picker = new Windows.Storage.Pickers.FileOpenPicker();
+            picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
+            picker.FileTypeFilter.Add(".jpg");
+            picker.FileTypeFilter.Add(".png");
+
+            Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
+
+            if (file == null) return ;
+            if (string.IsNullOrEmpty(file.Path))
+            {
+                return ;
+            }
+
+            StorageFile file1 = await file.CopyAsync(await GetArtistFolderAsync());
+            await file1.RenameAsync(artist.Name.Replace("/", "").Replace("\\", "").Replace(":", "").Replace("*", "").Replace("?", "").Replace("\"", "").Replace("<", "").Replace(">", "").Replace("|", "") +file.FileType);
         }
     }
 }
