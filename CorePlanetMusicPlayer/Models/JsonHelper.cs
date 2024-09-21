@@ -19,7 +19,9 @@ namespace CorePlanetMusicPlayer.Models
             jsonObject.Add("year",JsonValue.CreateNumberValue(music.Year));
             jsonObject.Add("trackNumber",JsonValue.CreateNumberValue(music.TrackNumber));
             jsonObject.Add("discNumber",JsonValue.CreateNumberValue(music.DiscNumber));
+            jsonObject.Add("dataCode",JsonValue.CreateStringValue(music.DataCode));
             jsonObject.Add("duration",JsonValue.CreateStringValue(music.Duration));
+            jsonObject.Add("musicType",JsonValue.CreateStringValue(music.MusicType.ToString()));
             return jsonObject;
         }
 

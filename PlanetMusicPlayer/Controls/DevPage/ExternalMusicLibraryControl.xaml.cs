@@ -1,4 +1,5 @@
 ﻿using CorePlanetMusicPlayer.Models;
+using PlanetMusicPlayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -85,6 +86,13 @@ namespace PlanetMusicPlayer.Controls.DevPage
             externalMusic.Artist = ArtistTextBox.Text;
             externalMusic.Album = AlbumTextBox.Text;
             LibraryManager.AddExternalMusic(externalMusic);
+        }
+
+        private async void AddToPlaylist_Click(object sender, RoutedEventArgs e)
+        {
+            if (musicListControl.MainListView.SelectedItem == null)
+                return;
+            await ContentDialogHelper.ShowContentDialogAsync(new SaveMusicToPlaylistControl(musicListControl.MainListView.SelectedItem as Music));
         }
     }
 }

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Projects\\CorePlanetMusicPlayer\\PlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj": {}
+    "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj": {}
   },
   "projects": {
-    "D:\\Projects\\CorePlanetMusicPlayer\\PlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj": {
+    "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Projects\\CorePlanetMusicPlayer\\PlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj",
+        "projectUniqueName": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj",
         "projectName": "CorePlanetMusicPlayer",
-        "projectPath": "D:\\Projects\\CorePlanetMusicPlayer\\PlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj",
+        "projectPath": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj",
         "packagesPath": "C:\\Users\\zouqi\\.nuget\\packages\\",
-        "outputPath": "D:\\Projects\\CorePlanetMusicPlayer\\PlanetMusicPlayer\\CorePlanetMusicPlayer\\obj\\",
+        "outputPath": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\obj\\",
         "projectStyle": "PackageReference",
         "skipContentFileWrite": true,
         "fallbackFolders": [

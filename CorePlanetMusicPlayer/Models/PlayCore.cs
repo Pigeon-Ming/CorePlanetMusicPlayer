@@ -181,13 +181,20 @@ namespace CorePlanetMusicPlayer.Models
 
         public static Music GetPlayingMusic()
         {
+            
             if (PlayCore.playMode != PlayCore.PlayMode.Shuffle)
             {
-                return PlayQueue.normalList[PlayQueue.playingMusicIndex];
+                if (PlayQueue.normalList.Count <= PlayQueue.playingMusicIndex || PlayQueue.playingMusicIndex == -1)
+                    return null;
+                else
+                    return PlayQueue.normalList[PlayQueue.playingMusicIndex];
             }
             else
             {
-                return PlayQueue.shuffleList[PlayQueue.playingMusicIndex];
+                if (PlayQueue.shuffleList.Count <= PlayQueue.playingMusicIndex || PlayQueue.playingMusicIndex == -1)
+                    return null;
+                else
+                    return PlayQueue.shuffleList[PlayQueue.playingMusicIndex];
             }
         }
 

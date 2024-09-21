@@ -125,6 +125,9 @@
     <Compile Include="Controls\DevPage\DevPageControlsShell.xaml.cs">
       <DependentUpon>DevPageControlsShell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\DevPage\DevToolsControl.xaml.cs">
+      <DependentUpon>DevToolsControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\DevPage\ExternalMusicLibraryControl.xaml.cs">
       <DependentUpon>ExternalMusicLibraryControl.xaml</DependentUpon>
     </Compile>
@@ -140,8 +143,14 @@
     <Compile Include="Controls\DevPage\PlayingControl.xaml.cs">
       <DependentUpon>PlayingControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\DevPage\PlaylistLibraryControl.xaml.cs">
+      <DependentUpon>PlaylistLibraryControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\DevPage\PlayQueueControl.xaml.cs">
       <DependentUpon>PlayQueueControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\DevPage\SaveMusicToPlaylistControl.xaml.cs">
+      <DependentUpon>SaveMusicToPlaylistControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\MusicListControl.xaml.cs">
       <DependentUpon>MusicListControl.xaml</DependentUpon>
@@ -149,6 +158,7 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\ContentDialogHelper.cs" />
     <Compile Include="Pages\DevPage.xaml.cs">
       <DependentUpon>DevPage.xaml</DependentUpon>
     </Compile>
@@ -182,6 +192,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\DevPage\DevToolsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\DevPage\ExternalMusicLibraryControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -202,7 +216,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\DevPage\PlaylistLibraryControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\DevPage\PlayQueueControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\DevPage\SaveMusicToPlaylistControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

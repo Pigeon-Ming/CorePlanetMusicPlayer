@@ -122,12 +122,13 @@
   <ItemGroup>
     <Compile Include="Models\Album.cs" />
     <Compile Include="Models\Artist.cs" />
+    <Compile Include="Models\Image.cs" />
     <Compile Include="Models\StorageHelper.cs" />
     <Compile Include="Models\JsonHelper.cs" />
     <Compile Include="Models\Library.cs" />
     <Compile Include="Models\Music.cs" />
     <Compile Include="Models\PlayCore.cs" />
-    <Compile Include="Models\PlayList.cs" />
+    <Compile Include="Models\Playlist.cs" />
     <Compile Include="Models\TagLibHelper\UwpStorageFileAbstraction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\CorePlanetMusicPlayer.rd.xml" />

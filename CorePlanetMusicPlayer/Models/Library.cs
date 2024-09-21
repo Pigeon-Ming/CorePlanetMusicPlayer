@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Json;
@@ -20,7 +21,17 @@ namespace CorePlanetMusicPlayer.Models
 
         public static List<Album> Albums { get; set; } = new List<Album> ();
         public static List<Artist> Artists { get; set;} = new List<Artist> ();
-        public static List<PlayList> playLists { get; set; } = new List<PlayList> ();
+        public static List<Playlist> PlayLists { get; set; } = new List<Playlist> ();
+
+        public class Image
+        {
+            public static List<CorePlanetMusicPlayer.Models.Image> LocalMusicCover { get; set; } = new List<CorePlanetMusicPlayer.Models.Image> ();
+            public static List<CorePlanetMusicPlayer.Models.Image> ExternalMusicCover { get; set; } = new List<CorePlanetMusicPlayer.Models.Image>();
+            public static List<CorePlanetMusicPlayer.Models.Image> OnlineMusicCover { get; set; } = new List<CorePlanetMusicPlayer.Models.Image>();
+            public static List<CorePlanetMusicPlayer.Models.Image> Artist { get; set; } = new List<CorePlanetMusicPlayer.Models.Image>();
+            public static List<CorePlanetMusicPlayer.Models.Image> Playlist { get; set; } = new List<CorePlanetMusicPlayer.Models.Image>();
+
+        }
     }
 
     public class LibraryManager
@@ -34,6 +45,7 @@ namespace CorePlanetMusicPlayer.Models
 
             RefreshArtistsData();
             RefreshAlbumsData();
+            RefreshPlaylistsData();
         }
 
         //LocalMusic
@@ -44,7 +56,6 @@ namespace CorePlanetMusicPlayer.Models
             
             Queue<StorageFolder> folderQueue = new Queue<StorageFolder>();
             folderQueue.Enqueue(folder);
-            int FileDataCode = 0;
             do
             {
                 IReadOnlyList<IStorageItem> folderList = await folderQueue.Dequeue().GetItemsAsync();
@@ -62,10 +73,11 @@ namespace CorePlanetMusicPlayer.Models
                         string fileSuffix = fileName.Substring(fileName.LastIndexOf("."));
                         if (fileSuffix == ".mp3" || fileSuffix == ".flac" || fileSuffix == ".wma" || fileSuffix == ".m4a" || fileSuffix == ".ac3" || fileSuffix == ".aac")
                         {
+                            StorageFile storageFile = item as StorageFile;
                             LocalMusic localMusic = new LocalMusic();
-                            localMusic.StorageFile = item as StorageFile;
+                            localMusic.StorageFile = storageFile;
                             localMusic.Title = item.Name;
-                            localMusic.DataCode = FileDataCode++;
+                            localMusic.DataCode = storageFile.Path;
                             Library.Music.LocalMusic.Add(localMusic);
                         }
                     }
@@ -90,12 +102,16 @@ namespace CorePlanetMusicPlayer.Models
                 JsonObject jsonObject = jsonArray.GetObjectAt((uint)i);
                 Music music = JsonHelper.JsonObjectToMusic(jsonObject);
                 OnlineMusic onlineMusic = MusicManager.MusicToOnlineMusic(music);
-                onlineMusic.DataCode = OnlineMusicMaxDataCode++;
+                
                 IJsonValue jsonValue;
                 if (jsonObject.TryGetValue("title", out jsonValue))
                     onlineMusic.Title = jsonObject.GetNamedString("title");
                 if (jsonObject.TryGetValue("url", out jsonValue))
+                {
                     onlineMusic.URL = jsonObject.GetNamedString("url");
+                    onlineMusic.DataCode = onlineMusic.URL;
+                }
+                    
                 Library.Music.OnlineMusic.Add(onlineMusic);
             }
         }
@@ -134,10 +150,14 @@ namespace CorePlanetMusicPlayer.Models
                 JsonObject jsonObject = jsonArray.GetObjectAt((uint)i);
                 Music music = JsonHelper.JsonObjectToMusic(jsonObject);
                 ExternalMusic externalMusic = MusicManager.MusicToExternalMusic(music);
-                externalMusic.DataCode = ExternalMusicMaxDataCode++;
+                
                 IJsonValue jsonValue;
                 if(jsonObject.TryGetValue("key",out jsonValue))
+                {
                     externalMusic.Key = jsonObject.GetNamedString("key");
+                    externalMusic.DataCode = externalMusic.Key;
+                }
+                    
                 
                 Library.Music.ExternalMusic.Add(externalMusic);
             }
@@ -145,7 +165,7 @@ namespace CorePlanetMusicPlayer.Models
 
         public static void AddExternalMusic(ExternalMusic externalMusic)
         {
-            externalMusic.DataCode = ExternalMusicMaxDataCode++;
+            externalMusic.DataCode = externalMusic.Key;
             Library.Music.ExternalMusic.Add(externalMusic);
             SaveExternalMusicData();
         }
@@ -197,6 +217,21 @@ namespace CorePlanetMusicPlayer.Models
             for (int i = 0; i < Library.Music.OnlineMusic.Count; i++)
             {
                 AlbumManager.AddMusicToAlbum(Library.Music.OnlineMusic[i]);
+            }
+        }
+
+        //Playlist
+        public static async void RefreshPlaylistsData()
+        {
+            Library.PlayLists.Clear();
+            StorageFolder folder = await StorageHelper.GetApplicationDataFolder("Playlists");
+            var itemsList = await folder.GetItemsAsync();
+            foreach (var item in itemsList) 
+            { 
+                if (item.IsOfType(StorageItemTypes.File))
+                {
+                    Library.PlayLists.Add(await PlaylistManager.ReadPlaylistFromStorageFileAsync(item as StorageFile));
+                }
             }
         }
     }

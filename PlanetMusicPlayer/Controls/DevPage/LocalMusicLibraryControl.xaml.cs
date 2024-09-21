@@ -1,10 +1,12 @@
 ﻿using CorePlanetMusicPlayer.Models;
+using PlanetMusicPlayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -55,6 +57,13 @@ namespace PlanetMusicPlayer.Controls.DevPage
         private void AddToPlayQueue_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private async void AddToPlaylist_Click(object sender, RoutedEventArgs e)
+        {
+            if(musicListControl.MainListView.SelectedItem == null)
+                return;
+            await ContentDialogHelper.ShowContentDialogAsync(new SaveMusicToPlaylistControl(musicListControl.MainListView.SelectedItem as Music));
         }
     }
 }

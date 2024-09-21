@@ -15,6 +15,9 @@
                     <TextBlock Text="{Binding Name}"/>
                 </Grid>
             </DataTemplate>
+            <Style TargetType="ListViewItem">
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

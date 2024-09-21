@@ -41,6 +41,8 @@ namespace PlanetMusicPlayer.Pages
             ContentGrid.Children.Add(new DevPageControlsShell("在线音乐库", new OnlineMusicLibraryControl()));
             ContentGrid.Children.Add(new DevPageControlsShell("艺术家", new ArtistsLibraryControl()));
             ContentGrid.Children.Add(new DevPageControlsShell("专辑", new AlbumsLibraryControl()));
+            ContentGrid.Children.Add(new DevPageControlsShell("播放列表", new PlaylistLibraryControl()));
+            ContentGrid.Children.Add(new DevPageControlsShell("开发人员工具", new DevToolsControl()));
         }
     }
 }

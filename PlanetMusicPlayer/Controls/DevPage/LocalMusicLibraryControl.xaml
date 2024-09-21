@@ -26,6 +26,7 @@
                 </AppBarElementContainer>
                 <AppBarButton Icon="Play" Label="播放选中项" Name="PlaySelectedItem" Click="PlaySelectedItem_Click"/>
                 <AppBarButton Icon="Add" Label="加入播放队列" Name="AddToPlayQueue" Click="AddToPlayQueue_Click"/>
+                <AppBarButton Icon="OutlineStar" Label="添加至……" Name="AddToPlaylist" Click="AddToPlaylist_Click"/>
             </CommandBar.PrimaryCommands>
         </CommandBar>
         <controls:MusicListControl x:Name="musicListControl" Grid.Row="1"/>

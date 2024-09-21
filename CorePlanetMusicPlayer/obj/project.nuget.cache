@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "2LHtNrWPoO8=",
+  "dgSpecHash": "XkMZQU1kZcs=",
   "success": true,
-  "projectFilePath": "D:\\Projects\\CorePlanetMusicPlayer\\PlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj",
+  "projectFilePath": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\zouqi\\.nuget\\packages\\microsoft.data.sqlite.core\\8.0.8\\microsoft.data.sqlite.core.8.0.8.nupkg.sha512",
     "C:\\Program Files (x86)\\Microsoft SDKs\\UWPNuGetPackages\\microsoft.net.native.compiler\\2.2.12-rel-31116-00\\microsoft.net.native.compiler.2.2.12-rel-31116-00.nupkg.sha512",

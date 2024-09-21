@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using TagLib;
+using Windows.Data.Json;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 
@@ -20,7 +21,7 @@ namespace CorePlanetMusicPlayer.Models
 
     public class Music
     {
-        public int DataCode { get; set; } = -1;
+        public string DataCode { get; set; } = "";//类似于Token
         public MusicType MusicType { get; set; }
         public String Title { get; set; } = "";
         public String Artist { get; set; } = "";
@@ -127,6 +128,33 @@ namespace CorePlanetMusicPlayer.Models
         public static async Task<StorageFile> GetExternalMusicByExternalMusicKeyAsync(string Key)
         {
             return await Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.GetFileAsync(Key);
+        }
+
+        public static Music GetMusicFromJsonObject(JsonObject jsonObject)
+        {
+            Music music = new Music();
+            music.Title = jsonObject.GetNamedString("title");
+            music.Artist = jsonObject.GetNamedString("artist");
+            music.Album = jsonObject.GetNamedString("album");
+            music.TrackNumber = (uint)jsonObject.GetNamedNumber("trackNumber");
+            music.DiscNumber = (uint)jsonObject.GetNamedNumber("discNumber");
+            music.Duration = jsonObject.GetNamedString("duration");
+            music.Year = (uint)jsonObject.GetNamedNumber("year");
+            music.Bitrate = (uint)jsonObject.GetNamedNumber("bitrate");
+            music.DataCode = jsonObject.GetNamedString("dataCode");
+            switch (jsonObject.GetNamedString("musicType"))
+            {
+                case "Local":
+                    music.MusicType = MusicType.Local;
+                    break;
+                case "Online":
+                    music.MusicType = MusicType.Online;
+                    break;
+                case "External":
+                    music.MusicType = MusicType.External;
+                    break;
+            }
+            return music;
         }
     }
 

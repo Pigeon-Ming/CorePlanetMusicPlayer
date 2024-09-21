@@ -1,4 +1,5 @@
 ﻿using CorePlanetMusicPlayer.Models;
+using PlanetMusicPlayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -70,6 +71,11 @@ namespace PlanetMusicPlayer.Controls.DevPage
             LibraryManager.AddOnlineMusic(onlineMusic);
         }
 
-
+        private async void AddToPlaylist_Click(object sender, RoutedEventArgs e)
+        {
+            if (musicListControl.MainListView.SelectedItem == null)
+                return;
+            await ContentDialogHelper.ShowContentDialogAsync(new SaveMusicToPlaylistControl(musicListControl.MainListView.SelectedItem as Music));
+        }
     }
 }

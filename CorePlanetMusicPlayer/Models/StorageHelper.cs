@@ -33,6 +33,29 @@ namespace CorePlanetMusicPlayer.Models
             return await Windows.Storage.FileIO.ReadTextAsync(storageFile);
         }
 
-        
+        public static async Task<string> ReadFile(StorageFile storageFile)
+        {
+            if (storageFile == null)
+                return "";
+            return await Windows.Storage.FileIO.ReadTextAsync(storageFile);
+        }
+
+        public static async Task<StorageFolder> GetApplicationDataFolder(string folderName)
+        {
+            StorageFolder folder = ApplicationData.Current.LocalFolder;
+            if (await IsItemExsitAsync(folder,folderName))
+                return await folder.GetFolderAsync(folderName);
+            return await folder.CreateFolderAsync(folderName);
+        }
+
+        public static async Task<bool> IsItemExsitAsync(StorageFolder parentFolder,string itemName)
+        {
+            
+            IStorageItem storageItem = await parentFolder.TryGetItemAsync(itemName);
+            if (storageItem == null)
+                return false;
+            else
+                return true;
+        }
     }
 }
