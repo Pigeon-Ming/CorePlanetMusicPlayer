@@ -123,6 +123,7 @@
     <Compile Include="Models\Album.cs" />
     <Compile Include="Models\Artist.cs" />
     <Compile Include="Models\Image.cs" />
+    <Compile Include="Models\Lyric.cs" />
     <Compile Include="Models\StorageHelper.cs" />
     <Compile Include="Models\JsonHelper.cs" />
     <Compile Include="Models\Library.cs" />
@@ -134,8 +135,8 @@
     <EmbeddedResource Include="Properties\CorePlanetMusicPlayer.rd.xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.Sqlite.Core">
-      <Version>8.0.8</Version>
+    <PackageReference Include="Microsoft.Data.Sqlite">
+      <Version>8.0.10</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.14</Version>

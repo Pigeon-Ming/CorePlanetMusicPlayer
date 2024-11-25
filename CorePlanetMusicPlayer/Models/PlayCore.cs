@@ -1,15 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Contacts;
+using Windows.ApplicationModel.Core;
+using Windows.Data.Json;
 using Windows.Media.Core;
 using Windows.Media.Playback;
+using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
+using Windows.UI.Core;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using static CorePlanetMusicPlayer.Models.Library;
 
@@ -19,8 +25,10 @@ namespace CorePlanetMusicPlayer.Models
     {
         public static MediaPlayerElement MainMediaPlayer { get; set; } = new MediaPlayerElement();
 
+        public static Music CurrentMusic { get; set; } = new Music();
         public enum PlayMode { LoopAll, Shuffle, Single, Reverse};
         public static PlayMode playMode { get; private set; } = PlayMode.LoopAll;
+        public static event EventHandler CurrentMusicChanging;
         public static void InitPlayCore()
         {
             MainMediaPlayer.MediaPlayer.SystemMediaTransportControls.IsPauseEnabled = true;
@@ -122,23 +130,30 @@ namespace CorePlanetMusicPlayer.Models
             }
         }
 
-        public static void PlayMusic(Music music,List<Music>playQueue,int playingMusicIndex)
+        public static async void PlayMusic(Music music,List<Music>playQueue,int playingMusicIndex)
         {
-            PlayQueue.SetList(playQueue);
-            PlayQueue.playingMusicIndex = playingMusicIndex;
-            switch (music.MusicType)
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                case MusicType.Local:
-                    PlayLocalMusic(music);
-                    break;
-                case MusicType.External:
-                    PlayExternalMusic(music);
-                    break;
-                case MusicType.Online:
-                    PlayOnlineMusic(music);
-                    break;
+                CurrentMusicChanging.Invoke(null,null);
+                PlayQueue.playingMusicIndex = playingMusicIndex;
+                
+                switch (music.MusicType)
+                {
+                    case MusicType.Local:
+                        PlayLocalMusic(music);
+                        break;
+                    case MusicType.External:
+                        PlayExternalMusic(music);
+                        break;
+                    case MusicType.Online:
+                        PlayOnlineMusic(music);
+                        break;
 
-            }
+                }
+                CurrentMusic = music;
+                PlayQueue.SetList(playQueue);
+            });
+            
         }
 
         private static async void PlayExternalMusic(Music music)
@@ -177,10 +192,12 @@ namespace CorePlanetMusicPlayer.Models
             PlayCore.MainMediaPlayer.MediaPlayer.Play();
             PlayCore.InitPlayCore();
             RefreshSMTC(playbackItem, music);
+            Debug.WriteLine(onlineMusic.URL);
         }
 
         public static Music GetPlayingMusic()
         {
+
             
             if (PlayCore.playMode != PlayCore.PlayMode.Shuffle)
             {
@@ -245,11 +262,11 @@ namespace CorePlanetMusicPlayer.Models
 
     public class PlayQueue
     {
-        public static event EventHandler PlayQueueChanged;
+        public static event EventHandler PlayQueueChanged = delegate { };
         public static List<Music> normalList { get; private set; } = new List<Music>();
         public static List<Music> shuffleList { get; private set; } = new List<Music>();
         public static int playingMusicIndex { get; set; } = -1;
-
+        public static bool SavePlayQueue { get; set; } = false;
         public static void SetList(List<Music>musicList)
         {
             if (PlayCore.playMode != PlayCore.PlayMode.Shuffle)
@@ -260,6 +277,8 @@ namespace CorePlanetMusicPlayer.Models
             {
                 shuffleList = musicList;
             }
+            if (SavePlayQueue)
+                SavePlayQueueAsync();
             PlayQueueChanged(null,new EventArgs());
         }
         public static void AddMusic(Music music)
@@ -272,6 +291,8 @@ namespace CorePlanetMusicPlayer.Models
             {
                 shuffleList.Add(music);
             }
+            if(SavePlayQueue)
+                SavePlayQueueAsync();
             PlayQueueChanged(null, new EventArgs());
         }
 
@@ -285,11 +306,15 @@ namespace CorePlanetMusicPlayer.Models
             {
                 shuffleList = shuffleList.Concat(musicList).ToList();
             }
+            if (SavePlayQueue)
+                SavePlayQueueAsync();
             PlayQueueChanged(null, new EventArgs());
         }
 
         public static void AddPlayNextMusic(Music music)
         {
+            if (playingMusicIndex == -1 || playingMusicIndex >= normalList.Count)
+                return;
             if (PlayCore.playMode != PlayCore.PlayMode.Shuffle)
             {
                 normalList.Insert(playingMusicIndex, music);
@@ -298,9 +323,44 @@ namespace CorePlanetMusicPlayer.Models
             {
                 shuffleList.Insert(playingMusicIndex, music);
             }
+            if (SavePlayQueue)
+                SavePlayQueueAsync();
             PlayQueueChanged(null, new EventArgs());
         }
 
+        public static void RemoveItemFromPlayQueue(Music music)
+        {
+            if(PlayCore.playMode != PlayCore.PlayMode.Shuffle)
+            {
+                normalList.Remove(music);
+            }
+            else
+            {
+                shuffleList.Remove(music);
+            }
+            if (SavePlayQueue)
+                SavePlayQueueAsync();
+        }
+
+        public static void RemoveItemFromPlayQueue(List<Music> musicList)
+        {
+            if (PlayCore.playMode != PlayCore.PlayMode.Shuffle)
+            {
+                for(int i = 0; i < musicList.Count; i++)
+                {
+                    normalList.Remove(musicList[i]);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < musicList.Count; i++)
+                {
+                    shuffleList.Remove(musicList[i]);
+                }
+            }
+            if (SavePlayQueue)
+                SavePlayQueueAsync();
+        }
         public static void CreateShuffleList()
         {
             if(normalList.Count < 2)
@@ -318,6 +378,60 @@ namespace CorePlanetMusicPlayer.Models
                     list.RemoveAt(index);
                 }
             }
+            if (SavePlayQueue)
+                SavePlayQueueAsync();
+        }
+
+        public static async Task SavePlayQueueAsync()
+        {
+            JsonArray jsonValues = new JsonArray();
+            if(PlayCore.playMode == PlayCore.PlayMode.Shuffle)
+            {
+                for (int i = 0; i < shuffleList.Count; i++)
+                    jsonValues.Add(JsonHelper.MusicToJsonObject(shuffleList[i]));
+            }
+            else
+            {
+                for (int i = 0; i < normalList.Count; i++)
+                    jsonValues.Add(JsonHelper.MusicToJsonObject(normalList[i]));
+            }
+            await StorageHelper.WriteFile(ApplicationData.Current.LocalFolder, "LastPlayQueue.json", jsonValues.ToString());
+            SavePlayQueueIndex();
+        }
+
+        public static void SavePlayQueueIndex()
+        {
+            ApplicationData.Current.LocalSettings.Values["PlayCore-LastPlayQueueIndex"] = playingMusicIndex.ToString();
+        }
+
+        public static async Task ReadLastPlayQueueAsync()
+        {
+            string fileStr = await StorageHelper.ReadFile(ApplicationData.Current.LocalFolder, "LastPlayQueue.json");
+            if (String.IsNullOrEmpty(fileStr))
+                return;
+            JsonArray jsonArray;
+            JsonArray.TryParse(fileStr,out jsonArray);
+            if (jsonArray == null)
+                return;
+            List<Music> list = new List<Music>();
+            for(int i=0;i<jsonArray.Count;i++)
+            {
+                list.Add(MusicManager.GetMusicFromJsonObject(jsonArray[i].GetObject()));
+            }
+            String str = ApplicationData.Current.LocalSettings.Values["PlayCore-LastPlayQueueIndex"].ToString();
+            if(String.IsNullOrEmpty(str))
+                return;
+            int index = -1;
+            try
+            {
+                index = Convert.ToInt32(str);
+            }catch(FormatException)
+            { 
+
+            }
+            playingMusicIndex = index;
+            SetList(list);
+            return;
         }
     }
 }

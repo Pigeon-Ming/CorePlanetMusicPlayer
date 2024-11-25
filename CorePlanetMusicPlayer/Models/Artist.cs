@@ -5,6 +5,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Graphics.Imaging;
+using Windows.Storage;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace CorePlanetMusicPlayer.Models
 {
@@ -24,7 +27,7 @@ namespace CorePlanetMusicPlayer.Models
         {
             List<string>artists = GetArtistNamesFromArtistString(music.Artist);
 
-            Debug.WriteLine(music.Title);
+            //Debug.WriteLine(music.Title);
 
             for(int i = 0; i < artists.Count; i++)
             {
@@ -63,6 +66,53 @@ namespace CorePlanetMusicPlayer.Models
                 artists.Add(ArtistString);
             }
             return artists;
+        }
+
+
+        public static async Task<BitmapImage> GetArtistProfileImageAsync(Artist artist)
+        {
+            BitmapImage image = null;
+            StorageFolder folder = await StorageHelper.GetApplicationDataFolder("Images");
+            folder = await StorageHelper.GetFolder(folder, "Artists");
+            if (folder == null) return null;
+            IStorageItem item = await folder.TryGetItemAsync(artist.Name + ".jpg");
+            if (item == null)
+                item = await folder.TryGetItemAsync(artist.Name + ".png") as StorageFile;
+            if (item == null)
+                return null;
+
+            var stream = await (item as StorageFile).OpenReadAsync();
+
+            BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
+            image = new BitmapImage();
+            image.SetSource(stream);
+            return image;
+        }
+
+        public static async Task SetArtistProfileImageAsync(Artist artist)
+        {
+            var picker = new Windows.Storage.Pickers.FileOpenPicker();
+            picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
+            picker.FileTypeFilter.Add(".jpg");
+            picker.FileTypeFilter.Add(".png");
+
+            Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                StorageFolder folder = await StorageHelper.GetApplicationDataFolder("Images");
+                folder = await StorageHelper.GetFolder(folder, "Artists");
+                if(await StorageHelper.IsItemExsitAsync(folder, artist.Name + ".jpg"))
+                {
+                    await(await folder.GetFileAsync(artist.Name + ".jpg")).DeleteAsync();
+                }
+                else if (await StorageHelper.IsItemExsitAsync(folder, artist.Name + ".png"))
+                {
+                    await (await folder.GetFileAsync(artist.Name + ".png")).DeleteAsync();
+                }
+                await file.CopyAsync(folder,artist.Name+file.FileType);
+            }
+            
         }
     }
 }

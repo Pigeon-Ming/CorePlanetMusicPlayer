@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -48,6 +49,13 @@ namespace CorePlanetMusicPlayer.Models
             return await folder.CreateFolderAsync(folderName);
         }
 
+        public static async Task<StorageFolder> GetFolder(StorageFolder paretntFolder,string folderName)
+        {
+            if (await IsItemExsitAsync(paretntFolder, folderName))
+                return await paretntFolder.GetFolderAsync(folderName);
+            return await paretntFolder.CreateFolderAsync(folderName);
+        }
+
         public static async Task<bool> IsItemExsitAsync(StorageFolder parentFolder,string itemName)
         {
             
@@ -56,6 +64,11 @@ namespace CorePlanetMusicPlayer.Models
                 return false;
             else
                 return true;
+        }
+
+        public static string RemoveIllegalCharacter(String str)
+        {
+            return str.Replace("/", "").Replace("\\", "").Replace("*", "").Replace("?", "").Replace(":", "").Replace("|", "");
         }
     }
 }

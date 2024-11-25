@@ -60,7 +60,7 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\CorePlanetMusicPlayer\bin\x64\Debug\CorePlanetMusicPlayer.dll">
       <PackagePath>CorePlanetMusicPlayer.dll</PackagePath>
-      <Modified>2024-09-18T02:29:41.824</Modified>
+      <Modified>2024-10-20T14:42:32.947</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Windows Kits\10\bin\10.0.22621.0\XamlCompiler\Microsoft.UI.Xaml.Markup.winmd">
       <PackagePath>Microsoft.UI.Xaml.Markup.winmd</PackagePath>
