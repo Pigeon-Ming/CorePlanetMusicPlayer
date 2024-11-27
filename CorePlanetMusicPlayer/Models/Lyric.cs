@@ -1,14 +1,12 @@
 ﻿using CorePlanetMusicPlayer.Models.TagLibHelper;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TagLib;
 using Windows.Storage;
 using Windows.UI.Xaml;
-using static CorePlanetMusicPlayer.Models.Library;
 
 namespace CorePlanetMusicPlayer.Models
 {
@@ -21,7 +19,7 @@ namespace CorePlanetMusicPlayer.Models
 
     public class LyricManager
     {
-        public static List<Lyric>CurrentLyrics { get; set; } = new List<Lyric>();
+        public static List<Lyric> CurrentLyrics { get; set; } = new List<Lyric>();
         public static int CurrentLyricIndex { get; set; } = -1;
         public static string CurrentLyricContent { get; set; } = "";
         public static DispatcherTimer LyricServiceTimer { get; set; } = new DispatcherTimer();
@@ -49,61 +47,61 @@ namespace CorePlanetMusicPlayer.Models
             if (PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Length < 10)
                 return;
             //Debug.WriteLine(PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Substring(3, 7));
-            int newIndex = CurrentLyrics.FindIndex(x=>x.Time == PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Substring(3, 7));
-            if (newIndex == -1 || newIndex == CurrentLyricIndex || newIndex>= CurrentLyrics.Count) return;
+            int newIndex = CurrentLyrics.FindIndex(x => x.Time == PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Substring(3, 7));
+            if (newIndex == -1 || newIndex == CurrentLyricIndex || newIndex >= CurrentLyrics.Count) return;
             CurrentLyricIndex = newIndex;
             CurrentLyricContent = CurrentLyrics[newIndex].Content;
-            CurrentLyricIndexChanged.Invoke(null,null);
+            CurrentLyricIndexChanged.Invoke(null, null);
         }
-        
+
         public static async Task<List<Lyric>> LoadLyricsFromStorageAsync(Music music)
         {
             if (KnownFolders.MusicLibrary == null)
                 return null;
-            StorageFolder LyricFolder= await StorageHelper.GetFolder(KnownFolders.MusicLibrary,"Lyrics");
-            if (await StorageHelper.IsItemExsitAsync(LyricFolder, StorageHelper.RemoveIllegalCharacter(music.Artist + " - " + music.Title + " - " + music.Album + ".lrc")))
+            StorageFolder LyricFolder = await StorageManager.GetFolder(KnownFolders.MusicLibrary, "Lyrics");
+            if (await StorageManager.IsItemExsitAsync(LyricFolder, StorageManager.RemoveIllegalCharacter(music.Artist + " - " + music.Title + " - " + music.Album + ".lrc")))
             {
-                return ProcessLyricsFromLRCFileString(await StorageHelper.ReadFile(await LyricFolder.GetFileAsync(StorageHelper.RemoveIllegalCharacter(music.Artist + " - " + music.Title + " - " + music.Album + ".lrc"))));
+                return ProcessLyricsFromLRCFileString(await StorageManager.ReadFile(await LyricFolder.GetFileAsync(StorageManager.RemoveIllegalCharacter(music.Artist + " - " + music.Title + " - " + music.Album + ".lrc"))));
             }
-            //if (await StorageHelper.IsItemExsitAsync(LyricFolder, music.Title + " - " + music.Album + ".lrc"))
+            //if (await StorageManager.IsItemExsitAsync(LyricFolder, music.Title + " - " + music.Album + ".lrc"))
             //{
-            //    return ProcessLyricsFromLRCFileString(await StorageHelper.ReadFile(await LyricFolder.GetFileAsync(music.Title + " - " + music.Album + ".lrc")));
+            //    return ProcessLyricsFromLRCFileString(await StorageManager.ReadFile(await LyricFolder.GetFileAsync(music.Title + " - " + music.Album + ".lrc")));
             //}
-            //if (await StorageHelper.IsItemExsitAsync(LyricFolder, music.Title + " - " + music.Album + " - " + music.Artist + ".lrc"))
+            //if (await StorageManager.IsItemExsitAsync(LyricFolder, music.Title + " - " + music.Album + " - " + music.Artist + ".lrc"))
             //{
-            //    return ProcessLyricsFromLRCFileString(await StorageHelper.ReadFile(await LyricFolder.GetFileAsync(music.Title + " - " + music.Album + " - " + music.Artist + ".lrc")));
+            //    return ProcessLyricsFromLRCFileString(await StorageManager.ReadFile(await LyricFolder.GetFileAsync(music.Title + " - " + music.Album + " - " + music.Artist + ".lrc")));
             //}
-            //if (await StorageHelper.IsItemExsitAsync(LyricFolder, music.Title + " - " + music.Artist + ".lrc"))
+            //if (await StorageManager.IsItemExsitAsync(LyricFolder, music.Title + " - " + music.Artist + ".lrc"))
             //{
-            //    return ProcessLyricsFromLRCFileString(await StorageHelper.ReadFile(await LyricFolder.GetFileAsync(music.Title + " - " + music.Artist + ".lrc")));
+            //    return ProcessLyricsFromLRCFileString(await StorageManager.ReadFile(await LyricFolder.GetFileAsync(music.Title + " - " + music.Artist + ".lrc")));
             //}
-            //if (await StorageHelper.IsItemExsitAsync(LyricFolder, music.Title +  " - " + music.Artist+ " - " + music.Album + ".lrc"))
+            //if (await StorageManager.IsItemExsitAsync(LyricFolder, music.Title +  " - " + music.Artist+ " - " + music.Album + ".lrc"))
             //{
-            //    return ProcessLyricsFromLRCFileString(await StorageHelper.ReadFile(await LyricFolder.GetFileAsync(music.Title + " - " + music.Artist + " - " + music.Album + ".lrc")));
+            //    return ProcessLyricsFromLRCFileString(await StorageManager.ReadFile(await LyricFolder.GetFileAsync(music.Title + " - " + music.Artist + " - " + music.Album + ".lrc")));
             //}
             //Debug.WriteLine(music.Artist + " - " + music.Title + " - " + music.Album + ".lrc");
-            //if (await StorageHelper.IsItemExsitAsync(LyricFolder, music.Artist + " - " + music.Title + " - " + music.Album + ".lrc"))
+            //if (await StorageManager.IsItemExsitAsync(LyricFolder, music.Artist + " - " + music.Title + " - " + music.Album + ".lrc"))
             //{
-            //    return ProcessLyricsFromLRCFileString(await StorageHelper.ReadFile(await LyricFolder.GetFileAsync(music.Artist + " - " + music.Title + " - " + music.Album + ".lrc")));
+            //    return ProcessLyricsFromLRCFileString(await StorageManager.ReadFile(await LyricFolder.GetFileAsync(music.Artist + " - " + music.Title + " - " + music.Album + ".lrc")));
             //}
 
-            //if (await StorageHelper.IsItemExsitAsync(LyricFolder, music.Artist + " - " + music.Album + " - " + music.Title + ".lrc"))
+            //if (await StorageManager.IsItemExsitAsync(LyricFolder, music.Artist + " - " + music.Album + " - " + music.Title + ".lrc"))
             //{
-            //    return ProcessLyricsFromLRCFileString(await StorageHelper.ReadFile(await LyricFolder.GetFileAsync(music.Artist + " - " + music.Album + " - " + music.Title + ".lrc")));
+            //    return ProcessLyricsFromLRCFileString(await StorageManager.ReadFile(await LyricFolder.GetFileAsync(music.Artist + " - " + music.Album + " - " + music.Title + ".lrc")));
             //}
 
-            //if (await StorageHelper.IsItemExsitAsync(LyricFolder, music.Artist + " - " + music.Title + ".lrc"))
+            //if (await StorageManager.IsItemExsitAsync(LyricFolder, music.Artist + " - " + music.Title + ".lrc"))
             //{
-            //    return ProcessLyricsFromLRCFileString(await StorageHelper.ReadFile(await LyricFolder.GetFileAsync(music.Artist + " - " + music.Title + ".lrc")));
+            //    return ProcessLyricsFromLRCFileString(await StorageManager.ReadFile(await LyricFolder.GetFileAsync(music.Artist + " - " + music.Title + ".lrc")));
             //}
 
-            //if (await StorageHelper.IsItemExsitAsync(LyricFolder, music.Title + ".lrc"))
+            //if (await StorageManager.IsItemExsitAsync(LyricFolder, music.Title + ".lrc"))
             //{
-            //    return ProcessLyricsFromLRCFileString(await StorageHelper.ReadFile(await LyricFolder.GetFileAsync(music.Title + ".lrc")));
+            //    return ProcessLyricsFromLRCFileString(await StorageManager.ReadFile(await LyricFolder.GetFileAsync(music.Title + ".lrc")));
             //}
             return null;
         }
-        public static async Task<List<Lyric>> LoadLyricsFromFilePikerAsync(bool ?CopyToLyricsFolder=false)
+        public static async Task<List<Lyric>> LoadLyricsFromFilePikerAsync(bool? CopyToLyricsFolder = false)
         {
             var picker = new Windows.Storage.Pickers.FileOpenPicker();
             picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
@@ -116,12 +114,12 @@ namespace CorePlanetMusicPlayer.Models
             {
                 if (KnownFolders.MusicLibrary != null)
                 {
-                    StorageFolder LyricFolder = await StorageHelper.GetFolder(KnownFolders.MusicLibrary, "Lyrics");
+                    StorageFolder LyricFolder = await StorageManager.GetFolder(KnownFolders.MusicLibrary, "Lyrics");
                     await file.CopyAsync(LyricFolder);
                 }
             }
-            if(file.FileType == ".lrc")
-                return ProcessLyricsFromLRCFileString(await StorageHelper.ReadFile(file));
+            if (file.FileType == ".lrc")
+                return ProcessLyricsFromLRCFileString(await StorageManager.ReadFile(file));
             return null;
         }
 
@@ -131,14 +129,7 @@ namespace CorePlanetMusicPlayer.Models
                 return null;
             if (music.MusicType == MusicType.Online)
                 return null;
-            object obj = MusicManager.FindMusic(music);
-            if(obj == null)
-                return null;
-            StorageFile storageFile = null;
-            if(obj.GetType() == typeof(LocalMusic))
-                storageFile = ((LocalMusic)obj).StorageFile;
-            if (obj.GetType() == typeof(ExternalMusic))
-                storageFile = await MusicManager.GetExternalMusicByExternalMusicKeyAsync(((ExternalMusic)obj).Key);
+            StorageFile storageFile = LibraryManager.GetLocalMusicFile(music);
             if (storageFile == null)
                 return null;
             if (storageFile.FileType == ".ac3" || storageFile.FileType == ".m4a") return new List<Lyric>();
@@ -157,7 +148,7 @@ namespace CorePlanetMusicPlayer.Models
             }
             return null;
         }
-        public static List<Lyric>ProcessLyricsFromLRCFileString(String str)
+        public static List<Lyric> ProcessLyricsFromLRCFileString(String str)
         {
             List<Lyric> lyrics = new List<Lyric>();
 
@@ -192,10 +183,10 @@ namespace CorePlanetMusicPlayer.Models
                     if (String.IsNullOrEmpty(lyric.Content) == false)
                     {
                         int translationLeft = lyric.Content.IndexOf("「");
-                        int translationLength = lyric.Content.IndexOf("」")-translationLeft;
+                        int translationLength = lyric.Content.IndexOf("」") - translationLeft;
                         if (translationLeft >= 0 && translationLength > 0)
                         {
-                            lyric.Translation = lyric.Content.Substring(translationLeft+1, translationLength-1);
+                            lyric.Translation = lyric.Content.Substring(translationLeft + 1, translationLength - 1);
                             lyric.Content = lyric.Content.Substring(0, translationLeft);
                         }
                     }
@@ -243,9 +234,9 @@ namespace CorePlanetMusicPlayer.Models
                     }
                 }
             }
-            for (int i=0;i<lyrics.Count;i++)
+            for (int i = 0; i < lyrics.Count; i++)
             {
-                lyrics[i].Time = lyrics[i].Time.Substring(0,7);
+                lyrics[i].Time = lyrics[i].Time.Substring(0, 7);
             }
             return lyrics;
         }

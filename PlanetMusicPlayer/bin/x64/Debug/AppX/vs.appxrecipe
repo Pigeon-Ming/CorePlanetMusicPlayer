@@ -8,7 +8,7 @@
     <TargetOsDescription>Windows 10.0</TargetOsDescription>
     <SolutionConfiguration>Debug|x64</SolutionConfiguration>
     <PackageArchitecture>x64</PackageArchitecture>
-    <PackageIdentityName>02d7615b-8384-4164-a644-102a3676c04e</PackageIdentityName>
+    <PackageIdentityName>73da3314-1353-490b-84c6-bac6c5fa51e7</PackageIdentityName>
     <PackageIdentityPublisher>CN=zouqi</PackageIdentityPublisher>
     <IntermediateOutputPath>D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\obj\x64\Debug\</IntermediateOutputPath>
     <RemoteDeploymentType>
@@ -19,10 +19,10 @@
     <DeployOptionalPackages>false</DeployOptionalPackages>
     <WindowsSdkPath>D:\Windows Kits\10\</WindowsSdkPath>
     <LayoutDir>D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\AppX</LayoutDir>
-    <RegisteredManifestChecksum>4EA6E1C8D8DB70C97E09DBCFD37985299F97BA67838173D2FE4E6EF90CDF6041</RegisteredManifestChecksum>
-    <RegisteredPackageMoniker>02d7615b-8384-4164-a644-102a3676c04e_1.0.0.0_x64__e5m0mm8c1d5pt</RegisteredPackageMoniker>
-    <RegisteredUserModeAppID>02d7615b-8384-4164-a644-102a3676c04e_e5m0mm8c1d5pt!App</RegisteredUserModeAppID>
-    <RegisteredPackageID>02d7615b-8384-4164-a644-102a3676c04e</RegisteredPackageID>
+    <RegisteredManifestChecksum>B5BD6425E2D8CC6097E5CC4FE8AFABA238C63AAA5C403BF4299CF7C77B77281D</RegisteredManifestChecksum>
+    <RegisteredPackageMoniker>73da3314-1353-490b-84c6-bac6c5fa51e7_1.0.0.0_x64__e5m0mm8c1d5pt</RegisteredPackageMoniker>
+    <RegisteredUserModeAppID>73da3314-1353-490b-84c6-bac6c5fa51e7_e5m0mm8c1d5pt!App</RegisteredUserModeAppID>
+    <RegisteredPackageID>73da3314-1353-490b-84c6-bac6c5fa51e7</RegisteredPackageID>
     <RegisteredPackagePublisher>CN=zouqi</RegisteredPackagePublisher>
     <RegisteredVersion>1.0.0.0</RegisteredVersion>
   </PropertyGroup>
@@ -30,25 +30,37 @@
     <AppXManifest Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Core\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2024-09-18T02:39:34.277</Modified>
+      <Modified>2024-11-27T03:09:29.872</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\PlanetMusicPlayer.exe">
       <PackagePath>entrypoint\PlanetMusicPlayer.exe</PackagePath>
-      <Modified>2024-09-18T02:39:33.630</Modified>
+      <Modified>2024-11-27T03:09:29.481</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\zouqi\.nuget\packages\microsoft.data.sqlite.core\8.0.8\lib\netstandard2.0\Microsoft.Data.Sqlite.dll">
+    <AppxPackagedFile Include="C:\Users\zouqi\.nuget\packages\microsoft.data.sqlite.core\8.0.10\lib\netstandard2.0\Microsoft.Data.Sqlite.dll">
       <PackagePath>Microsoft.Data.Sqlite.dll</PackagePath>
-      <Modified>2024-07-17T21:12:24.000</Modified>
+      <Modified>2024-09-17T23:49:18.000</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Program Files %28x86%29\Microsoft SDKs\UWPNuGetPackages\runtime.win10-x64.microsoft.netcore.universalwindowsplatform\6.2.14\runtimes\win10-x64\lib\uap10.0.15138\System.Runtime.dll">
       <PackagePath>System.Runtime.dll</PackagePath>
       <Modified>2022-06-10T14:23:28.000</Modified>
     </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\zouqi\.nuget\packages\sqlitepclraw.bundle_e_sqlite3\2.1.6\lib\netstandard2.0\SQLitePCLRaw.batteries_v2.dll">
+      <PackagePath>SQLitePCLRaw.batteries_v2.dll</PackagePath>
+      <Modified>2023-08-23T18:41:24.000</Modified>
+    </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\zouqi\.nuget\packages\sqlitepclraw.core\2.1.6\lib\netstandard2.0\SQLitePCLRaw.core.dll">
       <PackagePath>SQLitePCLRaw.core.dll</PackagePath>
       <Modified>2023-08-23T18:38:38.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\zouqi\.nuget\packages\sqlitepclraw.lib.e_sqlite3\2.1.6\runtimes\win10-x64\nativeassets\uap10.0\e_sqlite3.dll">
+      <PackagePath>e_sqlite3.dll</PackagePath>
+      <Modified>2023-08-23T18:33:42.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\zouqi\.nuget\packages\sqlitepclraw.provider.e_sqlite3\2.1.6\lib\netstandard2.0\SQLitePCLRaw.provider.e_sqlite3.dll">
+      <PackagePath>SQLitePCLRaw.provider.e_sqlite3.dll</PackagePath>
+      <Modified>2023-08-23T18:38:52.000</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\zouqi\.nuget\packages\system.runtime.compilerservices.unsafe\4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll">
       <PackagePath>System.Runtime.CompilerServices.Unsafe.dll</PackagePath>
@@ -60,129 +72,81 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\CorePlanetMusicPlayer\bin\x64\Debug\CorePlanetMusicPlayer.dll">
       <PackagePath>CorePlanetMusicPlayer.dll</PackagePath>
-      <Modified>2024-10-20T14:42:32.947</Modified>
+      <Modified>2024-11-27T03:09:25.637</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Windows Kits\10\bin\10.0.22621.0\XamlCompiler\Microsoft.UI.Xaml.Markup.winmd">
+    <AppxPackagedFile Include="D:\Windows Kits\10\bin\10.0.19041.0\XamlCompiler\Microsoft.UI.Xaml.Markup.winmd">
       <PackagePath>Microsoft.UI.Xaml.Markup.winmd</PackagePath>
-      <Modified>2024-02-21T12:52:32.000</Modified>
+      <Modified>2020-12-01T20:52:00.000</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\Properties\Default.rd.xml">
       <PackagePath>Properties\Default.rd.xml</PackagePath>
-      <Modified>2024-09-12T08:15:43.676</Modified>
+      <Modified>2024-11-26T12:23:08.054</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\Assets\LockScreenLogo.scale-200.png">
       <PackagePath>Assets\LockScreenLogo.scale-200.png</PackagePath>
-      <Modified>2024-09-12T08:15:43.676</Modified>
+      <Modified>2024-08-16T03:32:46.320</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\Assets\SplashScreen.scale-200.png">
       <PackagePath>Assets\SplashScreen.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2024-09-12T08:15:43.676</Modified>
+      <Modified>2024-08-16T03:32:46.320</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\Assets\Square150x150Logo.scale-200.png">
       <PackagePath>Assets\Square150x150Logo.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2024-09-12T08:15:43.676</Modified>
+      <Modified>2024-08-16T03:32:46.320</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\Assets\Square44x44Logo.scale-200.png">
       <PackagePath>Assets\Square44x44Logo.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2024-09-12T08:15:43.676</Modified>
+      <Modified>2024-08-16T03:32:46.320</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
       <PackagePath>Assets\Square44x44Logo.targetsize-24_altform-unplated.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2024-09-12T08:15:43.676</Modified>
+      <Modified>2024-08-16T03:32:46.320</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\Assets\StoreLogo.png">
       <PackagePath>Assets\StoreLogo.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2024-09-12T08:15:43.676</Modified>
+      <Modified>2024-08-16T03:32:46.320</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\Assets\Wide310x150Logo.scale-200.png">
       <PackagePath>Assets\Wide310x150Logo.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2024-09-12T08:15:43.676</Modified>
+      <Modified>2024-08-16T03:32:46.320</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\PlanetMusicPlayer.xr.xml">
       <PackagePath>PlanetMusicPlayer.xr.xml</PackagePath>
-      <Modified>2024-09-15T08:30:03.736</Modified>
+      <Modified>2024-11-27T02:15:25.989</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\App.xbf">
       <PackagePath>App.xbf</PackagePath>
-      <Modified>2024-09-18T02:39:33.535</Modified>
+      <Modified>2024-11-27T03:09:29.382</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\DevPage\AlbumsLibraryControl.xbf">
-      <PackagePath>Controls\DevPage\AlbumsLibraryControl.xbf</PackagePath>
-      <Modified>2024-09-18T02:39:33.535</Modified>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\ControlsShell.xbf">
+      <PackagePath>Controls\ControlsShell.xbf</PackagePath>
+      <Modified>2024-11-27T03:09:29.382</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\DevPage\DevPageControlsShell.xbf">
-      <PackagePath>Controls\DevPage\DevPageControlsShell.xbf</PackagePath>
-      <Modified>2024-09-18T02:39:33.535</Modified>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\DevPage\DevToolsControl.xbf">
-      <PackagePath>Controls\DevPage\DevToolsControl.xbf</PackagePath>
-      <Modified>2024-09-18T02:39:33.535</Modified>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\DevPage\ExternalMusicLibraryControl.xbf">
-      <PackagePath>Controls\DevPage\ExternalMusicLibraryControl.xbf</PackagePath>
-      <Modified>2024-09-18T02:39:33.535</Modified>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\DevPage\LocalMusicLibraryControl.xbf">
-      <PackagePath>Controls\DevPage\LocalMusicLibraryControl.xbf</PackagePath>
-      <Modified>2024-09-18T02:39:33.535</Modified>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\DevPage\ArtistsLibraryControl.xbf">
-      <PackagePath>Controls\DevPage\ArtistsLibraryControl.xbf</PackagePath>
-      <Modified>2024-09-18T02:39:33.535</Modified>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\DevPage\OnlineMusicLibraryControl.xbf">
-      <PackagePath>Controls\DevPage\OnlineMusicLibraryControl.xbf</PackagePath>
-      <Modified>2024-09-18T02:39:33.535</Modified>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\DevPage\PlayingControl.xbf">
-      <PackagePath>Controls\DevPage\PlayingControl.xbf</PackagePath>
-      <Modified>2024-09-18T02:39:33.535</Modified>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\DevPage\PlaylistLibraryControl.xbf">
-      <PackagePath>Controls\DevPage\PlaylistLibraryControl.xbf</PackagePath>
-      <Modified>2024-09-18T02:39:33.535</Modified>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\DevPage\PlayQueueControl.xbf">
-      <PackagePath>Controls\DevPage\PlayQueueControl.xbf</PackagePath>
-      <Modified>2024-09-18T02:39:33.535</Modified>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\DevPage\SaveMusicToPlaylistControl.xbf">
-      <PackagePath>Controls\DevPage\SaveMusicToPlaylistControl.xbf</PackagePath>
-      <Modified>2024-09-18T02:39:33.535</Modified>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\MusicListControl.xbf">
-      <PackagePath>Controls\MusicListControl.xbf</PackagePath>
-      <Modified>2024-09-18T02:39:33.535</Modified>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Dictionaries\MusicListItemDictionary.xbf">
-      <PackagePath>Dictionaries\MusicListItemDictionary.xbf</PackagePath>
-      <Modified>2024-09-18T02:39:33.535</Modified>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\DevToolControl.xbf">
+      <PackagePath>Controls\DevToolControl.xbf</PackagePath>
+      <Modified>2024-11-27T03:09:29.382</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\MainPage.xbf">
       <PackagePath>MainPage.xbf</PackagePath>
-      <Modified>2024-09-18T02:39:33.535</Modified>
+      <Modified>2024-11-27T03:09:29.382</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Pages\DevPage.xbf">
-      <PackagePath>Pages\DevPage.xbf</PackagePath>
-      <Modified>2024-09-18T02:39:33.535</Modified>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Windows Kits\10\UnionMetadata\10.0.22621.0\Windows.winmd">
+    <AppxPackagedFile Include="D:\Windows Kits\10\UnionMetadata\10.0.19041.0\Windows.winmd">
       <PackagePath>WinMetadata\Windows.winmd</PackagePath>
-      <Modified>2024-02-21T15:46:02.000</Modified>
+      <Modified>2020-12-01T18:52:06.000</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\resources.pri">
       <PackagePath>resources.pri</PackagePath>
-      <Modified>2024-09-15T08:30:04.412</Modified>
+      <Modified>2024-11-27T03:02:01.268</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Core\PlanetMusicPlayer.exe">
       <PackagePath>PlanetMusicPlayer.exe</PackagePath>
-      <Modified>2024-09-18T02:39:34.261</Modified>
+      <Modified>2024-11-27T03:09:29.872</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>

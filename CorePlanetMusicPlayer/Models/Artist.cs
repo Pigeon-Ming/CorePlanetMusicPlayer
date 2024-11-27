@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,20 +14,17 @@ namespace CorePlanetMusicPlayer.Models
         public string Name { get; set; } = "";
         public string Description { get; set; } = "";
         public List<Music> Music { get; set; } = new List<Music>();
-
     }
 
     public class ArtistManager
     {
-        
-
         public static void AddMusicToArtist(Music music)
         {
-            List<string>artists = GetArtistNamesFromArtistString(music.Artist);
+            List<string> artists = GetArtistNamesFromArtistString(music.Artist);
 
             //Debug.WriteLine(music.Title);
 
-            for(int i = 0; i < artists.Count; i++)
+            for (int i = 0; i < artists.Count; i++)
             {
                 Artist artist = Library.Artists.Find(x => x.Name == artists[i]);
                 if (artist != null)
@@ -43,15 +38,15 @@ namespace CorePlanetMusicPlayer.Models
                     artist.Music.Add(music);
                     Library.Artists.Add(artist);
                 }
-                
+
             }
-                
+
         }
 
         public static List<string> GetArtistNamesFromArtistString(string ArtistString)
         {
-            List<string>artists = new List<string>();
-            ArtistString = ArtistString.Replace("; ",";");
+            List<string> artists = new List<string>();
+            ArtistString = ArtistString.Replace("; ", ";");
             int semicolonIndex = ArtistString.IndexOf(';');
             if (semicolonIndex == -1)
                 artists.Add(ArtistString);
@@ -72,8 +67,8 @@ namespace CorePlanetMusicPlayer.Models
         public static async Task<BitmapImage> GetArtistProfileImageAsync(Artist artist)
         {
             BitmapImage image = null;
-            StorageFolder folder = await StorageHelper.GetApplicationDataFolder("Images");
-            folder = await StorageHelper.GetFolder(folder, "Artists");
+            StorageFolder folder = await StorageManager.GetApplicationDataFolder("Images");
+            folder = await StorageManager.GetFolder(folder, "Artists");
             if (folder == null) return null;
             IStorageItem item = await folder.TryGetItemAsync(artist.Name + ".jpg");
             if (item == null)
@@ -100,19 +95,19 @@ namespace CorePlanetMusicPlayer.Models
             Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                StorageFolder folder = await StorageHelper.GetApplicationDataFolder("Images");
-                folder = await StorageHelper.GetFolder(folder, "Artists");
-                if(await StorageHelper.IsItemExsitAsync(folder, artist.Name + ".jpg"))
+                StorageFolder folder = await StorageManager.GetApplicationDataFolder("Images");
+                folder = await StorageManager.GetFolder(folder, "Artists");
+                if (await StorageManager.IsItemExsitAsync(folder, artist.Name + ".jpg"))
                 {
-                    await(await folder.GetFileAsync(artist.Name + ".jpg")).DeleteAsync();
+                    await (await folder.GetFileAsync(artist.Name + ".jpg")).DeleteAsync();
                 }
-                else if (await StorageHelper.IsItemExsitAsync(folder, artist.Name + ".png"))
+                else if (await StorageManager.IsItemExsitAsync(folder, artist.Name + ".png"))
                 {
                     await (await folder.GetFileAsync(artist.Name + ".png")).DeleteAsync();
                 }
-                await file.CopyAsync(folder,artist.Name+file.FileType);
+                await file.CopyAsync(folder, artist.Name + file.FileType);
             }
-            
+
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,38 +19,38 @@ namespace CorePlanetMusicPlayer.Models
     {
         public static async Task<Playlist> ReadPlaylistFromStorageFileAsync(StorageFile storageFile)
         {
-            string fileStr = await StorageHelper.ReadFile(storageFile);
+            string fileStr = await StorageManager.ReadFile(storageFile);
             if (String.IsNullOrEmpty(fileStr)) return new Playlist();
             JsonObject jsonObject;
-            if(JsonObject.TryParse(fileStr,out jsonObject)==false)return new Playlist();
+            if (JsonObject.TryParse(fileStr, out jsonObject) == false) return new Playlist();
             Playlist playlist = new Playlist();
             playlist.Name = jsonObject.GetNamedString("name");
             playlist.Description = jsonObject.GetNamedString("description");
             JsonArray array = jsonObject.GetNamedArray("music");
-            for(int i = 0; i < array.Count; i++)
+            for (int i = 0; i < array.Count; i++)
             {
-                playlist.Music.Add(MusicManager.GetMusicFromJsonObject(array[i].GetObject()));
+                playlist.Music.Add(JsonHelper.JsonObjectToMusic(array[i].GetObject()));
             }
             return playlist;
         }
 
         public static async Task SavePlaylistAsync(Playlist playlist)
         {
-            if(Library.PlayLists.Find(x=>x.Name == playlist.Name)==null)
-                Library.PlayLists.Add(playlist);
-            StorageFolder folder = await StorageHelper.GetApplicationDataFolder("Playlists");
+            if (Library.Playlists.Find(x => x.Name == playlist.Name) == null)
+                Library.Playlists.Add(playlist);
+            StorageFolder folder = await StorageManager.GetApplicationDataFolder("Playlists");
             JsonObject jsonObject = new JsonObject();
-            jsonObject.Add("name",JsonValue.CreateStringValue(playlist.Name));
-            jsonObject.Add("description",JsonValue.CreateStringValue(playlist.Description));
+            jsonObject.Add("name", JsonValue.CreateStringValue(playlist.Name));
+            jsonObject.Add("description", JsonValue.CreateStringValue(playlist.Description));
             JsonArray jsonArray = new JsonArray();
-            for(int i = 0; i < playlist.Music.Count;i++)
+            for (int i = 0; i < playlist.Music.Count; i++)
             {
                 jsonArray.Add(JsonHelper.MusicToJsonObject(playlist.Music[i]));
             }
             jsonObject.Add("music", jsonArray);
             string content = jsonObject.ToString();
             //Debug.WriteLine(content);
-            await StorageHelper.WriteFile(folder,playlist.Name+".pmplist5",content);
+            await StorageManager.WriteFile(folder, playlist.Name + ".pmplist5", content);
         }
     }
 }
