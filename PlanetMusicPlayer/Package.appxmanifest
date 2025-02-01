@@ -4,15 +4,14 @@
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
-  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
-  IgnorableNamespaces="uap mp uap3">
+  IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="02d7615b-8384-4164-a644-102a3676c04e"
+    Name="73da3314-1353-490b-84c6-bac6c5fa51e7"
     Publisher="CN=zouqi"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="02d7615b-8384-4164-a644-102a3676c04e" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="73da3314-1353-490b-84c6-bac6c5fa51e7" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>PlanetMusicPlayer</DisplayName>
@@ -47,6 +46,5 @@
   <Capabilities>
     <Capability Name="internetClient" />
     <uap:Capability Name="musicLibrary"/>
-    <uap3:Capability Name="backgroundMediaPlayback"/>
   </Capabilities>
 </Package>

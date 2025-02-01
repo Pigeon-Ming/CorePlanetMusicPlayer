@@ -1,21 +1,21 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj": {}
+    "G:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj": {}
   },
   "projects": {
-    "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj": {
+    "G:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj",
+        "projectUniqueName": "G:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj",
         "projectName": "CorePlanetMusicPlayer",
-        "projectPath": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj",
-        "packagesPath": "C:\\Users\\zouqi\\.nuget\\packages\\",
-        "outputPath": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\obj\\",
+        "projectPath": "G:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj",
+        "packagesPath": "G:\\NuGet",
+        "outputPath": "G:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\obj\\",
         "projectStyle": "PackageReference",
         "skipContentFileWrite": true,
         "fallbackFolders": [
-          "D:\\VS2022SDK\\NuGetPackages",
+          "H:\\VSSDK\\NuGetPackages",
           "C:\\Program Files (x86)\\Microsoft SDKs\\UWPNuGetPackages\\"
         ],
         "configFilePaths": [
@@ -28,6 +28,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "G:\\Projects\\NugetPackges": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -51,6 +52,10 @@
             "Microsoft.NETCore.UniversalWindowsPlatform": {
               "target": "Package",
               "version": "[6.2.14, )"
+            },
+            "Microsoft.Toolkit.Uwp.Notifications": {
+              "target": "Package",
+              "version": "[7.1.3, )"
             },
             "TagLibSharp": {
               "target": "Package",

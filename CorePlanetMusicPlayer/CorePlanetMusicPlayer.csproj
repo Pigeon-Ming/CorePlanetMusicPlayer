@@ -122,15 +122,21 @@
   <ItemGroup>
     <Compile Include="Models\Album.cs" />
     <Compile Include="Models\Artist.cs" />
-    <Compile Include="Models\Image.cs" />
-    <Compile Include="Models\Lyric.cs" />
-    <Compile Include="Models\StorageHelper.cs" />
+    <Compile Include="Models\DataCodeImage.cs" />
+    <Compile Include="Models\ExceptionManager.cs" />
     <Compile Include="Models\JsonHelper.cs" />
     <Compile Include="Models\Library.cs" />
+    <Compile Include="Models\Lyric.cs" />
     <Compile Include="Models\Music.cs" />
     <Compile Include="Models\PlayCore.cs" />
     <Compile Include="Models\Playlist.cs" />
+    <Compile Include="Models\RemovableDevice.cs" />
+    <Compile Include="Models\Settings.cs" />
+    <Compile Include="Models\SQLiteManager.cs" />
+    <Compile Include="Models\Statistics\PlayHistoryItem.cs" />
+    <Compile Include="Models\StorageManager.cs" />
     <Compile Include="Models\TagLibHelper\UwpStorageFileAbstraction.cs" />
+    <Compile Include="Models\UWPAppManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\CorePlanetMusicPlayer.rd.xml" />
   </ItemGroup>
@@ -140,6 +146,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.14</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications">
+      <Version>7.1.3</Version>
     </PackageReference>
     <PackageReference Include="TagLibSharp">
       <Version>2.3.0</Version>

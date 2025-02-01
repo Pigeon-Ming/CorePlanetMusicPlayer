@@ -8,7 +8,7 @@
     <TargetOsDescription>Windows 10.0</TargetOsDescription>
     <SolutionConfiguration>Debug|x64</SolutionConfiguration>
     <PackageArchitecture>x64</PackageArchitecture>
-    <PackageIdentityName>02d7615b-8384-4164-a644-102a3676c04e</PackageIdentityName>
+    <PackageIdentityName>73da3314-1353-490b-84c6-bac6c5fa51e7</PackageIdentityName>
     <PackageIdentityPublisher>CN=zouqi</PackageIdentityPublisher>
     <IntermediateOutputPath>D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\obj\x64\Debug\</IntermediateOutputPath>
     <RemoteDeploymentType></RemoteDeploymentType>
@@ -28,14 +28,23 @@
     <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\PlanetMusicPlayer.exe">
       <PackagePath>entrypoint\PlanetMusicPlayer.exe</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\zouqi\.nuget\packages\microsoft.data.sqlite.core\8.0.8\lib\netstandard2.0\Microsoft.Data.Sqlite.dll">
+    <AppxPackagedFile Include="C:\Users\zouqi\.nuget\packages\microsoft.data.sqlite.core\8.0.10\lib\netstandard2.0\Microsoft.Data.Sqlite.dll">
       <PackagePath>Microsoft.Data.Sqlite.dll</PackagePath>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Program Files %28x86%29\Microsoft SDKs\UWPNuGetPackages\runtime.win10-x64.microsoft.netcore.universalwindowsplatform\6.2.14\runtimes\win10-x64\lib\uap10.0.15138\System.Runtime.dll">
       <PackagePath>System.Runtime.dll</PackagePath>
     </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\zouqi\.nuget\packages\sqlitepclraw.bundle_e_sqlite3\2.1.6\lib\netstandard2.0\SQLitePCLRaw.batteries_v2.dll">
+      <PackagePath>SQLitePCLRaw.batteries_v2.dll</PackagePath>
+    </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\zouqi\.nuget\packages\sqlitepclraw.core\2.1.6\lib\netstandard2.0\SQLitePCLRaw.core.dll">
       <PackagePath>SQLitePCLRaw.core.dll</PackagePath>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\zouqi\.nuget\packages\sqlitepclraw.lib.e_sqlite3\2.1.6\runtimes\win10-x64\nativeassets\uap10.0\e_sqlite3.dll">
+      <PackagePath>e_sqlite3.dll</PackagePath>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\zouqi\.nuget\packages\sqlitepclraw.provider.e_sqlite3\2.1.6\lib\netstandard2.0\SQLitePCLRaw.provider.e_sqlite3.dll">
+      <PackagePath>SQLitePCLRaw.provider.e_sqlite3.dll</PackagePath>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\zouqi\.nuget\packages\system.runtime.compilerservices.unsafe\4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll">
       <PackagePath>System.Runtime.CompilerServices.Unsafe.dll</PackagePath>
@@ -46,7 +55,7 @@
     <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\CorePlanetMusicPlayer\bin\x64\Debug\CorePlanetMusicPlayer.dll">
       <PackagePath>CorePlanetMusicPlayer.dll</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Windows Kits\10\bin\10.0.22621.0\XamlCompiler\Microsoft.UI.Xaml.Markup.winmd">
+    <AppxPackagedFile Include="D:\Windows Kits\10\bin\10.0.19041.0\XamlCompiler\Microsoft.UI.Xaml.Markup.winmd">
       <PackagePath>Microsoft.UI.Xaml.Markup.winmd</PackagePath>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\Properties\Default.rd.xml">
@@ -85,52 +94,16 @@
     <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\App.xbf">
       <PackagePath>App.xbf</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\DevPage\AlbumsLibraryControl.xbf">
-      <PackagePath>Controls\DevPage\AlbumsLibraryControl.xbf</PackagePath>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\ControlsShell.xbf">
+      <PackagePath>Controls\ControlsShell.xbf</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\DevPage\DevPageControlsShell.xbf">
-      <PackagePath>Controls\DevPage\DevPageControlsShell.xbf</PackagePath>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\DevPage\DevToolsControl.xbf">
-      <PackagePath>Controls\DevPage\DevToolsControl.xbf</PackagePath>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\DevPage\ExternalMusicLibraryControl.xbf">
-      <PackagePath>Controls\DevPage\ExternalMusicLibraryControl.xbf</PackagePath>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\DevPage\LocalMusicLibraryControl.xbf">
-      <PackagePath>Controls\DevPage\LocalMusicLibraryControl.xbf</PackagePath>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\DevPage\ArtistsLibraryControl.xbf">
-      <PackagePath>Controls\DevPage\ArtistsLibraryControl.xbf</PackagePath>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\DevPage\OnlineMusicLibraryControl.xbf">
-      <PackagePath>Controls\DevPage\OnlineMusicLibraryControl.xbf</PackagePath>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\DevPage\PlayingControl.xbf">
-      <PackagePath>Controls\DevPage\PlayingControl.xbf</PackagePath>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\DevPage\PlaylistLibraryControl.xbf">
-      <PackagePath>Controls\DevPage\PlaylistLibraryControl.xbf</PackagePath>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\DevPage\PlayQueueControl.xbf">
-      <PackagePath>Controls\DevPage\PlayQueueControl.xbf</PackagePath>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\DevPage\SaveMusicToPlaylistControl.xbf">
-      <PackagePath>Controls\DevPage\SaveMusicToPlaylistControl.xbf</PackagePath>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\MusicListControl.xbf">
-      <PackagePath>Controls\MusicListControl.xbf</PackagePath>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Dictionaries\MusicListItemDictionary.xbf">
-      <PackagePath>Dictionaries\MusicListItemDictionary.xbf</PackagePath>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Controls\DevToolControl.xbf">
+      <PackagePath>Controls\DevToolControl.xbf</PackagePath>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\MainPage.xbf">
       <PackagePath>MainPage.xbf</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\Pages\DevPage.xbf">
-      <PackagePath>Pages\DevPage.xbf</PackagePath>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Windows Kits\10\UnionMetadata\10.0.22621.0\Windows.winmd">
+    <AppxPackagedFile Include="D:\Windows Kits\10\UnionMetadata\10.0.19041.0\Windows.winmd">
       <PackagePath>WinMetadata\Windows.winmd</PackagePath>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\bin\x64\Debug\resources.pri">

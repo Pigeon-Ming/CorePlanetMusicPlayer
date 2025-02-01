@@ -1,0 +1,22 @@
+﻿<UserControl
+    x:Class="PlanetMusicPlayer.Controls.DevToolControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PlanetMusicPlayer.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <Grid>
+        <ScrollViewer Name="MainScrollViewer">
+            <StackPanel>
+                <Button Content="打开数据文件夹" Name="OpenLocalFolderButton"/>
+                <Button Content="载入库" Name="LoadLibraryButton"/>
+                <Button Content="获取数据" Name="LoadDataButton"/>
+                <!--<Button Content="载入音乐缓存信息" Name="LoadMusicCacheButton"/>-->
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

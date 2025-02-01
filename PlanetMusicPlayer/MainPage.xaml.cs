@@ -1,5 +1,4 @@
-﻿using CorePlanetMusicPlayer.Models;
-using PlanetMusicPlayer.Pages;
+﻿using PlanetMusicPlayer.Controls;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,13 +26,12 @@ namespace PlanetMusicPlayer
         public MainPage()
         {
             this.InitializeComponent();
-            Loaded += MainPage_Loaded;
+            InitControls();
         }
 
-        private void MainPage_Loaded(object sender, RoutedEventArgs e)
+        void InitControls()
         {
-            
-            Frame.Navigate(typeof(DevPage));
+            ControlsStackPanel.Children.Add(new ControlsShell("开发者控件",new DevToolControl()));
         }
     }
 }

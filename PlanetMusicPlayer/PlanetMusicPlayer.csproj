@@ -4,14 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{51E0C3BE-B00C-4E25-B153-E348D0CE9EE1}</ProjectGuid>
+    <ProjectGuid>{0B18F1EC-FADA-4E29-8AD3-A1FE303726C0}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PlanetMusicPlayer</RootNamespace>
     <AssemblyName>PlanetMusicPlayer</AssemblyName>
     <DefaultLanguage>zh-CN</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.22621.0</TargetPlatformVersion>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.19041.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -119,48 +119,14 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\DevPage\AlbumsLibraryControl.xaml.cs">
-      <DependentUpon>AlbumsLibraryControl.xaml</DependentUpon>
+    <Compile Include="Controls\ControlsShell.xaml.cs">
+      <DependentUpon>ControlsShell.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\DevPage\DevPageControlsShell.xaml.cs">
-      <DependentUpon>DevPageControlsShell.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\DevPage\DevToolsControl.xaml.cs">
-      <DependentUpon>DevToolsControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\DevPage\ExternalMusicLibraryControl.xaml.cs">
-      <DependentUpon>ExternalMusicLibraryControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\DevPage\LocalMusicLibraryControl.xaml.cs">
-      <DependentUpon>LocalMusicLibraryControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\DevPage\ArtistsLibraryControl.xaml.cs">
-      <DependentUpon>ArtistsLibraryControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\DevPage\OnlineMusicLibraryControl.xaml.cs">
-      <DependentUpon>OnlineMusicLibraryControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\DevPage\PlayingControl.xaml.cs">
-      <DependentUpon>PlayingControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\DevPage\PlaylistLibraryControl.xaml.cs">
-      <DependentUpon>PlaylistLibraryControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\DevPage\PlayQueueControl.xaml.cs">
-      <DependentUpon>PlayQueueControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\DevPage\SaveMusicToPlaylistControl.xaml.cs">
-      <DependentUpon>SaveMusicToPlaylistControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\MusicListControl.xaml.cs">
-      <DependentUpon>MusicListControl.xaml</DependentUpon>
+    <Compile Include="Controls\DevToolControl.xaml.cs">
+      <DependentUpon>DevToolControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ContentDialogHelper.cs" />
-    <Compile Include="Pages\DevPage.xaml.cs">
-      <DependentUpon>DevPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -184,65 +150,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Controls\DevPage\AlbumsLibraryControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\DevPage\DevPageControlsShell.xaml">
+    <Page Include="Controls\ControlsShell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\DevPage\DevToolsControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\DevPage\ExternalMusicLibraryControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\DevPage\LocalMusicLibraryControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\DevPage\ArtistsLibraryControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\DevPage\OnlineMusicLibraryControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\DevPage\PlayingControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\DevPage\PlaylistLibraryControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\DevPage\PlayQueueControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\DevPage\SaveMusicToPlaylistControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\MusicListControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Dictionaries\MusicListItemDictionary.xaml">
+    <Page Include="Controls\DevToolControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Pages\DevPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -252,7 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CorePlanetMusicPlayer\CorePlanetMusicPlayer.csproj">
-      <Project>{189d953d-b9d4-42dd-b73f-973b05ea2521}</Project>
+      <Project>{189D953D-B9D4-42DD-B73F-973B05EA2521}</Project>
       <Name>CorePlanetMusicPlayer</Name>
     </ProjectReference>
   </ItemGroup>

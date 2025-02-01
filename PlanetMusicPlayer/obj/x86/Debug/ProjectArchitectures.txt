@@ -1,2 +1,0 @@
-D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\CorePlanetMusicPlayer\CorePlanetMusicPlayer.csproj;x86
-D:\Projects\CorePlanetMusicPlayer\PlanetMusicPlayer\PlanetMusicPlayer\PlanetMusicPlayer.csproj;x86

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Graphics.Imaging;
+using Windows.Storage;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace CorePlanetMusicPlayer.Models
 {
@@ -18,7 +20,7 @@ namespace CorePlanetMusicPlayer.Models
     {
         public static void AddMusicToAlbum(Music music)
         {
-            Album album = Library.Albums.Find(x=>x.Name == music.Album);
+            Album album = Library.Albums.Find(x => x.Name == music.Album);
             if (album != null)
             {
                 album.Music.Add(music);

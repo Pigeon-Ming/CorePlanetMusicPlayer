@@ -9,6 +9,10 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        
+        <ScrollViewer>
+            <StackPanel Orientation="Horizontal" Name="ControlsStackPanel">
+                
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>

@@ -12,16 +12,8 @@ namespace CorePlanetMusicPlayer.Models
         public static JsonObject MusicToJsonObject(Music music)
         {
             JsonObject jsonObject = new JsonObject();
-            jsonObject.Add("title",JsonValue.CreateStringValue(music.Title));
-            jsonObject.Add("artist",JsonValue.CreateStringValue(music.Artist));
-            jsonObject.Add("album",JsonValue.CreateStringValue(music.Album));
-            jsonObject.Add("bitrate",JsonValue.CreateNumberValue(music.Bitrate));
-            jsonObject.Add("year",JsonValue.CreateNumberValue(music.Year));
-            jsonObject.Add("trackNumber",JsonValue.CreateNumberValue(music.TrackNumber));
-            jsonObject.Add("discNumber",JsonValue.CreateNumberValue(music.DiscNumber));
-            jsonObject.Add("dataCode",JsonValue.CreateStringValue(music.DataCode));
-            jsonObject.Add("duration",JsonValue.CreateStringValue(music.Duration));
-            jsonObject.Add("musicType",JsonValue.CreateStringValue(music.MusicType.ToString()));
+            jsonObject.Add("type", JsonValue.CreateNumberValue((int)music.MusicType));
+            jsonObject.Add("dataCode", JsonValue.CreateStringValue(music.DataCode));
             return jsonObject;
         }
 
@@ -40,7 +32,7 @@ namespace CorePlanetMusicPlayer.Models
 
         public static List<Music> JsonArrayToMusic(JsonArray jsonArray)
         {
-            List<Music>musicList = new List<Music>();
+            List<Music> musicList = new List<Music>();
             for (int i = 0; i < jsonArray.Count; i++)
             {
                 musicList.Add(JsonObjectToMusic(jsonArray.GetObjectAt((uint)i)));
@@ -51,14 +43,8 @@ namespace CorePlanetMusicPlayer.Models
         public static Music JsonObjectToMusic(JsonObject jsonObject)
         {
             Music music = new Music();
-            music.Title = jsonObject.GetNamedString("title");
-            music.Artist = jsonObject.GetNamedString("artist");
-            music.Album = jsonObject.GetNamedString("album");
-            music.Bitrate = (uint)jsonObject.GetNamedNumber("bitrate");
-            music.Year = (uint)jsonObject.GetNamedNumber("year");
-            music.TrackNumber = (uint)jsonObject.GetNamedNumber("trackNumber");
-            music.DiscNumber = (uint)jsonObject.GetNamedNumber("discNumber");
-            music.Duration = jsonObject.GetNamedString("duration");
+            music.MusicType = (MusicType)jsonObject.GetNamedNumber("type");
+            music.DataCode = jsonObject.GetNamedString("dataCode");
             return music;
         }
     }

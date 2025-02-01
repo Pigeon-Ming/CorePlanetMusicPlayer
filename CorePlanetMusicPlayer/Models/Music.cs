@@ -3,10 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml;
 using TagLib;
 using Windows.Data.Json;
 using Windows.Storage;
@@ -16,9 +14,8 @@ namespace CorePlanetMusicPlayer.Models
 {
     public enum MusicType
     {
-        Local, External, Online,
+        Local,ExternalLocal, Online,Removable
     }
-
 
     public class Music
     {
@@ -32,115 +29,68 @@ namespace CorePlanetMusicPlayer.Models
         public uint TrackNumber { get; set; }//专辑内音乐编号
         public uint DiscNumber { get; set; }//专辑内音乐编号
         public String Duration { get; set; } = "";//长度
+        public String Key { get; set; } = "";
+
+        public bool Available { get; set; } = true;
     }
 
     public class MusicManager
     {
-        public static object FindMusic(Music music)
-        {
-            switch (music.MusicType)
-            {
-                case MusicType.Local:
-                    if(music.DataCode.IndexOf("pmptemp-")==-1)
-                        return Library.Music.LocalMusic.Find(x => x.DataCode == music.DataCode);
-                    else
-                        return Library.Music.ClickToPlayMusic.Find(x => x.DataCode == music.DataCode);
-                case MusicType.External:
-                    return Library.Music.ExternalMusic.Find(x => x.DataCode == music.DataCode);
-                case MusicType.Online:
-                    return Library.Music.OnlineMusic.Find(x => x.DataCode == music.DataCode);
-            }
+        //public static async Task<Music> GetMusicPropertiesAsync(Music music)
+        //{
+            
+        //    return music;
+        //}
 
-            return null;
+        public static async Task<Music> GetRemovableMusicPropertiesAsync(StorageFile storageFile,Music music)
+        {
+            return await GetMusicPropertiesByStorageFile(storageFile, music);
         }
 
-        public static object FindMusic(string DataCode,MusicType musicType)
+        public static async Task<Music> GetLocalMusicPropertiesAsync(Music music)
         {
-            switch (musicType)
+            if (music.MusicType != MusicType.Local && music.MusicType != MusicType.ExternalLocal)
             {
-                case MusicType.Local:
-                    if (DataCode.IndexOf("pmptemp-") == -1)
-                        return Library.Music.LocalMusic.Find(x => x.DataCode == DataCode);
-                    else
-                        return Library.Music.ClickToPlayMusic.Find(x => x.DataCode == DataCode);
-                case MusicType.External:
-                    return Library.Music.ExternalMusic.Find(x => x.DataCode == DataCode);
-                case MusicType.Online:
-                    return Library.Music.OnlineMusic.Find(x => x.DataCode == DataCode);
-            }
-
-            return null;
-        }
-
-        static List<string> ExternalProperties { get; set; } = new List<string> { "System.Music.DiscNumber" };
-
-        public static async Task<LocalMusic> GetLocalMusicPropertiesAsync_Fast(LocalMusic music)
-        {
-            if (music == null || music.StorageFile == null)
                 return music;
-            StorageFile file = music.StorageFile;
+            }
+            StorageFile storageFile = Library.MusicFiles.Find(x => x.Path == music.DataCode);
+            return await GetMusicPropertiesByStorageFile(storageFile,music);
+        }
+
+        public static async Task<Music> GetMusicPropertiesByStorageFile(StorageFile storageFile,Music music)
+        {
+            if (storageFile == null) return music;
+            music.Title = storageFile.Name;
+            music.Album = "未知专辑";
+            music.Artist = "未知艺术家";
+            music.Duration = "--:--";
+            if (storageFile == null)
+                return music;
+            StorageFile file = storageFile;
             StorageItemContentProperties storageItemContentProperties = file.Properties;
             MusicProperties musicProperties = await storageItemContentProperties.GetMusicPropertiesAsync(); // 音频属性
             if (!string.IsNullOrEmpty(musicProperties.Title))
                 music.Title = musicProperties.Title;
-            else
-                music.Title = music.StorageFile.Name;
             if (!string.IsNullOrEmpty(musicProperties.Album))
                 music.Album = musicProperties.Album;
-            else
-                music.Album = "未知专辑";
-
             if (!string.IsNullOrEmpty(musicProperties.Artist))
                 music.Artist = musicProperties.Artist;
-            else
-                music.Artist = "未知艺术家";
             music.Year = musicProperties.Year;
             music.Bitrate = musicProperties.Bitrate;
-            music.Duration = musicProperties.Duration.ToString().Substring(3, 5);
-            music.TrackNumber = musicProperties.TrackNumber;
-            //IDictionary<string, object> extraProperties = await storageItemContentProperties.RetrievePropertiesAsync(ExternalProperties);
-            //Debug.WriteLine("获取高级信息");
-            //if (extraProperties["System.Music.DiscNumber"] != null)
-            //{
-            //    Debug.WriteLine("-----"+extraProperties["System.Music.DiscNumber"]);
-            //}
-            return music;
-        }
-
-        public static async Task<LocalMusic> GetLocalMusicPropertiesAsync(LocalMusic music)
-        {
-
-            //To-Do:从SQLite中读取
-            StorageFile file = music.StorageFile;
-            StorageItemContentProperties storageItemContentProperties = file.Properties;
-            MusicProperties musicProperties = await storageItemContentProperties.GetMusicPropertiesAsync(); // 音频属性
-            if (!string.IsNullOrEmpty(musicProperties.Title))
-                music.Title = musicProperties.Title;
-            else
-                music.Title = music.StorageFile.Name;
-            if (!string.IsNullOrEmpty(musicProperties.Album))
-                music.Album = musicProperties.Album;
-            else
-                music.Album = "未知专辑";
-
-            if (!string.IsNullOrEmpty(musicProperties.Artist))
-                music.Artist = musicProperties.Artist;
-            else
-                music.Artist = "未知艺术家";
-            music.Year = musicProperties.Year;
-            music.Bitrate = musicProperties.Bitrate;
-            music.Duration = musicProperties.Duration.ToString().Substring(3, 5);
+            
+            music.Duration = TimeToString(musicProperties.Duration.Minutes) +":"+ TimeToString(musicProperties.Duration.Seconds);
             music.TrackNumber = musicProperties.TrackNumber;
 
-            if (music.StorageFile.FileType == ".ac3" || music.StorageFile.FileType == ".m4a")
+            if (storageFile.FileType == ".ac3" || storageFile.FileType == ".m4a")
             {
                 return music;
             }
-            UwpStorageFileAbstraction uwpStorageFileAbstraction = new UwpStorageFileAbstraction(music.StorageFile);
+            UwpStorageFileAbstraction uwpStorageFileAbstraction = new UwpStorageFileAbstraction(storageFile);
             TagLib.File.IFileAbstraction fileAbstraction = uwpStorageFileAbstraction;
             TagLib.File _file;
             try
             {
+                Debug.WriteLine("正在获取文件信息：" + file.Path);
                 _file = TagLib.File.Create(fileAbstraction, ReadStyle.Average);
                 music.DiscNumber = _file.Tag.Disc;
             }
@@ -152,80 +102,115 @@ namespace CorePlanetMusicPlayer.Models
             return music;
         }
 
-        public static async Task<ExternalMusic> GetExternalMusicPropertiesAsync(ExternalMusic music)
+        private static string TimeToString(int timeValue)
         {
-
-            //To-Do:从SQLite中读取
-            StorageFile file = await MusicManager.GetExternalMusicByExternalMusicKeyAsync(music.Key);
-            if (file == null) return null;
-            StorageItemContentProperties storageItemContentProperties = file.Properties;
-            MusicProperties musicProperties = await storageItemContentProperties.GetMusicPropertiesAsync(); // 音频属性
-            if (!string.IsNullOrEmpty(musicProperties.Title))
-                music.Title = musicProperties.Title;
+            if (timeValue < 10)
+                return "0" + timeValue;
             else
-                music.Title = file.Name;
-            if (!string.IsNullOrEmpty(musicProperties.Album))
-                music.Album = musicProperties.Album;
-            else
-                music.Album = "未知专辑";
-
-            if (!string.IsNullOrEmpty(musicProperties.Artist))
-                music.Artist = musicProperties.Artist;
-            else
-                music.Artist = "未知艺术家";
-            music.Year = musicProperties.Year;
-            music.Bitrate = musicProperties.Bitrate;
-            music.Duration = musicProperties.Duration.ToString().Substring(3, 5);
-            music.TrackNumber = musicProperties.TrackNumber;
-
-            if (file.FileType == ".ac3" || file.FileType == ".m4a")
-            {
-                return music;
-            }
-            UwpStorageFileAbstraction uwpStorageFileAbstraction = new UwpStorageFileAbstraction(file);
-            TagLib.File.IFileAbstraction fileAbstraction = uwpStorageFileAbstraction;
-            TagLib.File _file;
-            try
-            {
-                _file = TagLib.File.Create(fileAbstraction, ReadStyle.Average);
-                music.DiscNumber = _file.Tag.Disc;
-            }
-            catch
-            {
-
-            }
-
-            return music;
+                return timeValue.ToString();
         }
 
-        public static ExternalMusic MusicToExternalMusic(Music music)
+        public static void SetMusicCache(Music music)
         {
-            ExternalMusic externalMusic = new ExternalMusic();
-            externalMusic.Title = music.Title;
-            externalMusic.Artist = music.Artist;
-            externalMusic.Album = music.Album;
-            externalMusic.TrackNumber = music.TrackNumber;
-            externalMusic.DiscNumber = music.DiscNumber;
-            externalMusic.Duration = music.Duration;
-            externalMusic.Year = music.Year;
-            externalMusic.Bitrate = music.Bitrate;
-            externalMusic.DataCode = music.DataCode;
-            return externalMusic;
+            if(music.MusicType == MusicType.Local)
+            {
+                SQLiteManager.MusicDataBasesHelper.SetTableData(StorageManager.LocalFolderPath + "\\Cache\\MusicCache.db", "LocalMusic",music);
+            }else if(music.MusicType == MusicType.ExternalLocal)
+                SQLiteManager.MusicDataBasesHelper.SetTableData(StorageManager.LocalFolderPath + "\\Cache\\MusicCache.db", "ExternalLocalMusic", music);
+        }
+        public static Music GetMusicFromMusicTypeAndDataCode(MusicType musicType,String dataCode)
+        {
+            List<Music>musicList = Library.Music.Where(x => x.MusicType == musicType && x.DataCode == dataCode).ToList();
+            if(musicList.Count>0)
+                return musicList[0];
+            return null;
+        }
+        public static Music GetMusic(Music music)
+        {
+            if (music.MusicType == MusicType.Removable)
+            {
+                return RemovableDeviceManager.GetMusic(music);
+            }
+            else
+            {
+                List<Music> musicList = Library.Music.Where(x => x.MusicType == music.MusicType && x.DataCode == music.DataCode).ToList();
+                if (musicList.Count > 0)
+                    return musicList[0];
+            }
+            return null;
         }
 
-        public static OnlineMusic MusicToOnlineMusic(Music music)
+        //OnlineMusic
+        public static void AddOnlineMusic(Music music)
         {
-            OnlineMusic OnlineMusic = new OnlineMusic();
-            OnlineMusic.Title = music.Title;
-            OnlineMusic.Artist = music.Artist;
-            OnlineMusic.Album = music.Album;
-            OnlineMusic.TrackNumber = music.TrackNumber;
-            OnlineMusic.DiscNumber = music.DiscNumber;
-            OnlineMusic.Duration = music.Duration;
-            OnlineMusic.Year = music.Year;
-            OnlineMusic.Bitrate = music.Bitrate;
-            OnlineMusic.DataCode = music.DataCode;
-            return OnlineMusic;
+            Library.Music.Add(music);
+            SQLiteManager.MusicDataBasesHelper.SetTableData(StorageManager.LocalFolderPath + "\\DataBases\\MusicLibrary.db", "OnlineMusic", music);
+        }
+
+        public static void DeleteOnlineMusic(Music music)
+        {
+            Library.Music.Remove(music);
+            SQLiteManager.MusicDataBasesHelper.DeleteTableData(StorageManager.LocalFolderPath + "\\DataBases\\MusicLibrary.db", "OnlineMusic", music.DataCode);
+        }
+
+        //ExternalLocalMusic
+        public static async Task<bool> AddExternalMusicAsync()
+        {
+            var picker = new Windows.Storage.Pickers.FileOpenPicker();
+            picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
+            picker.FileTypeFilter.Add(".mp3");
+            picker.FileTypeFilter.Add(".flac");
+            picker.FileTypeFilter.Add(".wma");
+            picker.FileTypeFilter.Add(".m4a");
+            picker.FileTypeFilter.Add(".ac3");
+            picker.FileTypeFilter.Add(".aac");
+
+            List<StorageFile> storageFiles = (await picker.PickMultipleFilesAsync()).ToList();
+            if (storageFiles == null || storageFiles.Count == 0) return false;
+
+            for(int i = 0; i < storageFiles.Count; i++)
+            {
+                String key = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.Add(storageFiles[i]);
+                Library.ExternalMusicKeys.Add(key);
+                Library.MusicFiles.Add(storageFiles[i]);
+                Music music = new Music { MusicType = MusicType.ExternalLocal, DataCode = storageFiles[i].Path ,Key = Library.ExternalMusicKeys[i] };
+                Library.Music.Add(await GetLocalMusicPropertiesAsync(music));
+            }
+            await SaveExternalDataAsync();
+            return true;
+        }
+
+        public static async Task<bool> AddExternalMusicAsync(StorageFile storageFile)
+        {
+            if (storageFile == null) return false;
+
+            String key = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.Add(storageFile);
+            Library.ExternalMusicKeys.Add(key);
+            Library.MusicFiles.Add(storageFile);
+            Music music = new Music { MusicType = MusicType.ExternalLocal, DataCode = storageFile.Path ,Key = key };
+            Library.Music.Add(await GetLocalMusicPropertiesAsync(music));
+            await SaveExternalDataAsync();
+            return true;
+        }
+
+        public static async Task SaveExternalDataAsync()
+        {
+            JsonArray jsonArray = new JsonArray();
+            for (int i = 0; i < Library.ExternalMusicKeys.Count; i++)
+            {
+                jsonArray.Add(JsonValue.CreateStringValue(Library.ExternalMusicKeys[i]));
+            }
+            await StorageManager.WriteFile(ApplicationData.Current.LocalFolder, "ExternalLocalMusic.json", jsonArray.ToString());
+        }
+
+        public static async Task<bool> DeleteExternalLocalMusicAsync(Music music)
+        {
+            //SQLiteManager.MusicListDataBasesHelper.DeleteTableData(StorageManager.LocalFolderPath + "\\DataBases\\MusicLibrary.db", "OnlineMusic", music.DataCode);
+            Library.ExternalMusicKeys.Remove(music.Key);
+            bool isSuccess = Library.Music.Remove(music);
+            await SaveExternalDataAsync();
+            return isSuccess;
         }
 
         public static async Task<StorageFile> GetExternalMusicByExternalMusicKeyAsync(string Key)
@@ -233,144 +218,52 @@ namespace CorePlanetMusicPlayer.Models
             return await Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.GetFileAsync(Key);
         }
 
-        public static Music GetMusicFromJsonObject(JsonObject jsonObject)
+        public static async Task<List<String>> GetExternalLocalMusicKeys()
         {
-            Music music = new Music();
-            music.Title = jsonObject.GetNamedString("title");
-            music.Artist = jsonObject.GetNamedString("artist");
-            music.Album = jsonObject.GetNamedString("album");
-            music.TrackNumber = (uint)jsonObject.GetNamedNumber("trackNumber");
-            music.DiscNumber = (uint)jsonObject.GetNamedNumber("discNumber");
-            music.Duration = jsonObject.GetNamedString("duration");
-            music.Year = (uint)jsonObject.GetNamedNumber("year");
-            music.Bitrate = (uint)jsonObject.GetNamedNumber("bitrate");
-            music.DataCode = jsonObject.GetNamedString("dataCode");
-            switch (jsonObject.GetNamedString("musicType"))
+            if (await StorageManager.IsItemExsitAsync(ApplicationData.Current.LocalFolder, "ExternalLocalMusic.json"))
             {
-                case "Local":
-                    music.MusicType = MusicType.Local;
-                    break;
-                case "Online":
-                    music.MusicType = MusicType.Online;
-                    break;
-                case "External":
-                    music.MusicType = MusicType.External;
-                    break;
+                String fileStr = "";
+                fileStr = await StorageManager.ReadFile(ApplicationData.Current.LocalFolder, "ExternalLocalMusic.json");
+                JsonArray jsonArray = new JsonArray();
+                if (JsonArray.TryParse(fileStr, out jsonArray) == false)
+                    return new List<String>();
+                List<String> Keys = new List<String>();
+                for (uint i = 0; i < jsonArray.Count; i++)
+                    Keys.Add(jsonArray.GetStringAt(i));
+                return Keys;
             }
-            return music;
+            else
+            {
+                await ApplicationData.Current.LocalFolder.CreateFileAsync("ExternalLocalMusic.json");
+                return new List<String>();
+            }
+
         }
 
-        public static async Task UpdateLocalMusicPropertiesCacheAsync()
+        //RemovableMusic
+        //public static async Task GetRemovableMusic()
+        //{
+
+        //}
+
+        public static async Task AddTempMusicToLibraryAsync(Music music)
         {
-            JsonArray jsonArray = new JsonArray();
-            JsonObject jsonObject;
-            for(int i=0;i<Library.Music.LocalMusic.Count;i++)
-            {
-                jsonArray.Add(JsonHelper.MusicToJsonObject(Library.Music.LocalMusic[i]));
-            }
-            StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
-            storageFolder = await StorageHelper.GetFolder(storageFolder,"Cache");
-            await StorageHelper.WriteFile(storageFolder, "LocalMusicProperties.json", jsonArray.Stringify());
+            StorageFile storageFile = Library.TempMusicFiles.Find(x => x.Path == music.DataCode.Replace("pmptemp-",""));
+            if(storageFile == null) return;
+            if (Library.MusicFiles.Find(x => x.Path == storageFile.Path) != null) return;
+            await AddExternalMusicAsync(storageFile);
+            //LibraryManager.AddExternalMusicFromLocalMusic(localMusic);
         }
 
-        public static async Task<bool> ReadLocalMusicPropertiesCacheAsync()
+        public static TimeSpan CountMusicDuration(List<Music>musicList)
         {
-            StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
-            storageFolder = await StorageHelper.GetFolder(storageFolder, "Cache");
-            string fileStr = await StorageHelper.ReadFile(storageFolder, "LocalMusicProperties.json");
-            JsonArray jsonArray = new JsonArray();
-            if (JsonArray.TryParse(fileStr, out jsonArray) == false)
-                return false;
-            for(int i=0;i<jsonArray.Count;i++)
+            TimeSpan timeSpan = TimeSpan.FromSeconds(0);
+            for (int i = 0; i < musicList.Count; i++)
             {
-                JsonObject jsonObject = jsonArray[i].GetObject();
-                LocalMusic localMusic = Library.Music.LocalMusic.Find(x=>x.DataCode == jsonObject.GetNamedString("dataCode"));
-                if (localMusic == null)
-                    continue;
-                Music music = JsonHelper.JsonObjectToMusic(jsonObject);
-                localMusic.Title = music.Title;
-                localMusic.Artist = music.Artist;
-                localMusic.Album = music.Album;
-                localMusic.DiscNumber = music.DiscNumber;
-                localMusic.TrackNumber = music.TrackNumber;
-                localMusic.Year = music.Year;
-                localMusic.Bitrate = music.Bitrate;
-                localMusic.Duration = music.Duration;
+                if (!String.IsNullOrEmpty(musicList[i].Duration))
+                    timeSpan += TimeSpan.Parse("00:" + musicList[i].Duration);
             }
-            return true;
-        }
-
-        public static async Task UpdateExternalMusicPropertiesCacheAsync()
-        {
-            JsonArray jsonArray = new JsonArray();
-            JsonObject jsonObject;
-            for (int i = 0; i < Library.Music.ExternalMusic.Count; i++)
-            {
-                jsonArray.Add(JsonHelper.MusicToJsonObject(Library.Music.ExternalMusic[i]));
-            }
-            StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
-            storageFolder = await StorageHelper.GetFolder(storageFolder, "Cache");
-            await StorageHelper.WriteFile(storageFolder, "ExternalMusicProperties.json", jsonArray.Stringify());
-        }
-
-        public static async Task<bool> ReadExternalMusicPropertiesCacheAsync()
-        {
-            StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
-            storageFolder = await StorageHelper.GetFolder(storageFolder, "Cache");
-            string fileStr = await StorageHelper.ReadFile(storageFolder, "ExternalMusicProperties.json");
-            JsonArray jsonArray = new JsonArray();
-            if (JsonArray.TryParse(fileStr, out jsonArray) == false)
-                return false;
-            for (int i = 0; i < jsonArray.Count; i++)
-            {
-                JsonObject jsonObject = jsonArray[i].GetObject();
-                ExternalMusic externalMusic = Library.Music.ExternalMusic.Find(x => x.DataCode == jsonObject.GetNamedString("dataCode"));
-                if (externalMusic == null)
-                    continue;
-                Music music = JsonHelper.JsonObjectToMusic(jsonObject);
-                externalMusic.Title = music.Title;
-                externalMusic.Artist = music.Artist;
-                externalMusic.Album = music.Album;
-                externalMusic.DiscNumber = music.DiscNumber;
-                externalMusic.TrackNumber = music.TrackNumber;
-                externalMusic.Year = music.Year;
-                externalMusic.Bitrate = music.Bitrate;
-                externalMusic.Duration = music.Duration;
-            }
-            return true;
+            return timeSpan;
         }
     }
-
-    public class LocalMusic:Music
-    {
-        public LocalMusic() 
-        { 
-            MusicType = MusicType.Local;
-        }
-        public StorageFile StorageFile { get; set; }
-    }
-
-    
-
-    public class ExternalMusic:Music
-    {
-        public ExternalMusic()
-        {
-            MusicType = MusicType.External;
-        }
-        public bool Temp { get; set; } = false;//不在库中
-        public String Key { get; set; }
-    }
-
-    public class OnlineMusic:Music
-    {
-        public OnlineMusic()
-        {
-            MusicType = MusicType.Online;
-        }
-        public bool Temp { get; set; } = false;//不在库中
-        public String URL { get; set; } = "";
-        public String CoverURL { get; set; } = "";
-    }
-
 }
