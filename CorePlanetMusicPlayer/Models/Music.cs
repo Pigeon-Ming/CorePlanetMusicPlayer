@@ -1,6 +1,7 @@
 ﻿using CorePlanetMusicPlayer.Models.TagLibHelper;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace CorePlanetMusicPlayer.Models
 {
     public enum MusicType
     {
-        Local, Online,
+        Local,ExternalLocal, Online,Removable
     }
 
     public class Music
@@ -28,6 +29,9 @@ namespace CorePlanetMusicPlayer.Models
         public uint TrackNumber { get; set; }//专辑内音乐编号
         public uint DiscNumber { get; set; }//专辑内音乐编号
         public String Duration { get; set; } = "";//长度
+        public String Key { get; set; } = "";
+
+        public bool Available { get; set; } = true;
     }
 
     public class MusicManager
@@ -38,13 +42,24 @@ namespace CorePlanetMusicPlayer.Models
         //    return music;
         //}
 
+        public static async Task<Music> GetRemovableMusicPropertiesAsync(StorageFile storageFile,Music music)
+        {
+            return await GetMusicPropertiesByStorageFile(storageFile, music);
+        }
+
         public static async Task<Music> GetLocalMusicPropertiesAsync(Music music)
         {
-            if (music.MusicType != MusicType.Local)
+            if (music.MusicType != MusicType.Local && music.MusicType != MusicType.ExternalLocal)
             {
                 return music;
             }
             StorageFile storageFile = Library.MusicFiles.Find(x => x.Path == music.DataCode);
+            return await GetMusicPropertiesByStorageFile(storageFile,music);
+        }
+
+        public static async Task<Music> GetMusicPropertiesByStorageFile(StorageFile storageFile,Music music)
+        {
+            if (storageFile == null) return music;
             music.Title = storageFile.Name;
             music.Album = "未知专辑";
             music.Artist = "未知艺术家";
@@ -62,7 +77,8 @@ namespace CorePlanetMusicPlayer.Models
                 music.Artist = musicProperties.Artist;
             music.Year = musicProperties.Year;
             music.Bitrate = musicProperties.Bitrate;
-            music.Duration = musicProperties.Duration.ToString().Substring(3, 5);
+            
+            music.Duration = TimeToString(musicProperties.Duration.Minutes) +":"+ TimeToString(musicProperties.Duration.Seconds);
             music.TrackNumber = musicProperties.TrackNumber;
 
             if (storageFile.FileType == ".ac3" || storageFile.FileType == ".m4a")
@@ -74,6 +90,7 @@ namespace CorePlanetMusicPlayer.Models
             TagLib.File _file;
             try
             {
+                Debug.WriteLine("正在获取文件信息：" + file.Path);
                 _file = TagLib.File.Create(fileAbstraction, ReadStyle.Average);
                 music.DiscNumber = _file.Tag.Disc;
             }
@@ -84,12 +101,22 @@ namespace CorePlanetMusicPlayer.Models
 
             return music;
         }
+
+        private static string TimeToString(int timeValue)
+        {
+            if (timeValue < 10)
+                return "0" + timeValue;
+            else
+                return timeValue.ToString();
+        }
+
         public static void SetMusicCache(Music music)
         {
             if(music.MusicType == MusicType.Local)
             {
                 SQLiteManager.MusicDataBasesHelper.SetTableData(StorageManager.LocalFolderPath + "\\Cache\\MusicCache.db", "LocalMusic",music);
-            }
+            }else if(music.MusicType == MusicType.ExternalLocal)
+                SQLiteManager.MusicDataBasesHelper.SetTableData(StorageManager.LocalFolderPath + "\\Cache\\MusicCache.db", "ExternalLocalMusic", music);
         }
         public static Music GetMusicFromMusicTypeAndDataCode(MusicType musicType,String dataCode)
         {
@@ -100,21 +127,30 @@ namespace CorePlanetMusicPlayer.Models
         }
         public static Music GetMusic(Music music)
         {
-            List<Music> musicList = Library.Music.Where(x => x.MusicType == music.MusicType && x.DataCode == music.DataCode).ToList();
-            if (musicList.Count > 0)
-                return musicList[0];
+            if (music.MusicType == MusicType.Removable)
+            {
+                return RemovableDeviceManager.GetMusic(music);
+            }
+            else
+            {
+                List<Music> musicList = Library.Music.Where(x => x.MusicType == music.MusicType && x.DataCode == music.DataCode).ToList();
+                if (musicList.Count > 0)
+                    return musicList[0];
+            }
             return null;
         }
 
         //OnlineMusic
         public static void AddOnlineMusic(Music music)
         {
+            Library.Music.Add(music);
             SQLiteManager.MusicDataBasesHelper.SetTableData(StorageManager.LocalFolderPath + "\\DataBases\\MusicLibrary.db", "OnlineMusic", music);
         }
 
         public static void DeleteOnlineMusic(Music music)
         {
-            SQLiteManager.MusicDataBasesHelper.DeleteTableData(StorageManager.LocalFolderPath + "\\DataBases\\Library.db", "OnlineMusic", music.DataCode);
+            Library.Music.Remove(music);
+            SQLiteManager.MusicDataBasesHelper.DeleteTableData(StorageManager.LocalFolderPath + "\\DataBases\\MusicLibrary.db", "OnlineMusic", music.DataCode);
         }
 
         //ExternalLocalMusic
@@ -130,28 +166,51 @@ namespace CorePlanetMusicPlayer.Models
             picker.FileTypeFilter.Add(".ac3");
             picker.FileTypeFilter.Add(".aac");
 
-            StorageFile storageFile = await picker.PickSingleFileAsync();
+            List<StorageFile> storageFiles = (await picker.PickMultipleFilesAsync()).ToList();
+            if (storageFiles == null || storageFiles.Count == 0) return false;
+
+            for(int i = 0; i < storageFiles.Count; i++)
+            {
+                String key = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.Add(storageFiles[i]);
+                Library.ExternalMusicKeys.Add(key);
+                Library.MusicFiles.Add(storageFiles[i]);
+                Music music = new Music { MusicType = MusicType.ExternalLocal, DataCode = storageFiles[i].Path ,Key = Library.ExternalMusicKeys[i] };
+                Library.Music.Add(await GetLocalMusicPropertiesAsync(music));
+            }
+            await SaveExternalDataAsync();
+            return true;
+        }
+
+        public static async Task<bool> AddExternalMusicAsync(StorageFile storageFile)
+        {
             if (storageFile == null) return false;
 
             String key = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.Add(storageFile);
             Library.ExternalMusicKeys.Add(key);
-
-            SaveExternalData();
+            Library.MusicFiles.Add(storageFile);
+            Music music = new Music { MusicType = MusicType.ExternalLocal, DataCode = storageFile.Path ,Key = key };
+            Library.Music.Add(await GetLocalMusicPropertiesAsync(music));
+            await SaveExternalDataAsync();
             return true;
         }
 
-        public static void SaveExternalData()
+        public static async Task SaveExternalDataAsync()
         {
             JsonArray jsonArray = new JsonArray();
             for (int i = 0; i < Library.ExternalMusicKeys.Count; i++)
             {
                 jsonArray.Add(JsonValue.CreateStringValue(Library.ExternalMusicKeys[i]));
             }
+            await StorageManager.WriteFile(ApplicationData.Current.LocalFolder, "ExternalLocalMusic.json", jsonArray.ToString());
         }
 
-        public static void DeleteExternalLocalMusic(Music music)
+        public static async Task<bool> DeleteExternalLocalMusicAsync(Music music)
         {
             //SQLiteManager.MusicListDataBasesHelper.DeleteTableData(StorageManager.LocalFolderPath + "\\DataBases\\MusicLibrary.db", "OnlineMusic", music.DataCode);
+            Library.ExternalMusicKeys.Remove(music.Key);
+            bool isSuccess = Library.Music.Remove(music);
+            await SaveExternalDataAsync();
+            return isSuccess;
         }
 
         public static async Task<StorageFile> GetExternalMusicByExternalMusicKeyAsync(string Key)
@@ -179,6 +238,32 @@ namespace CorePlanetMusicPlayer.Models
                 return new List<String>();
             }
 
+        }
+
+        //RemovableMusic
+        //public static async Task GetRemovableMusic()
+        //{
+
+        //}
+
+        public static async Task AddTempMusicToLibraryAsync(Music music)
+        {
+            StorageFile storageFile = Library.TempMusicFiles.Find(x => x.Path == music.DataCode.Replace("pmptemp-",""));
+            if(storageFile == null) return;
+            if (Library.MusicFiles.Find(x => x.Path == storageFile.Path) != null) return;
+            await AddExternalMusicAsync(storageFile);
+            //LibraryManager.AddExternalMusicFromLocalMusic(localMusic);
+        }
+
+        public static TimeSpan CountMusicDuration(List<Music>musicList)
+        {
+            TimeSpan timeSpan = TimeSpan.FromSeconds(0);
+            for (int i = 0; i < musicList.Count; i++)
+            {
+                if (!String.IsNullOrEmpty(musicList[i].Duration))
+                    timeSpan += TimeSpan.Parse("00:" + musicList[i].Duration);
+            }
+            return timeSpan;
         }
     }
 }

@@ -57,7 +57,7 @@ namespace CorePlanetMusicPlayer.Models
                     artists.Add(ArtistString.Substring(0, semicolonIndex));
                     ArtistString = ArtistString.Substring(semicolonIndex + 1);
                     semicolonIndex = ArtistString.IndexOf(";");
-                } while (semicolonIndex != -1);
+                } while (semicolonIndex != -1 && semicolonIndex != 0);
                 artists.Add(ArtistString);
             }
             return artists;

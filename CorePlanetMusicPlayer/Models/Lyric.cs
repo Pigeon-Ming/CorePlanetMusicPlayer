@@ -1,11 +1,13 @@
 ﻿using CorePlanetMusicPlayer.Models.TagLibHelper;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TagLib;
 using Windows.Storage;
+using Windows.UI.StartScreen;
 using Windows.UI.Xaml;
 
 namespace CorePlanetMusicPlayer.Models
@@ -22,6 +24,10 @@ namespace CorePlanetMusicPlayer.Models
         public static List<Lyric> CurrentLyrics { get; set; } = new List<Lyric>();
         public static int CurrentLyricIndex { get; set; } = -1;
         public static string CurrentLyricContent { get; set; } = "";
+        public static string CurrentLyricTranslation { get; set; } = "";
+
+        public static bool ExchangeLyricsAndTranslations { get; set; } = false;
+
         public static DispatcherTimer LyricServiceTimer { get; set; } = new DispatcherTimer();
 
         public static EventHandler CurrentLyricIndexChanged;
@@ -34,6 +40,7 @@ namespace CorePlanetMusicPlayer.Models
                 if (CurrentLyrics == null)
                 {
                     CurrentLyricContent = "";
+                    CurrentLyricTranslation = "";
                     LyricServiceTimer.Stop();
                     return;
                 }
@@ -41,24 +48,28 @@ namespace CorePlanetMusicPlayer.Models
             };
         }
 
+        static String CurrentPosition = "";
+
         static void GetCurrentLyric()
         {
             if (PlayCore.MainMediaPlayer.MediaPlayer == null) return;
-            if (PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Length < 10)
-                return;
             //Debug.WriteLine(PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Substring(3, 7));
-            int newIndex = CurrentLyrics.FindIndex(x => x.Time == PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString().Substring(3, 7));
+            CurrentPosition = PlayCore.MainMediaPlayer.MediaPlayer.Position.ToString();
+            if (CurrentPosition.Length < 11)
+                return;
+            int newIndex = CurrentLyrics.FindIndex(x => x.Time == CurrentPosition.Substring(3, 7));
             if (newIndex == -1 || newIndex == CurrentLyricIndex || newIndex >= CurrentLyrics.Count) return;
             CurrentLyricIndex = newIndex;
             CurrentLyricContent = CurrentLyrics[newIndex].Content;
-            CurrentLyricIndexChanged.Invoke(null, null);
+            CurrentLyricTranslation = CurrentLyrics[newIndex].Translation;
+            CurrentLyricIndexChanged?.Invoke(null, null);
         }
 
         public static async Task<List<Lyric>> LoadLyricsFromStorageAsync(Music music)
         {
             if (KnownFolders.MusicLibrary == null)
                 return null;
-            StorageFolder LyricFolder = await StorageManager.GetFolder(KnownFolders.MusicLibrary, "Lyrics");
+            StorageFolder LyricFolder = await StorageManager.GetApplicationDataFolder("Lyrics");
             if (await StorageManager.IsItemExsitAsync(LyricFolder, StorageManager.RemoveIllegalCharacter(music.Artist + " - " + music.Title + " - " + music.Album + ".lrc")))
             {
                 return ProcessLyricsFromLRCFileString(await StorageManager.ReadFile(await LyricFolder.GetFileAsync(StorageManager.RemoveIllegalCharacter(music.Artist + " - " + music.Title + " - " + music.Album + ".lrc"))));
@@ -101,7 +112,18 @@ namespace CorePlanetMusicPlayer.Models
             //}
             return null;
         }
-        public static async Task<List<Lyric>> LoadLyricsFromFilePikerAsync(bool? CopyToLyricsFolder = false)
+
+        public static async Task<bool> RemoveLyricAsync(Music music)
+        {
+            StorageFolder LyricFolder = await StorageManager.GetApplicationDataFolder("Lyrics");
+            Debug.WriteLine("删除歌词："+music.Artist + " - " + music.Title + " - " + music.Album + ".lrc");
+            IStorageItem item = await LyricFolder.TryGetItemAsync(StorageManager.RemoveIllegalCharacter(music.Artist + " - " + music.Title + " - " + music.Album + ".lrc"));
+            if(item == null)
+                return false;
+            await ((StorageFile)item).DeleteAsync();
+            return true;
+        }
+        public static async Task<List<Lyric>> LoadLyricsFromFilePikerAsync(Music music,bool? CopyToLyricsFolder = false)
         {
             var picker = new Windows.Storage.Pickers.FileOpenPicker();
             picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
@@ -112,11 +134,9 @@ namespace CorePlanetMusicPlayer.Models
             if (file == null) return null;
             if (CopyToLyricsFolder == true)
             {
-                if (KnownFolders.MusicLibrary != null)
-                {
-                    StorageFolder LyricFolder = await StorageManager.GetFolder(KnownFolders.MusicLibrary, "Lyrics");
-                    await file.CopyAsync(LyricFolder);
-                }
+                StorageFolder LyricFolder = await StorageManager.GetApplicationDataFolder("Lyrics");
+                await RemoveLyricAsync(music);
+                file = await file.CopyAsync(LyricFolder,StorageManager.RemoveIllegalCharacter(music.Artist + " - " + music.Title + " - " + music.Album + ".lrc"));
             }
             if (file.FileType == ".lrc")
                 return ProcessLyricsFromLRCFileString(await StorageManager.ReadFile(file));
@@ -236,9 +256,31 @@ namespace CorePlanetMusicPlayer.Models
             }
             for (int i = 0; i < lyrics.Count; i++)
             {
-                lyrics[i].Time = lyrics[i].Time.Substring(0, 7);
+                if (lyrics[i].Time.Length > 6)
+                    lyrics[i].Time = lyrics[i].Time.Substring(0, 7);
+                else
+                {
+                    return null;
+                }
             }
+            if (ExchangeLyricsAndTranslations)
+                ExchangeCurrentLyricsAndTranslations();
             return lyrics;
+        }
+
+        public static void ExchangeCurrentLyricsAndTranslations()
+        {
+            if (CurrentLyrics == null)
+                return;
+            String temp;
+            for (int i=0;i<CurrentLyrics.Count;i++)
+            {
+                if (String.IsNullOrEmpty(CurrentLyrics[i].Content) || String.IsNullOrEmpty(CurrentLyrics[i].Translation))
+                    continue;
+                temp = CurrentLyrics[i].Content;
+                CurrentLyrics[i].Content = CurrentLyrics[i].Translation;
+                CurrentLyrics[i].Translation = temp;
+            }
         }
     }
 }
