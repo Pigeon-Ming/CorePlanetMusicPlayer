@@ -1,0 +1,45 @@
+﻿<UserControl
+    x:Class="CorePlanetMusicPlayer6.Controls.LibraryPage.MusicListFilterControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:CorePlanetMusicPlayer6.Controls.LibraryPage"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <Grid>
+        <TextBlock x:ConnectionId='2' Text="筛选不可用" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" Name="ErrorTipTextBlock"/>
+        <Grid x:ConnectionId='3' Name="FilterControls">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="筛选"/>
+            <ScrollViewer Grid.Row="1">
+                <Grid>
+                    <StackPanel Padding="8">
+                        <TextBlock Text="音乐来源"/>
+                        <CheckBox x:ConnectionId='6' Content="系统音乐库" Name="MusicSource_SystemLibrary_CheckBox"/>
+                        <CheckBox x:ConnectionId='7' Content="添加扫描的文件夹" Name="MusicSource_ScanedFolder_CheckBox"/>
+                        <CheckBox x:ConnectionId='8' Content="最近打开的文件" Name="MusicSource_RecentOpendFile_CheckBox"/>
+                        <CheckBox x:ConnectionId='9' Content="流式传输的音频" Name="MusicSource_StreamAudio_CheckBox"/>
+                    </StackPanel>
+
+                </Grid>
+            </ScrollViewer>
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Button x:ConnectionId='4' Content="恢复默认" HorizontalAlignment="Stretch" Margin="4,4,2,4" Name="RestoreDefaultButton"                                   />
+                <Button x:ConnectionId='5' Content="应用筛选" Grid.Column="1" HorizontalAlignment="Stretch" Margin="2,4,4,4" Name="ApplyFilterButton"                                />
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>
+

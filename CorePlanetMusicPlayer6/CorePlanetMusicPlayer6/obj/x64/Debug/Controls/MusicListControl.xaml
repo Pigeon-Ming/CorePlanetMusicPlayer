@@ -1,0 +1,100 @@
+﻿<UserControl x:ConnectionId='1'
+    x:Class="CorePlanetMusicPlayer6.Controls.MusicListControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:CorePlanetMusicPlayer6.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:models="using:CorePlanetMusicPlayer.Models" xmlns:datamodels="using:CorePlanetMusicPlayer6.ViewModels.DataModels"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+    <UserControl.Resources>
+        <DataTemplate x:Key="BasicListViewItemTemplate"                           >
+            <Grid>
+                <TextBlock Text="{Binding Title}"/>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="BasicListViewItemTemplateWithCover"                                  >
+            <Grid Padding="4">
+                <Grid.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Margin" Value="4,0,4,0"/>
+                    </Style>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid Grid.RowSpan="2" Height="48" Width="48" Margin="4" Background="#20484848">
+                    <Image Source="{Binding Cover}"/>
+                </Grid>
+                <TextBlock Grid.RowSpan="2" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Music.Title}"/>
+                <TextBlock Grid.RowSpan="2" Grid.Column="2" VerticalAlignment="Center" Text="{Binding Music.Artist}"/>
+                <TextBlock Grid.RowSpan="2" Grid.Column="3" VerticalAlignment="Center" Text="{Binding Music.Album}"/>
+                <TextBlock Grid.RowSpan="2" Grid.Column="4" VerticalAlignment="Center" Text="{Binding Music.Duration}"/>
+            </Grid>
+        </DataTemplate>
+        <MenuFlyout x:ConnectionId='2' x:Name="DefaultMusicMenu"                          >
+            <MenuFlyoutItem x:ConnectionId='3'                                                        x:FieldModifier="public"                                                    MaxWidth="300">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon  Glyph="&#xEC4F;" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+            <MenuFlyoutSeparator/>
+            <MenuFlyoutItem x:ConnectionId='4' Text="播放" Name="Menu_Play"                                         >
+                <MenuFlyoutItem.Icon>
+                    <FontIcon  Glyph="&#xE102;" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem x:ConnectionId='5' Text="下一曲播放" Name="Menu_PlayNext"                                             >
+                <MenuFlyoutItem.Icon>
+                    <FontIcon  Glyph="&#xEC57;" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem x:ConnectionId='6' Text="加入播放队列" Name="Menu_AddToPlayQueue"                                                   >
+                <MenuFlyoutItem.Icon>
+                    <FontIcon  Glyph="&#xE14C;" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+            <MenuFlyoutSeparator/>
+            <MenuFlyoutItem x:ConnectionId='7' Text="查看专辑" Name="Menu_Album"                                              >
+                <MenuFlyoutItem.Icon>
+                    <FontIcon  Glyph="&#xE93C;" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem x:ConnectionId='8' Text="查看艺术家" Name="Menu_Artist"                                               >
+                <MenuFlyoutItem.Icon>
+                    <FontIcon  Glyph="&#xF8B2;" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+            <MenuFlyoutSeparator/>
+            <MenuFlyoutItem x:ConnectionId='9' Text="保存到播放列表" Name="Menu_SaveToPlaylist"                                                   >
+                <MenuFlyoutItem.Icon>
+                    <FontIcon  Glyph="&#xE728;" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem x:ConnectionId='10' Text="详情信息" Name="Menu_Detail"                                             >
+                <MenuFlyoutItem.Icon>
+                    <FontIcon  Glyph="&#xE142;" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+        </MenuFlyout>
+    </UserControl.Resources>
+    <Grid>
+        <ListView x:ConnectionId='15' x:FieldModifier="public" Name="MainListView"                                       >
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+    </Grid>
+</UserControl>
+

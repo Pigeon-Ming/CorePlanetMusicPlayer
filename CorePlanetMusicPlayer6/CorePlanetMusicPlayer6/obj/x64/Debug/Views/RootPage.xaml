@@ -1,0 +1,59 @@
+﻿<Page x:ConnectionId='1'
+    x:Class="CorePlanetMusicPlayer6.Views.RootPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:CorePlanetMusicPlayer6.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:controls="using:CorePlanetMusicPlayer6.Controls"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                        >
+
+    <Grid>
+        <NavigationView x:ConnectionId='2' IsBackButtonVisible="Collapsed" Name="MainNavigationView" IsSettingsVisible="True"                                                       >
+            <NavigationView.AutoSuggestBox>
+                <AutoSuggestBox PlaceholderText="搜索"/>
+            </NavigationView.AutoSuggestBox>
+            <NavigationView.MenuItems>
+                <NavigationViewItem Content="主页" Tag="Home">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE80F;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="库" Tag="Library">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE8F1;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="专辑" Tag="Album">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE93C;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="艺术家" Tag="Artist">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE8CF;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItemSeparator/>
+                <NavigationViewItem Content="播放列表" Tag="Playlist">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xEA37;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.MenuItems>
+            <NavigationView.Content>
+                
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Frame x:ConnectionId='3' Name="MainFrame"                                />
+                    <controls:PlayBarControl Grid.Row="1"/>
+                </Grid>
+            </NavigationView.Content>
+        </NavigationView>
+    </Grid>
+</Page>
+

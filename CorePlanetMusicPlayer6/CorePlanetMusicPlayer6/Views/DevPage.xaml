@@ -1,0 +1,40 @@
+﻿<Page
+    x:Class="CorePlanetMusicPlayer6.Views.DevPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:CorePlanetMusicPlayer6.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <ScrollViewer>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="库"/>
+                    <Grid Grid.Row="1">
+                        <StackPanel>
+                            <Button Content="读取系统音乐库" Name="Library_ReadLibrary" Click="Library_ReadLibrary_Click"/>
+                            <Button Content="打开文件夹" Name="Library_OpenFolder" Click="Library_OpenFolder_Click"/>
+                            <Button Content="打开文件" Name="Library_OpenFile" Click="Library_OpenFile_Click"/>
+                            <Button Content="清空音乐库" Name="Library_ClearLibrary" Click="Library_ClearLibrary_Click"/>
+                        </StackPanel>
+                    </Grid>
+                    <Grid Grid.Row="1">
+                        
+                    </Grid>
+                </Grid>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</Page>

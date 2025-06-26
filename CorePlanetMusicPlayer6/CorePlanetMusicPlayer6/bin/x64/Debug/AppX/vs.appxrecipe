@@ -1,0 +1,256 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Machine>LAPTOP-BDMCAHIF</Machine>
+    <WindowsUser>zouqi</WindowsUser>
+    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+    <TargetOsVersion>10.0</TargetOsVersion>
+    <TargetOsDescription>Windows 10.0</TargetOsDescription>
+    <SolutionConfiguration>Debug|x64</SolutionConfiguration>
+    <PackageArchitecture>x64</PackageArchitecture>
+    <PackageIdentityName>1feae7dd-53fc-415d-9221-2f966e80768b</PackageIdentityName>
+    <PackageIdentityPublisher>CN=zouqi</PackageIdentityPublisher>
+    <IntermediateOutputPath>D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\obj\x64\Debug\</IntermediateOutputPath>
+    <RemoteDeploymentType>
+    </RemoteDeploymentType>
+    <PackageRegistrationPath>
+    </PackageRegistrationPath>
+    <RemoveNonLayoutFiles>true</RemoveNonLayoutFiles>
+    <DeployOptionalPackages>false</DeployOptionalPackages>
+    <WindowsSdkPath>D:\Windows Kits\10\</WindowsSdkPath>
+    <LayoutDir>D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\bin\x64\Debug\AppX</LayoutDir>
+    <RegisteredManifestChecksum>D24141CED32C607413DC3D0057BD1FD285B9909517DE8993E8BBD388D9163366</RegisteredManifestChecksum>
+    <RegisteredPackageMoniker>1feae7dd-53fc-415d-9221-2f966e80768b_1.0.0.0_x64__e5m0mm8c1d5pt</RegisteredPackageMoniker>
+    <RegisteredUserModeAppID>1feae7dd-53fc-415d-9221-2f966e80768b_e5m0mm8c1d5pt!App</RegisteredUserModeAppID>
+    <RegisteredPackageID>1feae7dd-53fc-415d-9221-2f966e80768b</RegisteredPackageID>
+    <RegisteredPackagePublisher>CN=zouqi</RegisteredPackagePublisher>
+    <RegisteredVersion>1.0.0.0</RegisteredVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <AppXManifest Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\bin\x64\Debug\Core\AppxManifest.xml">
+      <PackagePath>AppxManifest.xml</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2025-04-24T04:32:33.960</Modified>
+    </AppXManifest>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\bin\x64\Debug\CorePlanetMusicPlayer6.exe">
+      <PackagePath>entrypoint\CorePlanetMusicPlayer6.exe</PackagePath>
+      <Modified>2025-04-24T04:32:33.417</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Program Files %28x86%29\Microsoft SDKs\UWPNuGetPackages\runtime.win10-x64.microsoft.netcore.universalwindowsplatform\6.2.14\runtimes\win10-x64\lib\uap10.0.15138\System.Runtime.dll">
+      <PackagePath>System.Runtime.dll</PackagePath>
+      <Modified>2022-06-10T14:23:28.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\zouqi\.nuget\packages\taglibsharp\2.3.0\lib\netstandard2.0\TagLibSharp.dll">
+      <PackagePath>TagLibSharp.dll</PackagePath>
+      <Modified>2022-07-30T00:03:00.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer.Models\bin\x64\Debug\CorePlanetMusicPlayer.Models.dll">
+      <PackagePath>CorePlanetMusicPlayer.Models.dll</PackagePath>
+      <Modified>2025-04-18T06:10:14.140</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer.PlayCore\bin\x64\Debug\CorePlanetMusicPlayer.PlayCore.dll">
+      <PackagePath>CorePlanetMusicPlayer.PlayCore.dll</PackagePath>
+      <Modified>2025-04-24T04:14:35.680</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Windows Kits\10\bin\10.0.18362.0\XamlCompiler\Microsoft.UI.Xaml.Markup.winmd">
+      <PackagePath>Microsoft.UI.Xaml.Markup.winmd</PackagePath>
+      <Modified>2019-03-18T10:36:56.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\Properties\Default.rd.xml">
+      <PackagePath>Properties\Default.rd.xml</PackagePath>
+      <Modified>2025-03-05T15:16:38.714</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\Assets\LockScreenLogo.scale-200.png">
+      <PackagePath>Assets\LockScreenLogo.scale-200.png</PackagePath>
+      <Modified>2025-02-18T04:49:35.893</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\Assets\SplashScreen.scale-200.png">
+      <PackagePath>Assets\SplashScreen.scale-200.png</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2025-02-18T04:49:35.894</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\Assets\Square150x150Logo.scale-200.png">
+      <PackagePath>Assets\Square150x150Logo.scale-200.png</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2025-02-18T04:49:35.894</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\Assets\Square44x44Logo.scale-200.png">
+      <PackagePath>Assets\Square44x44Logo.scale-200.png</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2025-02-18T04:49:35.894</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
+      <PackagePath>Assets\Square44x44Logo.targetsize-24_altform-unplated.png</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2025-02-18T04:49:35.895</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\Assets\StoreLogo.png">
+      <PackagePath>Assets\StoreLogo.png</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2025-02-18T04:49:35.895</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\Assets\Wide310x150Logo.scale-200.png">
+      <PackagePath>Assets\Wide310x150Logo.scale-200.png</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2025-02-18T04:49:35.895</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\bin\x64\Debug\CorePlanetMusicPlayer6.xr.xml">
+      <PackagePath>CorePlanetMusicPlayer6.xr.xml</PackagePath>
+      <Modified>2025-04-24T04:30:50.123</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\bin\x64\Debug\App.xbf">
+      <PackagePath>App.xbf</PackagePath>
+      <Modified>2025-04-24T04:32:33.327</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\bin\x64\Debug\Controls\LibraryPage\MusicListFilterControl.xbf">
+      <PackagePath>Controls\LibraryPage\MusicListFilterControl.xbf</PackagePath>
+      <Modified>2025-04-24T04:32:33.327</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\bin\x64\Debug\Controls\MusicListControl.xbf">
+      <PackagePath>Controls\MusicListControl.xbf</PackagePath>
+      <Modified>2025-04-24T04:32:33.327</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\bin\x64\Debug\Controls\PlayBarControl.xbf">
+      <PackagePath>Controls\PlayBarControl.xbf</PackagePath>
+      <Modified>2025-04-24T04:32:33.327</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\bin\x64\Debug\MainPage.xbf">
+      <PackagePath>MainPage.xbf</PackagePath>
+      <Modified>2025-04-24T04:32:33.327</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\bin\x64\Debug\Views\AlbumsPage.xbf">
+      <PackagePath>Views\AlbumsPage.xbf</PackagePath>
+      <Modified>2025-04-24T04:32:33.327</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\bin\x64\Debug\Views\ArtistsPage.xbf">
+      <PackagePath>Views\ArtistsPage.xbf</PackagePath>
+      <Modified>2025-04-24T04:32:33.327</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\bin\x64\Debug\Views\DevPage.xbf">
+      <PackagePath>Views\DevPage.xbf</PackagePath>
+      <Modified>2025-04-24T04:32:33.327</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\bin\x64\Debug\Views\HomePage.xbf">
+      <PackagePath>Views\HomePage.xbf</PackagePath>
+      <Modified>2025-04-24T04:32:33.327</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\bin\x64\Debug\Views\LibraryPage.xbf">
+      <PackagePath>Views\LibraryPage.xbf</PackagePath>
+      <Modified>2025-04-24T04:32:33.327</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\bin\x64\Debug\Views\PlaylistsPage.xbf">
+      <PackagePath>Views\PlaylistsPage.xbf</PackagePath>
+      <Modified>2025-04-24T04:32:33.327</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\bin\x64\Debug\Views\RootPage.xbf">
+      <PackagePath>Views\RootPage.xbf</PackagePath>
+      <Modified>2025-04-24T04:32:33.327</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Windows Kits\10\UnionMetadata\10.0.18362.0\Windows.winmd">
+      <PackagePath>WinMetadata\Windows.winmd</PackagePath>
+      <Modified>2019-03-18T09:33:42.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\bin\x64\Debug\resources.pri">
+      <PackagePath>resources.pri</PackagePath>
+      <Modified>2025-04-24T04:30:51.122</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Projects\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\bin\x64\Debug\Core\CorePlanetMusicPlayer6.exe">
+      <PackagePath>CorePlanetMusicPlayer6.exe</PackagePath>
+      <Modified>2025-04-24T04:32:33.960</Modified>
+    </AppxPackagedFile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResolvedSDKReference Include="C:\Program Files %28x86%29\Microsoft SDKs\UWPNuGetPackages\runtime.win10-x86.microsoft.net.uwpcoreruntimesdk\2.2.14\build\..\tools\Appx\Microsoft.NET.CoreRuntime.2.2.appx">
+      <Name>Microsoft.NET.CoreRuntime.2.2</Name>
+      <Version>2.2.31331.1</Version>
+      <Architecture>x86</Architecture>
+      <FrameworkIdentity>Name = Microsoft.NET.CoreRuntime.2.2, MinVersion = 2.2.31331.1, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
+      <AppxLocation>C:\Program Files %28x86%29\Microsoft SDKs\UWPNuGetPackages\runtime.win10-x86.microsoft.net.uwpcoreruntimesdk\2.2.14\build\..\tools\Appx\Microsoft.NET.CoreRuntime.2.2.appx</AppxLocation>
+      <MoreInfo>
+      </MoreInfo>
+    </ResolvedSDKReference>
+    <ResolvedSDKReference Include="C:\Program Files %28x86%29\Microsoft SDKs\UWPNuGetPackages\runtime.win10-x64.microsoft.net.uwpcoreruntimesdk\2.2.14\build\..\tools\Appx\Microsoft.NET.CoreRuntime.2.2.appx">
+      <Name>Microsoft.NET.CoreRuntime.2.2</Name>
+      <Version>2.2.31331.1</Version>
+      <Architecture>x64</Architecture>
+      <FrameworkIdentity>Name = Microsoft.NET.CoreRuntime.2.2, MinVersion = 2.2.31331.1, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
+      <AppxLocation>C:\Program Files %28x86%29\Microsoft SDKs\UWPNuGetPackages\runtime.win10-x64.microsoft.net.uwpcoreruntimesdk\2.2.14\build\..\tools\Appx\Microsoft.NET.CoreRuntime.2.2.appx</AppxLocation>
+      <MoreInfo>
+      </MoreInfo>
+    </ResolvedSDKReference>
+    <ResolvedSDKReference Include="C:\Program Files %28x86%29\Microsoft SDKs\UWPNuGetPackages\runtime.win10-arm.microsoft.net.uwpcoreruntimesdk\2.2.14\build\..\tools\Appx\Microsoft.NET.CoreRuntime.2.2.appx">
+      <Name>Microsoft.NET.CoreRuntime.2.2</Name>
+      <Version>2.2.31331.1</Version>
+      <Architecture>arm</Architecture>
+      <FrameworkIdentity>Name = Microsoft.NET.CoreRuntime.2.2, MinVersion = 2.2.31331.1, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
+      <AppxLocation>C:\Program Files %28x86%29\Microsoft SDKs\UWPNuGetPackages\runtime.win10-arm.microsoft.net.uwpcoreruntimesdk\2.2.14\build\..\tools\Appx\Microsoft.NET.CoreRuntime.2.2.appx</AppxLocation>
+      <MoreInfo>
+      </MoreInfo>
+    </ResolvedSDKReference>
+    <ResolvedSDKReference Include="C:\Program Files %28x86%29\Microsoft SDKs\UWPNuGetPackages\runtime.win10-x86.microsoft.net.uwpcoreruntimesdk\2.2.14\build\..\tools\Appx\Microsoft.NET.CoreFramework.Debug.2.2.appx">
+      <Name>Microsoft.NET.CoreFramework.Debug.2.2</Name>
+      <Version>2.2.31327.1</Version>
+      <Architecture>x86</Architecture>
+      <FrameworkIdentity>Name = Microsoft.NET.CoreFramework.Debug.2.2, MinVersion = 2.2.31327.1, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
+      <AppxLocation>C:\Program Files %28x86%29\Microsoft SDKs\UWPNuGetPackages\runtime.win10-x86.microsoft.net.uwpcoreruntimesdk\2.2.14\build\..\tools\Appx\Microsoft.NET.CoreFramework.Debug.2.2.appx</AppxLocation>
+      <MoreInfo>
+      </MoreInfo>
+    </ResolvedSDKReference>
+    <ResolvedSDKReference Include="C:\Program Files %28x86%29\Microsoft SDKs\UWPNuGetPackages\runtime.win10-x64.microsoft.net.uwpcoreruntimesdk\2.2.14\build\..\tools\Appx\Microsoft.NET.CoreFramework.Debug.2.2.appx">
+      <Name>Microsoft.NET.CoreFramework.Debug.2.2</Name>
+      <Version>2.2.31327.1</Version>
+      <Architecture>x64</Architecture>
+      <FrameworkIdentity>Name = Microsoft.NET.CoreFramework.Debug.2.2, MinVersion = 2.2.31327.1, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
+      <AppxLocation>C:\Program Files %28x86%29\Microsoft SDKs\UWPNuGetPackages\runtime.win10-x64.microsoft.net.uwpcoreruntimesdk\2.2.14\build\..\tools\Appx\Microsoft.NET.CoreFramework.Debug.2.2.appx</AppxLocation>
+      <MoreInfo>
+      </MoreInfo>
+    </ResolvedSDKReference>
+    <ResolvedSDKReference Include="C:\Program Files %28x86%29\Microsoft SDKs\UWPNuGetPackages\runtime.win10-arm.microsoft.net.uwpcoreruntimesdk\2.2.14\build\..\tools\Appx\Microsoft.NET.CoreFramework.Debug.2.2.appx">
+      <Name>Microsoft.NET.CoreFramework.Debug.2.2</Name>
+      <Version>2.2.31327.1</Version>
+      <Architecture>arm</Architecture>
+      <FrameworkIdentity>Name = Microsoft.NET.CoreFramework.Debug.2.2, MinVersion = 2.2.31327.1, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
+      <AppxLocation>C:\Program Files %28x86%29\Microsoft SDKs\UWPNuGetPackages\runtime.win10-arm.microsoft.net.uwpcoreruntimesdk\2.2.14\build\..\tools\Appx\Microsoft.NET.CoreFramework.Debug.2.2.appx</AppxLocation>
+      <MoreInfo>
+      </MoreInfo>
+    </ResolvedSDKReference>
+    <ResolvedSDKReference Include="C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.VCLibs\14.0\">
+      <Name>Microsoft.VCLibs.140.00.Debug</Name>
+      <Version>14.0.33519.0</Version>
+      <Architecture>ARM</Architecture>
+      <FrameworkIdentity>Name = Microsoft.VCLibs.140.00.Debug, MinVersion = 14.0.33519.0, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
+      <AppxLocation>C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.VCLibs\14.0\.\AppX\Debug\ARM\Microsoft.VCLibs.ARM.Debug.14.00.appx</AppxLocation>
+      <MoreInfo>
+      </MoreInfo>
+    </ResolvedSDKReference>
+    <ResolvedSDKReference Include="C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.VCLibs\14.0\">
+      <Name>Microsoft.VCLibs.140.00.Debug</Name>
+      <Version>14.0.33519.0</Version>
+      <Architecture>ARM64</Architecture>
+      <FrameworkIdentity>Name = Microsoft.VCLibs.140.00.Debug, MinVersion = 14.0.33519.0, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
+      <AppxLocation>C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.VCLibs\14.0\.\AppX\Debug\ARM64\Microsoft.VCLibs.ARM64.Debug.14.00.appx</AppxLocation>
+      <MoreInfo>
+      </MoreInfo>
+    </ResolvedSDKReference>
+    <ResolvedSDKReference Include="C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.VCLibs\14.0\">
+      <Name>Microsoft.VCLibs.140.00.Debug</Name>
+      <Version>14.0.33519.0</Version>
+      <Architecture>x64</Architecture>
+      <FrameworkIdentity>Name = Microsoft.VCLibs.140.00.Debug, MinVersion = 14.0.33519.0, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
+      <AppxLocation>C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.VCLibs\14.0\.\AppX\Debug\x64\Microsoft.VCLibs.x64.Debug.14.00.appx</AppxLocation>
+      <MoreInfo>
+      </MoreInfo>
+    </ResolvedSDKReference>
+    <ResolvedSDKReference Include="C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.VCLibs\14.0\">
+      <Name>Microsoft.VCLibs.140.00.Debug</Name>
+      <Version>14.0.33519.0</Version>
+      <Architecture>x86</Architecture>
+      <FrameworkIdentity>Name = Microsoft.VCLibs.140.00.Debug, MinVersion = 14.0.33519.0, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
+      <AppxLocation>C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.VCLibs\14.0\.\AppX\Debug\x86\Microsoft.VCLibs.x86.Debug.14.00.appx</AppxLocation>
+      <MoreInfo>
+      </MoreInfo>
+    </ResolvedSDKReference>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,87 @@
+﻿<Page
+    x:Class="CorePlanetMusicPlayer6.Views.LibraryPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:CorePlanetMusicPlayer6.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:controls="using:CorePlanetMusicPlayer6.Controls"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Loaded="Page_Loaded"
+    SizeChanged="Page_SizeChanged">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <CommandBar DefaultLabelPosition="Right" VerticalContentAlignment="Center" HorizontalContentAlignment="Stretch">
+            <CommandBar.Content>
+                <Grid Margin="8,0,0,0" Name="PageHeaderGrid">
+                    <TextBlock Text="音乐库"/>
+                </Grid>
+            </CommandBar.Content>
+            <CommandBar.PrimaryCommands>
+                <AppBarButton Label="筛选">
+                    <FontIcon Glyph="&#xE71C;"/>
+                    <AppBarButton.Flyout>
+                        <Flyout x:Name="FilterFlyout" Opened="FilterFlyout_Opened" Closed="FilterFlyout_Closed">
+
+                        </Flyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+                <AppBarButton Label="管理扫描位置">
+                    <FontIcon Glyph="&#xE8B7;"/>
+                </AppBarButton>
+                <AppBarButton Label="打开文件">
+                    <FontIcon Glyph="&#xE8E5;"/>
+                </AppBarButton>
+            </CommandBar.PrimaryCommands>
+        </CommandBar>
+        <Grid Grid.Row="2">
+            <controls:MusicListControl x:Name="MainMusicListControl"/>
+        </Grid>
+        <CommandBar Grid.Row="1" >
+
+            <CommandBar.PrimaryCommands>
+                <AppBarButton Label="多选">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xE762;"/>
+                    </AppBarButton.Icon>
+                </AppBarButton>
+                <AppBarSeparator/>
+                <AppBarButton Label="播放">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xE768;"/>
+                    </AppBarButton.Icon>
+                </AppBarButton>
+                <AppBarButton Label="下一首播放">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xEC57;"/>
+                    </AppBarButton.Icon>
+                </AppBarButton>
+                <AppBarButton Label="加入播放队列">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xED0E;"/>
+                    </AppBarButton.Icon>
+                </AppBarButton>
+                <AppBarButton Label="查看专辑">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xE93C;"/>
+                    </AppBarButton.Icon>
+                </AppBarButton>
+                <AppBarButton Label="查看艺术家">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xE8CF;"/>
+                    </AppBarButton.Icon>
+                </AppBarButton>
+                <AppBarButton Label="添加到播放列表">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xE728;"/>
+                    </AppBarButton.Icon>
+                </AppBarButton>
+            </CommandBar.PrimaryCommands>
+        </CommandBar>
+    </Grid>
+</Page>
