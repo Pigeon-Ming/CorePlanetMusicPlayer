@@ -10,6 +10,6 @@
 <h3>相关网站：</h3>
 <p>CorePMP项目站点：<a href="http://pigeonming.top/index.php/coreplanetmusicplayer">点击这里</a>
 <p>
-<p>基于CorePMP开发的完整PlanetMusicPlayer（未开源,且暂未更新至最新的CorePMPVersion5）：<a
+<p>基于CorePMP开发的完整PlanetMusicPlayer（未开源）：<a
                 href="http://pigeonming.top/index.php/planetmusicplayer">点击这里</a></p>
 <hr>
