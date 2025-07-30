@@ -10501,11 +10501,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Projects\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.PlayCore\\CorePlanetMusicPlayer.PlayCore.csproj",
+      "projectUniqueName": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.PlayCore\\CorePlanetMusicPlayer.PlayCore.csproj",
       "projectName": "CorePlanetMusicPlayer.PlayCore",
-      "projectPath": "D:\\Projects\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.PlayCore\\CorePlanetMusicPlayer.PlayCore.csproj",
+      "projectPath": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.PlayCore\\CorePlanetMusicPlayer.PlayCore.csproj",
       "packagesPath": "C:\\Users\\zouqi\\.nuget\\packages\\",
-      "outputPath": "D:\\Projects\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.PlayCore\\obj\\",
+      "outputPath": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.PlayCore\\obj\\",
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
       "UsingMicrosoftNETSdk": false,
@@ -10528,8 +10528,8 @@
       "frameworks": {
         "uap10.0.17763": {
           "projectReferences": {
-            "D:\\Projects\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.Models\\CorePlanetMusicPlayer.Models.csproj": {
-              "projectPath": "D:\\Projects\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.Models\\CorePlanetMusicPlayer.Models.csproj"
+            "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.Models\\CorePlanetMusicPlayer.Models.csproj": {
+              "projectPath": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.Models\\CorePlanetMusicPlayer.Models.csproj"
             }
           }
         }

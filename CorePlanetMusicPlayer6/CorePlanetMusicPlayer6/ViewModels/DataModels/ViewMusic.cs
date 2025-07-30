@@ -26,7 +26,7 @@ namespace CorePlanetMusicPlayer6.ViewModels.DataModels
         //    }
         //    return viewMusicList;
         //}
-        public static async Task<ViewMusic> CreateViewMusicAsync(IMusic music)
+        public static async Task<ViewMusic> CreateViewMusicAsync(IMusic music)//小缩略图
         {
             if (music == null)
                 return null;
@@ -36,7 +36,6 @@ namespace CorePlanetMusicPlayer6.ViewModels.DataModels
             {
                 LocalMusic localMusic = (LocalMusic)music;
                 viewMusic.Cover = await LocalMusicManager.GetCover_TagLibAsync(localMusic);
-                
             }
             else if(music is OnlineMusic)
             {

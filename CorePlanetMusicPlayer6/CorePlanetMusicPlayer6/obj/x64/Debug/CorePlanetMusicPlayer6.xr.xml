@@ -6,7 +6,6 @@
     <RootPropertyPathName Name="Album" />
     <RootPropertyPathName Name="Artist" />
     <RootPropertyPathName Name="Title" />
-    <RootPropertyPathName Name="Cover" />
   </Roots.PropertyPathNames>
   <Roots.RootTypes>
     <RootType FullName="Windows.UI.Xaml.Application">
@@ -102,10 +101,6 @@
       <RootProperty Name="Margin" />
     </RootType>
     <RootType FullName="Windows.UI.Xaml.Data.Binding" />
-    <RootType FullName="Windows.UI.Xaml.Controls.Image">
-      <RootProperty Name="Source" />
-      <RootProperty Name="Name" />
-    </RootType>
     <RootType FullName="Windows.UI.Xaml.Controls.ListView">
       <RootProperty Name="Name" />
       <RootProperty Name="ItemContainerStyle" />
@@ -117,6 +112,10 @@
       <RootProperty Name="Background" />
     </RootType>
     <RootType FullName="CorePlanetMusicPlayer6.Controls.MusicListControl" />
+    <RootType FullName="Windows.UI.Xaml.Controls.Image">
+      <RootProperty Name="Name" />
+      <RootProperty Name="Source" />
+    </RootType>
     <RootType FullName="CorePlanetMusicPlayer6.Controls.PlayBarControl" />
     <RootType FullName="Windows.UI.Xaml.Controls.Page">
       <RootProperty Name="Background" />

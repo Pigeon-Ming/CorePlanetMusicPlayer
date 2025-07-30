@@ -46,7 +46,7 @@ namespace CorePlanetMusicPlayer.Models.TagLibModels
             TagLib.File _file;
             try
             {
-                Debug.WriteLine("正在获取文件信息：" + file.Path);
+                //Debug.WriteLine("正在获取文件信息：" + file.Path);
                 _file = TagLib.File.Create(fileAbstraction, ReadStyle.Average);
                 music.DiscNumber = _file.Tag.Disc;
             }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CorePlanetMusicPlayer.Models.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -36,7 +37,7 @@ namespace CorePlanetMusicPlayer.Models
                     str = str.Substring(str_LineFeed_Index + 1);
                     continue;
                 }
-                lyric.Time = str.Substring(1, str_DoseBracket_Index - 1);
+                lyric.Time = StringHelper.ConvertToTimeSpan(str.Substring(1, str_DoseBracket_Index - 1));//待优化
 
 
                 if (str.IndexOf("\r") - str.IndexOf("]") - 1 <= 0)
@@ -62,7 +63,7 @@ namespace CorePlanetMusicPlayer.Models
                     str_DoseBracket_Index = str.IndexOf("]");
                     if (str_DoseBracket_Index == -1) break;
                     lyric = new Lyric();
-                    lyric.Time = str.Substring(1, str_DoseBracket_Index - 1);
+                    lyric.Time = lyric.Time = StringHelper.ConvertToTimeSpan(str.Substring(1, str_DoseBracket_Index - 1));//待优化
                     if (str.Length - str.IndexOf("]") - 1 <= 0)
                         lyric.Content = "";
                     else

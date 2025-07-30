@@ -10619,11 +10619,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Projects\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6.csproj",
+      "projectUniqueName": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6.csproj",
       "projectName": "CorePlanetMusicPlayer6",
-      "projectPath": "D:\\Projects\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6.csproj",
+      "projectPath": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6.csproj",
       "packagesPath": "C:\\Users\\zouqi\\.nuget\\packages\\",
-      "outputPath": "D:\\Projects\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\obj\\",
+      "outputPath": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\obj\\",
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
       "UsingMicrosoftNETSdk": false,
@@ -10646,11 +10646,11 @@
       "frameworks": {
         "uap10.0.17763": {
           "projectReferences": {
-            "D:\\Projects\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.Models\\CorePlanetMusicPlayer.Models.csproj": {
-              "projectPath": "D:\\Projects\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.Models\\CorePlanetMusicPlayer.Models.csproj"
+            "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.Models\\CorePlanetMusicPlayer.Models.csproj": {
+              "projectPath": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.Models\\CorePlanetMusicPlayer.Models.csproj"
             },
-            "D:\\Projects\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.PlayCore\\CorePlanetMusicPlayer.PlayCore.csproj": {
-              "projectPath": "D:\\Projects\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.PlayCore\\CorePlanetMusicPlayer.PlayCore.csproj"
+            "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.PlayCore\\CorePlanetMusicPlayer.PlayCore.csproj": {
+              "projectPath": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.PlayCore\\CorePlanetMusicPlayer.PlayCore.csproj"
             }
           }
         }

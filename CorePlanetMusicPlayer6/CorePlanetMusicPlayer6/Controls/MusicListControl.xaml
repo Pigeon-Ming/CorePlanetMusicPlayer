@@ -33,7 +33,7 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <Grid Grid.RowSpan="2" Height="48" Width="48" Margin="4" Background="#20484848">
-                    <Image Source="{Binding Cover}"/>
+                    <!--<Image Source="{Binding Cover}"/>-->
                 </Grid>
                 <TextBlock Grid.RowSpan="2" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Music.Title}"/>
                 <TextBlock Grid.RowSpan="2" Grid.Column="2" VerticalAlignment="Center" Text="{Binding Music.Artist}"/>

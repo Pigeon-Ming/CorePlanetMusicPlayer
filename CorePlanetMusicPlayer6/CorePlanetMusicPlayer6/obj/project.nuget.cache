@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "BaZelmwarx0=",
+  "dgSpecHash": "FBzdBPGk8DA=",
   "success": true,
-  "projectFilePath": "D:\\Projects\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6.csproj",
+  "projectFilePath": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6.csproj",
   "expectedPackageFiles": [
     "C:\\Program Files (x86)\\Microsoft SDKs\\UWPNuGetPackages\\microsoft.net.native.compiler\\2.2.12-rel-31116-00\\microsoft.net.native.compiler.2.2.12-rel-31116-00.nupkg.sha512",
     "C:\\Program Files (x86)\\Microsoft SDKs\\UWPNuGetPackages\\microsoft.net.uwpcoreruntimesdk\\2.2.14\\microsoft.net.uwpcoreruntimesdk.2.2.14.nupkg.sha512",
