@@ -1,6 +1,7 @@
 ﻿using CorePlanetMusicPlayer.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -60,7 +61,7 @@ namespace CorePlanetMusicPlayer.PlayCore
 
     public class SystemMediaPlayer : IPlayEngine
     {
-        MediaPlayer MediaPlayer = new MediaPlayer();
+        MediaPlayer MediaPlayer { get; }
 
         SystemMediaTransportControls SMTCConrtols { get; set; }
 
@@ -77,14 +78,19 @@ namespace CorePlanetMusicPlayer.PlayCore
 
         public SystemMediaPlayer()
         {
-            SMTCConrtols = MediaPlayer.SystemMediaTransportControls;
-            SMTCConrtols.DisplayUpdater.Type = MediaPlaybackType.Music;
+            MediaPlayer = new MediaPlayer();
+            MediaPlayer.SystemMediaTransportControls.IsEnabled = false;
+            SMTCConrtols = MediaPlayer.SystemMediaTransportControls;//SystemMediaTransportControls.GetForCurrentView(); ;
+            
+            //SMTCConrtols.DisplayUpdater.Type = MediaPlaybackType.Music;
+            
             MediaPlayer.CurrentStateChanged += MediaPlayer_CurrentStateChanged;
             MediaPlayer.MediaOpened += MediaPlayer_MediaOpened;
         }
 
         private void MediaPlayer_MediaOpened(MediaPlayer sender, object args)
         {
+            Debug.WriteLine("MediaOpened");
             int newIndex = (int)((MediaPlaybackList)MediaPlayer.Source).CurrentItemIndex;
             if (PlayQueue.CurrentIndex != newIndex)
                 PlayQueue.SetCurrentIndex(newIndex);
@@ -120,7 +126,8 @@ namespace CorePlanetMusicPlayer.PlayCore
         {
             PlayQueue.Next();
             playMusic(PlayQueue.CurrentIndex);
-            SMTCManager.UpdateSMTC(SMTCConrtols, PlayQueue.GetCurrentMusic());
+            SMTCManager.UpdateSMTC(((MediaPlaybackList)MediaPlayer.Source).CurrentItem, PlayQueue.GetCurrentMusic());
+            //SMTCManager.UpdateSMTC(SMTCConrtols, PlayQueue.GetCurrentMusic());
         }
 
         public void Pause()
@@ -161,20 +168,36 @@ namespace CorePlanetMusicPlayer.PlayCore
 
         public void PlayMusic(IMusic music, List<IMusic> newPlayQueue, int currentMusicIndex)
         {
-            
+            if(MediaPlayer.Source != null)
+            {
+                ((MediaPlaybackList)MediaPlayer.Source).CurrentItemChanged -= MediaPlaybackList_CurrentItemChanged;
+            }
             MediaPlaybackList mediaPlaybackList = GetMediaPlayBackListFromIMusicList(newPlayQueue);
+            mediaPlaybackList.CurrentItemChanged += MediaPlaybackList_CurrentItemChanged;
+
             if (mediaPlaybackList == null)
                 return;
             
             PlayQueue.SetQueue(newPlayQueue);
             PlayQueue.SetCurrentIndex(currentMusicIndex);
             playMusic(mediaPlaybackList,currentMusicIndex);
-            SMTCManager.UpdateSMTC(SMTCConrtols, PlayQueue.GetCurrentMusic());
+            SMTCManager.UpdateSMTC(mediaPlaybackList.Items[currentMusicIndex], PlayQueue.GetCurrentMusic());
+            //SMTCManager.UpdateSMTC(SMTCConrtols, PlayQueue.GetCurrentMusic());
+        }
+
+        private void MediaPlaybackList_CurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
+        {
+            PlayQueue.SetCurrentIndex((int)sender.CurrentItemIndex);
+            SMTCManager.UpdateSMTC(((MediaPlaybackList)MediaPlayer.Source).Items[(int)sender.CurrentItemIndex], PlayQueue.GetCurrentMusic());
+            Debug.WriteLine($"CurrentItemChanged:{PlayQueue.CurrentIndex}");
         }
 
         private MediaPlaybackList GetMediaPlayBackListFromIMusicList(List<IMusic>musicList)
         {
             MediaPlaybackList mediaPlaybackList = new MediaPlaybackList();
+            //mediaPlaybackList.Items.Clear();
+            //mediaPlaybackList.CurrentItemChanged
+//            mediaPlaybackList.Items.Clear
             foreach(IMusic music in musicList)
             {
                 MediaPlaybackItem mediaPlaybackItem = GetMediaPlayBackItemFromIMusic(music);
@@ -182,6 +205,21 @@ namespace CorePlanetMusicPlayer.PlayCore
                     mediaPlaybackList.Items.Add(mediaPlaybackItem);
             }
             return mediaPlaybackList;
+        }
+
+        private List<MediaPlaybackItem> GetMediaPlayBackItemListFromIMusicList(List<IMusic> musicList)
+        {
+            //MediaPlaybackList mediaPlaybackList = new MediaPlaybackList();
+            List<MediaPlaybackItem> items = new List<MediaPlaybackItem>();
+            //mediaPlaybackList.CurrentItemChanged
+            //            mediaPlaybackList.Items.Clear
+            foreach (IMusic music in musicList)
+            {
+                MediaPlaybackItem mediaPlaybackItem = GetMediaPlayBackItemFromIMusic(music);
+                if (mediaPlaybackItem != null)
+                    items.Add(mediaPlaybackItem);
+            }
+            return items;
         }
 
         private MediaPlaybackItem GetMediaPlayBackItemFromIMusic(IMusic music)
@@ -207,7 +245,8 @@ namespace CorePlanetMusicPlayer.PlayCore
         {
             PlayQueue.Previous();
             playMusic(PlayQueue.CurrentIndex);
-            SMTCManager.UpdateSMTC(SMTCConrtols, PlayQueue.GetCurrentMusic());
+            SMTCManager.UpdateSMTC(((MediaPlaybackList)MediaPlayer.Source).CurrentItem, PlayQueue.GetCurrentMusic());
+            // SMTCManager.UpdateSMTC(SMTCConrtols, PlayQueue.GetCurrentMusic());
         }
 
         public void Stop()

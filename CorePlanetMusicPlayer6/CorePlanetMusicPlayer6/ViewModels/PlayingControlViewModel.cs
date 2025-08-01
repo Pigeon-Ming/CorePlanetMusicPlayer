@@ -4,9 +4,13 @@ using CorePlanetMusicPlayer6.Models;
 using CorePlanetMusicPlayer6.ViewModels.DataModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Core;
+using Windows.UI.Core;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -75,8 +79,14 @@ namespace CorePlanetMusicPlayer6.ViewModels
 
         async Task GetCoverAsync()
         {
-            ViewMusic viewMusic = await ViewMusicManager.FindViewMusicInViewMusicListAsync(ProgramData.ViewMusic,CurrentMusic,true);
-            CurrentMusicCover = viewMusic.Cover;
+            await CoreApplication.GetCurrentView().Dispatcher.RunAsync(CoreDispatcherPriority.Normal,async () =>
+            {
+                ViewMusic viewMusic = await ViewMusicManager.FindViewMusicInViewMusicListAsync(ProgramData.ViewMusic, CurrentMusic, true);
+                CurrentMusicCover = viewMusic.Cover;
+                
+            });
+            await Task.Delay(500);
+            Debug.WriteLine("Func: GetCoverAsync");
             StateChanged?.Invoke(this, null);
         }
 
