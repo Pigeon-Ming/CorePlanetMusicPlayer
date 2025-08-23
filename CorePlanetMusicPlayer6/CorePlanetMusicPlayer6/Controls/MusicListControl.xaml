@@ -7,7 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:models="using:CorePlanetMusicPlayer.Models" xmlns:datamodels="using:CorePlanetMusicPlayer6.ViewModels.DataModels"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    xmlns:viewmodel="using:CorePlanetMusicPlayer6.ViewModels">
     <UserControl.Resources>
         <DataTemplate x:Key="BasicListViewItemTemplate" x:DataType="models:IMusic">
             <Grid>
@@ -41,6 +42,7 @@
                 <TextBlock Grid.RowSpan="2" Grid.Column="4" VerticalAlignment="Center" Text="{Binding Music.Duration}"/>
             </Grid>
         </DataTemplate>
+        <viewmodel:TestViewModel/>
         <MenuFlyout x:Name="DefaultMusicMenu" Opened="MusicMenu_Opened">
             <MenuFlyoutItem Text="{x:Bind MusicMenuViewModel.SelectedMusic.Title}" x:FieldModifier="public" Click="{x:Bind MusicMenuViewModel.CopyMusicTitle}" MaxWidth="300">
                 <MenuFlyoutItem.Icon>

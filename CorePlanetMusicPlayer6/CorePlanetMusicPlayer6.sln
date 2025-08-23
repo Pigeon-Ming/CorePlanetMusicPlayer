@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorePlanetMusicPlayer.PlayC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorePlanetMusicPlayer.Controls", "CorePlanetMusicPlayer.Controls\CorePlanetMusicPlayer.Controls.csproj", "{6C71421F-747B-4E2C-A510-61BE12C53DAB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject", "UnitTestProject\UnitTestProject.csproj", "{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_WithoutTagLib|ARM = Debug_WithoutTagLib|ARM
@@ -161,6 +163,42 @@ Global
 		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Release|x64.Build.0 = Release|x64
 		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Release|x86.ActiveCfg = Release|x86
 		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Release|x86.Build.0 = Release|x86
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Debug_WithoutTagLib|ARM.ActiveCfg = Debug|ARM
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Debug_WithoutTagLib|ARM.Build.0 = Debug|ARM
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Debug_WithoutTagLib|ARM.Deploy.0 = Debug|ARM
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Debug_WithoutTagLib|ARM64.ActiveCfg = Debug|ARM64
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Debug_WithoutTagLib|ARM64.Build.0 = Debug|ARM64
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Debug_WithoutTagLib|ARM64.Deploy.0 = Debug|ARM64
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Debug_WithoutTagLib|x64.ActiveCfg = Debug|x64
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Debug_WithoutTagLib|x64.Build.0 = Debug|x64
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Debug_WithoutTagLib|x64.Deploy.0 = Debug|x64
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Debug_WithoutTagLib|x86.ActiveCfg = Debug|x86
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Debug_WithoutTagLib|x86.Build.0 = Debug|x86
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Debug_WithoutTagLib|x86.Deploy.0 = Debug|x86
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Debug|ARM.ActiveCfg = Debug|ARM
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Debug|ARM.Build.0 = Debug|ARM
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Debug|ARM.Deploy.0 = Debug|ARM
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Debug|ARM64.Build.0 = Debug|ARM64
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Debug|ARM64.Deploy.0 = Debug|ARM64
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Debug|x64.ActiveCfg = Debug|x64
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Debug|x64.Build.0 = Debug|x64
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Debug|x64.Deploy.0 = Debug|x64
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Debug|x86.ActiveCfg = Debug|x86
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Debug|x86.Build.0 = Debug|x86
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Debug|x86.Deploy.0 = Debug|x86
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Release|ARM.ActiveCfg = Release|ARM
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Release|ARM.Build.0 = Release|ARM
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Release|ARM.Deploy.0 = Release|ARM
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Release|ARM64.ActiveCfg = Release|ARM64
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Release|ARM64.Build.0 = Release|ARM64
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Release|ARM64.Deploy.0 = Release|ARM64
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Release|x64.ActiveCfg = Release|x64
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Release|x64.Build.0 = Release|x64
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Release|x64.Deploy.0 = Release|x64
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Release|x86.ActiveCfg = Release|x86
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Release|x86.Build.0 = Release|x86
+		{B7A1EE7B-F899-4F96-B0A3-7A6C3D4C1833}.Release|x86.Deploy.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

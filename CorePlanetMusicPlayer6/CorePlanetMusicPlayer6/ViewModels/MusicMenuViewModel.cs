@@ -1,64 +1,104 @@
 ﻿using CorePlanetMusicPlayer.Models;
 using CorePlanetMusicPlayer.PlayCore;
+using CorePlanetMusicPlayer6.Models;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.DataTransfer;
-using Windows.UI.Xaml;
+using System.Windows.Input;
 
 namespace CorePlanetMusicPlayer6.ViewModels
 {
-    public class MusicMenuViewModel
+    public class MusicMenuViewModel : Notify
     {
-        public IPlayEngine PlayEngine { get; set; }
+        private IMusic _menuMusic;
 
-        public IMusic SelectedMusic { get; set; }
-        public List<IMusic> MusicList { get; set; } = new List<IMusic>();
+        private IPlayEngine _playEngine;
 
-        public void CopyMusicTitle(object sender, RoutedEventArgs e)
+        private ObservableCollection<IMusic> _musicCollection = new ObservableCollection<IMusic>();
+
+        public IMusic MenuMusic
         {
-            DataPackage dataPackage = new DataPackage();
-            dataPackage.SetText(SelectedMusic.Title);
-            Clipboard.SetContent(dataPackage);
+            get { return _menuMusic; }
+            set { _menuMusic = value; OnPropertyChanged(); }
         }
 
-        public void Play(object sender, RoutedEventArgs e)
+        private IPlayEngine PlayEngine
         {
-            Debug.WriteLine("播放音乐：" + SelectedMusic.Title);
-            PlayEngine.PlayMusic(SelectedMusic,MusicList,MusicList.IndexOf(SelectedMusic));
+            get { return _playEngine; }
+            set { _playEngine = value; OnPropertyChanged(); }
         }
 
-        public void PlayNext(object sender, RoutedEventArgs e)
+        public ObservableCollection<IMusic> MusicCollection
         {
-            PlayEngine.GetPlayQueue().AddNextMusic(SelectedMusic);
+            get { return _musicCollection; }
+            set { _musicCollection = value; OnPropertyChanged(); }
         }
 
-        public void AddToPlayQueue(object sender, RoutedEventArgs e)
+
+
+        public MusicMenuViewModel()
         {
-            PlayEngine.GetPlayQueue().AddMusic(SelectedMusic);
+            Play = new ActionCommand(OnPlayClick);
         }
 
-        public void ViewAlbum(object sender, RoutedEventArgs e)
-        {
 
+        private ICommand _play;
+        public ICommand Play
+        {
+            get { return _play; }
+            set { _play = value; OnPropertyChanged(); }
         }
 
-        public void ViewArtist(object sender, RoutedEventArgs e)
+        private ICommand _playNext;
+        public ICommand PlayNext
         {
-
+            get { return _playNext; }
+            set { _playNext = value; OnPropertyChanged(); }
         }
 
-        public void ViewInfo(object sender, RoutedEventArgs e)
+        private ICommand _addToPlayQueue;
+        public ICommand AddToPlayQueue
         {
-
+            get { return _addToPlayQueue; }
+            set { _addToPlayQueue = value; OnPropertyChanged(); }
         }
 
-        public void SaveToPlaylist(object sender, RoutedEventArgs e)
+        private ICommand _viewAlbum;
+        public ICommand ViewAlbum
         {
+            get { return _viewAlbum; }
+            set { _viewAlbum = value; OnPropertyChanged(); }
+        }
 
+        private ICommand _viewArtist;
+        public ICommand ViewArtist
+        {
+            get { return _viewArtist; }
+            set { _viewArtist = value; OnPropertyChanged(); }
+        }
+
+        private ICommand _viewInfo;
+        public ICommand ViewInfo
+        {
+            get { return _viewInfo; }
+            set { _viewInfo = value; OnPropertyChanged(); }
+        }
+
+        private ICommand _saveToPlayList;
+        public ICommand SaveToPlayList
+        {
+            get { return _saveToPlayList; }
+            set { _saveToPlayList = value; OnPropertyChanged(); }
+        }
+
+
+
+        private void OnPlayClick()
+        {
+            PlayEngine.PlayMusic(MenuMusic, MusicCollection.ToList(), MusicCollection.IndexOf(MenuMusic));
         }
     }
 }

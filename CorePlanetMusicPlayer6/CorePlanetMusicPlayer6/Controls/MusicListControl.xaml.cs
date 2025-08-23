@@ -31,7 +31,7 @@ namespace CorePlanetMusicPlayer6.Controls
 
         public List<IMusic> MusicList { get; set; }
 
-        public MusicMenuViewModel MusicMenuViewModel { get; set; } = new MusicMenuViewModel();
+        public MusicMenuViewModel_Old MusicMenuViewModel { get; set; } = new MusicMenuViewModel_Old();
 
         public IPlayEngine PlayEngine { get; set; }
 

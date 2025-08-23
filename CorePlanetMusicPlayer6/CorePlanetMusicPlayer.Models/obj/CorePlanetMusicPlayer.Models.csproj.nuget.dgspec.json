@@ -1,21 +1,22 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Projects\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.Models\\CorePlanetMusicPlayer.Models.csproj": {}
+    "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.Models\\CorePlanetMusicPlayer.Models.csproj": {}
   },
   "projects": {
-    "D:\\Projects\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.Models\\CorePlanetMusicPlayer.Models.csproj": {
+    "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.Models\\CorePlanetMusicPlayer.Models.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Projects\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.Models\\CorePlanetMusicPlayer.Models.csproj",
+        "projectUniqueName": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.Models\\CorePlanetMusicPlayer.Models.csproj",
         "projectName": "CorePlanetMusicPlayer.Models",
-        "projectPath": "D:\\Projects\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.Models\\CorePlanetMusicPlayer.Models.csproj",
+        "projectPath": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.Models\\CorePlanetMusicPlayer.Models.csproj",
         "packagesPath": "C:\\Users\\zouqi\\.nuget\\packages\\",
-        "outputPath": "D:\\Projects\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.Models\\obj\\",
+        "outputPath": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.Models\\obj\\",
         "projectStyle": "PackageReference",
         "skipContentFileWrite": true,
+        "UsingMicrosoftNETSdk": false,
         "fallbackFolders": [
-          "D:\\VisualStudio\\Shared\\NuGetPackages",
+          "D:\\VS2022SDK\\NuGetPackages",
           "C:\\Program Files (x86)\\Microsoft SDKs\\UWPNuGetPackages\\"
         ],
         "configFilePaths": [
