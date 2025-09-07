@@ -10,6 +10,7 @@ namespace UnitTestProject
         [TestMethod]
         public void TestMethod1()
         {
+            Console.WriteLine("输出测试。");
         }
     }
 }
