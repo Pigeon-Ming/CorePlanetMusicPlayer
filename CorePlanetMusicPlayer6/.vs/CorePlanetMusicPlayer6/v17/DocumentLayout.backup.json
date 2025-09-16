@@ -3,7 +3,7 @@
   "WorkspaceRootPath": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{B0073D1B-607C-48C0-8078-BAC7C9B56F1B}|CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6.csproj|D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\coreplanetmusicplayer6\\viewmodels\\musicmenuviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{B0073D1B-607C-48C0-8078-BAC7C9B56F1B}|CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6.csproj|d:\\projects\\coreplanetmusicplayer\\coreplanetmusicplayer6\\coreplanetmusicplayer6\\viewmodels\\musicmenuviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B0073D1B-607C-48C0-8078-BAC7C9B56F1B}|CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6.csproj|solutionrelative:coreplanetmusicplayer6\\viewmodels\\musicmenuviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -15,28 +15,12 @@
       "RelativeMoniker": "D:0:0:{B0073D1B-607C-48C0-8078-BAC7C9B56F1B}|CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6.csproj|solutionrelative:coreplanetmusicplayer6\\viewmodels\\musicmenuviewmodel_old.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B0073D1B-607C-48C0-8078-BAC7C9B56F1B}|CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6.csproj|D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\coreplanetmusicplayer6\\controls\\musiclistcontrol.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{B0073D1B-607C-48C0-8078-BAC7C9B56F1B}|CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6.csproj|solutionrelative:coreplanetmusicplayer6\\controls\\musiclistcontrol.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{B0073D1B-607C-48C0-8078-BAC7C9B56F1B}|CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6.csproj|D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\coreplanetmusicplayer6\\viewmodels\\testviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B0073D1B-607C-48C0-8078-BAC7C9B56F1B}|CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6.csproj|solutionrelative:coreplanetmusicplayer6\\viewmodels\\testviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{B0073D1B-607C-48C0-8078-BAC7C9B56F1B}|CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6.csproj|D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\coreplanetmusicplayer6\\viewmodels\\librarypageviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B0073D1B-607C-48C0-8078-BAC7C9B56F1B}|CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6.csproj|solutionrelative:coreplanetmusicplayer6\\viewmodels\\librarypageviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B0073D1B-607C-48C0-8078-BAC7C9B56F1B}|CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6.csproj|D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\coreplanetmusicplayer6\\viewmodels\\datamodels\\viewmusic.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B0073D1B-607C-48C0-8078-BAC7C9B56F1B}|CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6.csproj|solutionrelative:coreplanetmusicplayer6\\viewmodels\\datamodels\\viewmusic.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{B0073D1B-607C-48C0-8078-BAC7C9B56F1B}|CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6.csproj|D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\coreplanetmusicplayer6\\models\\notify.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B0073D1B-607C-48C0-8078-BAC7C9B56F1B}|CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6.csproj|solutionrelative:coreplanetmusicplayer6\\models\\notify.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{B0073D1B-607C-48C0-8078-BAC7C9B56F1B}|CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6.csproj|D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\coreplanetmusicplayer6\\models\\actioncommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B0073D1B-607C-48C0-8078-BAC7C9B56F1B}|CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6.csproj|solutionrelative:coreplanetmusicplayer6\\models\\actioncommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{B0073D1B-607C-48C0-8078-BAC7C9B56F1B}|CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6.csproj|D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\coreplanetmusicplayer6\\viewmodels\\playingcontrolviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -96,7 +80,7 @@
               "RelativeDocumentMoniker": "CorePlanetMusicPlayer6\\ViewModels\\MusicMenuViewModel.cs",
               "ToolTip": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\ViewModels\\MusicMenuViewModel.cs",
               "RelativeToolTip": "CorePlanetMusicPlayer6\\ViewModels\\MusicMenuViewModel.cs",
-              "ViewState": "AgIAAAUAAAAAAAAAAAAqwA0AAAAXAAAAAAAAAA==",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAqwBcAAAAmAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-15T15:03:31.087Z",
               "IsPinned": true,
@@ -141,55 +125,12 @@
               "Name": "ST:0:0:{40ea2e6b-2121-4bb8-a43e-c83c04b51041}"
             },
             {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "MusicListControl.xaml",
-              "DocumentMoniker": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\Controls\\MusicListControl.xaml",
-              "RelativeDocumentMoniker": "CorePlanetMusicPlayer6\\Controls\\MusicListControl.xaml",
-              "ToolTip": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\Controls\\MusicListControl.xaml",
-              "RelativeToolTip": "CorePlanetMusicPlayer6\\Controls\\MusicListControl.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-08-15T14:57:28.085Z"
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "TestViewModel.cs",
-              "DocumentMoniker": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\ViewModels\\TestViewModel.cs",
-              "RelativeDocumentMoniker": "CorePlanetMusicPlayer6\\ViewModels\\TestViewModel.cs",
-              "ToolTip": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\ViewModels\\TestViewModel.cs",
-              "RelativeToolTip": "CorePlanetMusicPlayer6\\ViewModels\\TestViewModel.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-15T14:59:41.218Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "ViewMusic.cs",
-              "DocumentMoniker": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\ViewModels\\DataModels\\ViewMusic.cs",
-              "RelativeDocumentMoniker": "CorePlanetMusicPlayer6\\ViewModels\\DataModels\\ViewMusic.cs",
-              "ToolTip": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\ViewModels\\DataModels\\ViewMusic.cs",
-              "RelativeToolTip": "CorePlanetMusicPlayer6\\ViewModels\\DataModels\\ViewMusic.cs",
-              "ViewState": "AgIAACUAAAAAAAAAAAAkwAgAAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-15T14:21:27.575Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "ActionCommand.cs",
-              "DocumentMoniker": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\Models\\ActionCommand.cs",
-              "RelativeDocumentMoniker": "CorePlanetMusicPlayer6\\Models\\ActionCommand.cs",
-              "ToolTip": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\Models\\ActionCommand.cs",
-              "RelativeToolTip": "CorePlanetMusicPlayer6\\Models\\ActionCommand.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAABwAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-15T13:53:05.069Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
               "Title": "Notify.cs",
               "DocumentMoniker": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\Models\\Notify.cs",
               "RelativeDocumentMoniker": "CorePlanetMusicPlayer6\\Models\\Notify.cs",
@@ -201,7 +142,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 3,
               "Title": "LibraryPageViewModel.cs",
               "DocumentMoniker": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\ViewModels\\LibraryPageViewModel.cs",
               "RelativeDocumentMoniker": "CorePlanetMusicPlayer6\\ViewModels\\LibraryPageViewModel.cs",
@@ -213,7 +154,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 5,
               "Title": "PlayingControlViewModel.cs",
               "DocumentMoniker": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\ViewModels\\PlayingControlViewModel.cs",
               "RelativeDocumentMoniker": "CorePlanetMusicPlayer6\\ViewModels\\PlayingControlViewModel.cs",
@@ -225,7 +166,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 6,
               "Title": "ArtistsPage.xaml.cs",
               "DocumentMoniker": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\Views\\ArtistsPage.xaml.cs",
               "RelativeDocumentMoniker": "CorePlanetMusicPlayer6\\Views\\ArtistsPage.xaml.cs",
@@ -237,7 +178,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 7,
               "Title": "App.xaml.cs",
               "DocumentMoniker": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\App.xaml.cs",
               "RelativeDocumentMoniker": "CorePlanetMusicPlayer6\\App.xaml.cs",
@@ -249,7 +190,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 10,
               "Title": "AlbumsPage.xaml.cs",
               "DocumentMoniker": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\Views\\AlbumsPage.xaml.cs",
               "RelativeDocumentMoniker": "CorePlanetMusicPlayer6\\Views\\AlbumsPage.xaml.cs",
@@ -261,7 +202,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 9,
               "Title": "PlayBarControl.xaml.cs",
               "DocumentMoniker": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\Controls\\PlayBarControl.xaml.cs",
               "RelativeDocumentMoniker": "CorePlanetMusicPlayer6\\Controls\\PlayBarControl.xaml.cs",
@@ -273,7 +214,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 12,
               "Title": "SMTCManager.cs",
               "DocumentMoniker": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.PlayCore\\SMTCManager.cs",
               "RelativeDocumentMoniker": "CorePlanetMusicPlayer.PlayCore\\SMTCManager.cs",
@@ -285,7 +226,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 8,
               "Title": "PlayBarControl.xaml",
               "DocumentMoniker": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\Controls\\PlayBarControl.xaml",
               "RelativeDocumentMoniker": "CorePlanetMusicPlayer6\\Controls\\PlayBarControl.xaml",
@@ -296,7 +237,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 13,
               "Title": "RootPage.xaml",
               "DocumentMoniker": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer6\\Views\\RootPage.xaml",
               "RelativeDocumentMoniker": "CorePlanetMusicPlayer6\\Views\\RootPage.xaml",
@@ -307,7 +248,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 11,
               "Title": "PlayEngine.cs",
               "DocumentMoniker": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.PlayCore\\PlayEngine.cs",
               "RelativeDocumentMoniker": "CorePlanetMusicPlayer.PlayCore\\PlayEngine.cs",
@@ -319,7 +260,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 14,
               "Title": "IPlayEngine.cs",
               "DocumentMoniker": "D:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer6\\CorePlanetMusicPlayer.PlayCore\\IPlayEngine.cs",
               "RelativeDocumentMoniker": "CorePlanetMusicPlayer.PlayCore\\IPlayEngine.cs",

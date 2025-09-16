@@ -1,4 +1,0 @@
-D:\Projects\CorePlanetMusicPlayer\CorePlanetMusicPlayer6\CorePlanetMusicPlayer.Models\CorePlanetMusicPlayer.Models.csproj;x64
-D:\Projects\CorePlanetMusicPlayer\CorePlanetMusicPlayer6\CorePlanetMusicPlayer.Models\CorePlanetMusicPlayer.Models.csproj;x64
-D:\Projects\CorePlanetMusicPlayer\CorePlanetMusicPlayer6\CorePlanetMusicPlayer.PlayCore\CorePlanetMusicPlayer.PlayCore.csproj;x64
-D:\Projects\CorePlanetMusicPlayer\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6\CorePlanetMusicPlayer6.csproj;x64
