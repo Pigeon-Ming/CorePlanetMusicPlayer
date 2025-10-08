@@ -41,6 +41,23 @@
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
+      <Extensions>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="sound">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/mpeg">.mp3</uap:FileType>
+              <uap:FileType ContentType="audio/flac">.flac</uap:FileType>
+              <uap:FileType>.wma</uap:FileType>
+              <uap:FileType ContentType="audio/aac">.aac</uap:FileType>
+              <uap:FileType ContentType="audio/ac3">.ac3</uap:FileType>
+              <uap:FileType ContentType="audio/x-m4a">.m4a</uap:FileType>
+              <uap:FileType ContentType="audio/x-wav">.wav</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>音频文件</uap:DisplayName>
+            <uap:InfoTip>音频文件</uap:InfoTip>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+      </Extensions>
     </Application>
   </Applications>
 
@@ -48,5 +65,6 @@
     <Capability Name="internetClient" />
     <uap:Capability Name="musicLibrary"/>
     <uap3:Capability Name="backgroundMediaPlayback"/>
+    <uap:Capability Name="removableStorage"/>
   </Capabilities>
 </Package>

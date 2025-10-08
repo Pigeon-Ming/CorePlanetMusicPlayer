@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 using TagLib;
 using Windows.Storage.FileProperties;
 using Windows.Storage;
-using CorePlanetMusicPlayer.Models.Helpers;
 using Windows.UI.Xaml.Media.Imaging;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Storage.Streams;
+using UWPTools.Models;
 
 namespace CorePlanetMusicPlayer.Models.TagLibModels
 {

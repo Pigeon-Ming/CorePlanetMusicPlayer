@@ -1,0 +1,94 @@
+﻿using CorePlanetMusicPlayer.Models;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using UWPTools.Models;
+using Windows.Devices.Enumeration;
+using Windows.Storage;
+
+namespace CorePlanetMusicPlayer6.Models
+{
+    public class RemovableDevice
+    {
+        public string Name { get; set; }
+        public StorageFolder StorageFolder { get; set; }
+
+        public List<LocalMusic> Music { get; set; }
+
+        public List<Artist> Artists {  get; set; }
+
+        public List<Album> Albums { get; set; }
+
+        public List<Genre> Genres { get; set; }
+    }
+
+    public class RemovableDeviceManager
+    {
+        public static ObservableCollection<RemovableDevice> RemovableDevices { get; set; } = new ObservableCollection<RemovableDevice>();
+
+        public static DeviceWatcher RemovableDevicesWatcher { get; set; }
+        public static bool WatcherRunning { get; private set; } = false;
+
+        public static void StartWatcher()
+        {
+            //string[] requestedProperties = { "System.Devices.InterfaceClassGuid" };
+            //string aqsFilter = "System.Devices.InterfaceClassGuid:=\"{A5DCBF10-6530-11D2-901F-00C04FB951ED}\"";
+            RemovableDevicesWatcher = DeviceInformation.CreateWatcher(DeviceClass.PortableStorageDevice);
+            RemovableDevicesWatcher.Added += RemovableDevicesWatcher_Added;
+            RemovableDevicesWatcher.Removed += RemovableDevicesWatcher_Removed;
+            RemovableDevicesWatcher.Start();
+            WatcherRunning = true;
+            Debug.WriteLine("对可移动设备的监听已开始。");
+        }
+
+        public static void StopWatcher()
+        {
+            //string[] requestedProperties = { "System.Devices.InterfaceClassGuid" };
+            //string aqsFilter = "System.Devices.InterfaceClassGuid:=\"{A5DCBF10-6530-11D2-901F-00C04FB951ED}\"";
+            //RemovableDevicesWatcher = DeviceInformation.CreateWatcher(DeviceClass.PortableStorageDevice);
+            if (RemovableDevicesWatcher == null)
+            {
+                return;
+            }
+            RemovableDevicesWatcher.Added -= RemovableDevicesWatcher_Added;
+            RemovableDevicesWatcher.Removed -= RemovableDevicesWatcher_Removed;
+            RemovableDevicesWatcher.Stop();
+            WatcherRunning = false;
+            Debug.WriteLine("对可移动设备的监听已停止。");
+        }
+
+        public static async Task RefreshDevicesListAsync()
+        {
+            RemovableDevices.Clear();
+            List<StorageFolder> folders = await StorageHelper.GetRemovableDevicesStorageFolderAsync();
+            List<RemovableDevice> devices = new List<RemovableDevice>();
+            foreach (StorageFolder folder in folders)
+            {
+                devices.Add(CreateRemovableDevice(folder));
+            }
+            RemovableDevices.Concat(devices);
+        }
+
+        private static RemovableDevice CreateRemovableDevice(StorageFolder storageFolder)
+        {
+            RemovableDevice removableDevice = new RemovableDevice();
+            removableDevice.StorageFolder = storageFolder;
+            removableDevice.Name = storageFolder.Name;
+            return removableDevice;
+        }
+
+        private static async void RemovableDevicesWatcher_Removed(DeviceWatcher sender, DeviceInformationUpdate args)
+        {
+            await RefreshDevicesListAsync();
+        }
+
+        private static async void RemovableDevicesWatcher_Added(DeviceWatcher sender, DeviceInformation args)
+        {
+            await RefreshDevicesListAsync();
+        }
+    }
+}

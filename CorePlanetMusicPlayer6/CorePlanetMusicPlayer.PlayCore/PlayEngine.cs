@@ -233,7 +233,7 @@ namespace CorePlanetMusicPlayer.PlayCore
                 mediaPlaybackItem = new MediaPlaybackItem(mediaSource);
                 return mediaPlaybackItem;
             }
-            else if(music is OnlineMusic)
+            else if(music is StreamMusic)
             {
                 //To-Do:OnlineMusic的播放
                 return null;

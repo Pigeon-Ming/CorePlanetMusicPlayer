@@ -34,8 +34,12 @@ namespace CorePlanetMusicPlayer6
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            //Frame.Navigate(typeof(RootPage));
+            Frame.Navigate(typeof(DevPage));
+            // 初始化数据库
+            await DataBaseManager.InitDataBasesAsync();
             await GetDataAsync();
-            Frame.Navigate(typeof(RootPage));
+            
             
 
 
@@ -43,22 +47,30 @@ namespace CorePlanetMusicPlayer6
 
         async Task GetDataAsync()
         {
-            await ProgramData.RefreshSystemLibraryMusicListAsync();
-            await ProgramData.RefreshOpenedFolderAsync();
-            await ProgramData.RefreshOpenedFolderMusicListAsync();
-            await ProgramData.RefreshViewMusicListAsync();
-            GetCoverData();
+            // 获取文件夹列表
+            await Library.GetFoldersFromFutureAccessListAsync();
+            // 获取LocalMusic
+            await Library.GetLocalMusicAsync();
+            await Library.GetLocalMusicPropertiesAsync();
+            // 启动可移动设备监听
+            RemovableDeviceManager.StartWatcher();
+
+            //await ProgramData.RefreshSystemLibraryMusicListAsync();
+            //await ProgramData.RefreshOpenedFolderAsync();
+            //await ProgramData.RefreshOpenedFolderMusicListAsync();
+            //await ProgramData.RefreshViewMusicListAsync();
+            //GetCoverData();
 
 
-            Debug.WriteLine("系统音乐库歌曲数量："+ ProgramData.SystemLibraryMusic.Count);
+            //Debug.WriteLine("系统音乐库歌曲数量："+ ProgramData.SystemLibraryMusic.Count);
         }
 
-        async void GetCoverData()
-        {
-            foreach (LocalMusic localMusic in ProgramData.SystemLibraryMusic)
-            {
-                await LocalMusicManager.GetProperties_MixedAsync(localMusic);
-            }
-        }
+        //async void GetCoverData()
+        //{
+        //    foreach (LocalMusic localMusic in ProgramData.SystemLibraryMusic)
+        //    {
+        //        await LocalMusicManager.GetProperties_MixedAsync(localMusic);
+        //    }
+        //}
     }
 }

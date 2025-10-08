@@ -9,6 +9,9 @@
     d:DesignHeight="300"
     d:DesignWidth="400"
     xmlns:viewmodel="using:CorePlanetMusicPlayer6.ViewModels">
+    <UserControl.DataContext>
+        <viewmodel:MusicListControlViewModel x:Name="ViewModel" x:FieldModifier="public"/>
+    </UserControl.DataContext>
     <UserControl.Resources>
         <DataTemplate x:Key="BasicListViewItemTemplate" x:DataType="models:IMusic">
             <Grid>
@@ -42,47 +45,47 @@
                 <TextBlock Grid.RowSpan="2" Grid.Column="4" VerticalAlignment="Center" Text="{Binding Music.Duration}"/>
             </Grid>
         </DataTemplate>
-        <viewmodel:TestViewModel/>
+        <!--<viewmodel:TestViewModel/>-->
         <MenuFlyout x:Name="DefaultMusicMenu" Opened="MusicMenu_Opened">
-            <MenuFlyoutItem Text="{x:Bind MusicMenuViewModel.SelectedMusic.Title}" x:FieldModifier="public" Click="{x:Bind MusicMenuViewModel.CopyMusicTitle}" MaxWidth="300">
+            <MenuFlyoutItem x:FieldModifier="public" Command="{Binding MusicMenuViewModel.CopyMusicTitle}" MaxWidth="300">
                 <MenuFlyoutItem.Icon>
                     <FontIcon  Glyph="&#xEC4F;" />
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
             <MenuFlyoutSeparator/>
-            <MenuFlyoutItem Text="播放" Name="Menu_Play" Click="{x:Bind MusicMenuViewModel.Play}">
+            <MenuFlyoutItem Text="播放" Name="Menu_Play" Command="{Binding Play}">
                 <MenuFlyoutItem.Icon>
                     <FontIcon  Glyph="&#xE102;" />
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
-            <MenuFlyoutItem Text="下一曲播放" Name="Menu_PlayNext" Click="{x:Bind MusicMenuViewModel.PlayNext}">
+            <MenuFlyoutItem Text="下一曲播放" Name="Menu_PlayNext" Command="{Binding MusicMenuViewModel.PlayNext}">
                 <MenuFlyoutItem.Icon>
                     <FontIcon  Glyph="&#xEC57;" />
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
-            <MenuFlyoutItem Text="加入播放队列" Name="Menu_AddToPlayQueue" Click="{x:Bind MusicMenuViewModel.AddToPlayQueue}">
+            <MenuFlyoutItem Text="加入播放队列" Name="Menu_AddToPlayQueue" Command="{Binding MusicMenuViewModel.AddToPlayQueue}">
                 <MenuFlyoutItem.Icon>
                     <FontIcon  Glyph="&#xE14C;" />
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
             <MenuFlyoutSeparator/>
-            <MenuFlyoutItem Text="查看专辑" Name="Menu_Album" Click="{x:Bind MusicMenuViewModel.ViewAlbum}">
+            <MenuFlyoutItem Text="查看专辑" Name="Menu_Album" Command="{Binding MusicMenuViewModel.ViewAlbum}">
                 <MenuFlyoutItem.Icon>
                     <FontIcon  Glyph="&#xE93C;" />
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
-            <MenuFlyoutItem Text="查看艺术家" Name="Menu_Artist" Click="{x:Bind MusicMenuViewModel.ViewArtist}">
+            <MenuFlyoutItem Text="查看艺术家" Name="Menu_Artist" Command="{Binding MusicMenuViewModel.ViewArtist}">
                 <MenuFlyoutItem.Icon>
                     <FontIcon  Glyph="&#xF8B2;" />
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
             <MenuFlyoutSeparator/>
-            <MenuFlyoutItem Text="保存到播放列表" Name="Menu_SaveToPlaylist" Click="{x:Bind MusicMenuViewModel.SaveToPlaylist}">
+            <MenuFlyoutItem Text="保存到播放列表" Name="Menu_SaveToPlaylist" Command="{Binding MusicMenuViewModel.SaveToPlayList}">
                 <MenuFlyoutItem.Icon>
                     <FontIcon  Glyph="&#xE728;" />
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
-            <MenuFlyoutItem Text="详情信息" Name="Menu_Detail" Click="{x:Bind MusicMenuViewModel.ViewInfo}">
+            <MenuFlyoutItem Text="详情信息" Name="Menu_Detail" Command="{Binding MusicMenuViewModel.ViewInfo}">
                 <MenuFlyoutItem.Icon>
                     <FontIcon  Glyph="&#xE142;" />
                 </MenuFlyoutItem.Icon>
@@ -96,6 +99,7 @@
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                 </Style>
             </ListView.ItemContainerStyle>
+            
         </ListView>
     </Grid>
 </UserControl>

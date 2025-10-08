@@ -1,17 +1,31 @@
-﻿using CorePlanetMusicPlayer.Models.Helpers;
-using CorePlanetMusicPlayer.Models.TagLibModels;
+﻿using CorePlanetMusicPlayer.Models.TagLibModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
+using UWPTools.Models;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace CorePlanetMusicPlayer.Models
 {
+    public class MusicHelper
+    {
+        public static List<string> SupportedMusicFileTypesString = new List<string> { ".mp3", ".flac" };
+
+        public static TimeSpan GetTotalDuration(List<IMusic> musicList)
+        {
+            TimeSpan totalDuration = TimeSpan.Zero;
+            foreach (IMusic music in musicList)
+            {
+                totalDuration = totalDuration.Add(StringHelper.ConvertToTimeSpan(music.Duration));
+            }
+            return totalDuration;
+        }
+    }
     public interface IMusic
     {
         string Title { get; set; }
@@ -30,7 +44,7 @@ namespace CorePlanetMusicPlayer.Models
 
         uint Year { get; set; }
 
-        Dictionary<string,string> ExternalInfo { get; set; }
+        uint Genre { get; set; }
     }
 
     public class Music : IMusic
@@ -43,7 +57,10 @@ namespace CorePlanetMusicPlayer.Models
         public uint TrackNumber { get; set; } = 0;
         public uint DiscNumber { get; set; } = 0;
         public uint Year { get; set; } = 0;
-        public Dictionary<string, string> ExternalInfo { get; set; }
+        public uint Genre { get; set; } = 0;
+        public string Token { get; set; } = "";
+        public enum MusicType { Local, Stream};
+        public MusicType Type { get; set; }
     }
 
     public class LocalMusic : IMusic
@@ -56,8 +73,7 @@ namespace CorePlanetMusicPlayer.Models
         public uint TrackNumber { get; set; }
         public uint DiscNumber { get; set; }
         public uint Year { get; set; }
-
-        public Dictionary<string, string> ExternalInfo { get; set; }
+        public uint Genre { get; set; }
 
         public StorageFile StorageFile { get; set; }
 
@@ -87,7 +103,7 @@ namespace CorePlanetMusicPlayer.Models
                 if (storageItem is StorageFile)
                 {
                     StorageFile storageFile = (StorageFile)storageItem;
-                    if (StorageHelper.SupportedMusicFileTypesString.Contains(storageFile.FileType.ToLower()))
+                    if (MusicHelper.SupportedMusicFileTypesString.Contains(storageFile.FileType.ToLower()))
                         localMusicList.Add(CreateLocalMusicFromStorageFile(storageFile));
                 }
                 else if (storageItem is StorageFolder)
@@ -160,7 +176,7 @@ namespace CorePlanetMusicPlayer.Models
         }
     }
 
-    public class OnlineMusic : IMusic
+    public class StreamMusic : IMusic
     {
         public string Title { get; set; }
         public string Artist { get; set; }
@@ -170,15 +186,14 @@ namespace CorePlanetMusicPlayer.Models
         public uint TrackNumber { get; set; }
         public uint DiscNumber { get; set; }
         public uint Year { get; set; }
-
-        public Dictionary<string, string> ExternalInfo { get; set; }
+        public uint Genre { get; set; }
 
         public string Url { get; set; }
 
         public string CoverUrl { get; set; }
     }
 
-    public class OnlineMusicManaer
+    public class StreamMusicManager
     {
         public BitmapImage GetCover()
         {

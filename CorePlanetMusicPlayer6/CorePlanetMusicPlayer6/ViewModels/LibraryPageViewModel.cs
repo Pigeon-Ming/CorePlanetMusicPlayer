@@ -1,4 +1,5 @@
-﻿using CorePlanetMusicPlayer.Models;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CorePlanetMusicPlayer.Models;
 using CorePlanetMusicPlayer6.Models;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CorePlanetMusicPlayer6.ViewModels
 {
-    public class LibraryPageViewModel : Notify
+    public class LibraryPageViewModel : ObservableObject
     {
         private ObservableCollection<Music>musicCollection = new ObservableCollection<Music>();
 

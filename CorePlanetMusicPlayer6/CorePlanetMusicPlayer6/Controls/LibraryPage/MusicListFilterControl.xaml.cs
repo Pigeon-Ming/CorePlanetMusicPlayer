@@ -26,7 +26,7 @@ namespace CorePlanetMusicPlayer6.Controls.LibraryPage
         {
             this.InitializeComponent();
             MusicListControl = musicListControl;
-            if (musicListControl == null || musicListControl.MusicList == null)
+            if (musicListControl == null || musicListControl.ViewModel.MusicCollection == null)
             {
                 FilterControls.Visibility = Visibility.Collapsed;
                 ErrorTipTextBlock.Visibility = Visibility.Visible;
@@ -48,22 +48,22 @@ namespace CorePlanetMusicPlayer6.Controls.LibraryPage
         {
             List<IMusic> musicList = new List<IMusic>();
             
-            if (MusicSource_SystemLibrary_CheckBox.IsChecked == true)
-            {
-                musicList.AddRange(ProgramData.SystemLibraryMusic);
-            }
-            if (MusicSource_ScanedFolder_CheckBox.IsChecked == true)
-            {
-                musicList.AddRange(ProgramData.OpenedFoldersMusic);
-            }
-            if (MusicSource_RecentOpendFile_CheckBox.IsChecked == true)
-            {
-                musicList.AddRange(ProgramData.OpenedMusic);
-            }
-            if (MusicSource_StreamAudio_CheckBox.IsChecked == true)
-            {
-                musicList.AddRange(ProgramData.StreamMusic);
-            }
+            //if (MusicSource_SystemLibrary_CheckBox.IsChecked == true)
+            //{
+            //    musicList.AddRange(ProgramData.SystemLibraryMusic);
+            //}
+            //if (MusicSource_ScanedFolder_CheckBox.IsChecked == true)
+            //{
+            //    musicList.AddRange(ProgramData.OpenedFoldersMusic);
+            //}
+            //if (MusicSource_RecentOpendFile_CheckBox.IsChecked == true)
+            //{
+            //    musicList.AddRange(ProgramData.OpenedMusic);
+            //}
+            //if (MusicSource_StreamAudio_CheckBox.IsChecked == true)
+            //{
+            //    musicList.AddRange(ProgramData.StreamMusic);
+            //}
 
             MusicListControl.UpdateData(musicList);
         }

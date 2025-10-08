@@ -5,6 +5,7 @@ using CorePlanetMusicPlayer6.ViewModels;
 using CorePlanetMusicPlayer6.ViewModels.DataModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -29,12 +30,6 @@ namespace CorePlanetMusicPlayer6.Controls
 
         public MenuFlyout MusicMenuFlyout { get; set; }
 
-        public List<IMusic> MusicList { get; set; }
-
-        public MusicMenuViewModel_Old MusicMenuViewModel { get; set; } = new MusicMenuViewModel_Old();
-
-        public IPlayEngine PlayEngine { get; set; }
-
         public MusicListControl()
         {
             this.InitializeComponent();
@@ -43,11 +38,10 @@ namespace CorePlanetMusicPlayer6.Controls
 
         public void UpdateData(List<IMusic>musicList)
         {
-            MusicList = musicList;
-            MusicMenuViewModel.MusicList = musicList;
-            if(PlayEngine != null)
-                MusicMenuViewModel.PlayEngine = PlayEngine;
-            MainListView.ContextFlyout = MusicMenuFlyout;
+            ViewModel.MusicCollection = new ObservableCollection<IMusic>(musicList);
+            if(ViewModel.PlayEngine != null)
+                ViewModel.MusicMenuViewModel.PlayEngine = ViewModel.PlayEngine;
+            //MainListView.ContextFlyout = MusicMenuFlyout;
             if (ShowItemWithCover)
             {
                 UpdateData_WithCover(musicList);
@@ -75,9 +69,19 @@ namespace CorePlanetMusicPlayer6.Controls
 
         private void MainListView_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            ViewMusic viewMusic = ((e.OriginalSource as FrameworkElement).DataContext as ViewMusic);
-            if(viewMusic != null)
-                MusicMenuViewModel.SelectedMusic = viewMusic.Music;
+            if(ShowItemWithCover)
+            {
+                ViewMusic viewMusic = ((e.OriginalSource as FrameworkElement).DataContext as ViewMusic);
+                if (viewMusic != null)
+                    ViewModel.MusicMenuViewModel.MenuMusic = viewMusic.Music;
+            }
+            else
+            {
+                IMusic music = ((e.OriginalSource as FrameworkElement).DataContext as IMusic);
+                if (music != null)
+                    ViewModel.MusicMenuViewModel.MenuMusic = music;
+
+            }
             //MusicMenuViewModel.SelectedMusic = (e.OriginalSource as FrameworkElement).DataContext as IMusic;
             
             
@@ -85,7 +89,7 @@ namespace CorePlanetMusicPlayer6.Controls
 
         private void MusicMenu_Opened(object sender, object e)
         {
-            if (MusicMenuViewModel.SelectedMusic == null)
+            if (ViewModel.MusicMenuViewModel.MenuMusic == null)
             {
                 ((MenuFlyout)sender).Hide();
             }

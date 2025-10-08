@@ -37,7 +37,7 @@ namespace CorePlanetMusicPlayer6.ViewModels.DataModels
                 LocalMusic localMusic = (LocalMusic)music;
                 viewMusic.Cover = await LocalMusicManager.GetCover_TagLibAsync(localMusic);
             }
-            else if(music is OnlineMusic)
+            else if(music is StreamMusic)
             {
                 //To-Do:OnlineMusic的ViewMusic生成
             }

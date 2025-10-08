@@ -26,25 +26,5 @@ namespace CorePlanetMusicPlayer6.Views
         {
             this.InitializeComponent();
         }
-
-        private void Library_ReadLibrary_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Library_OpenFolder_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Library_OpenFile_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Library_ClearLibrary_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
     }
 }

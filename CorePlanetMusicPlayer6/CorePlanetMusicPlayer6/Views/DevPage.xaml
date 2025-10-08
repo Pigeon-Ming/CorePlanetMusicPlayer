@@ -4,35 +4,34 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:CorePlanetMusicPlayer6.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:devcontrols="using:CorePlanetMusicPlayer6.Controls.DevControls" xmlns:controls="using:UWPTools.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <ScrollViewer>
-            <Grid>
+        <!--库、音乐、正在播放、播放队列、艺术家、专辑、流派、播放列表-->
+        <ScrollViewer VerticalScrollBarVisibility="Hidden" VerticalScrollMode="Disabled" HorizontalScrollBarVisibility="Auto" HorizontalScrollMode="Enabled">
+            <Grid Width="2200" VerticalAlignment="Stretch">
+                <Grid.Resources>
+                    <Style TargetType="Grid">
+                        <Setter Property="BorderBrush" Value="Gray"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                    </Style>
+                </Grid.Resources>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition/>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Grid Grid.Column="0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Text="库"/>
-                    <Grid Grid.Row="1">
-                        <StackPanel>
-                            <Button Content="读取系统音乐库" Name="Library_ReadLibrary" Click="Library_ReadLibrary_Click"/>
-                            <Button Content="打开文件夹" Name="Library_OpenFolder" Click="Library_OpenFolder_Click"/>
-                            <Button Content="打开文件" Name="Library_OpenFile" Click="Library_OpenFile_Click"/>
-                            <Button Content="清空音乐库" Name="Library_ClearLibrary" Click="Library_ClearLibrary_Click"/>
-                        </StackPanel>
-                    </Grid>
-                    <Grid Grid.Row="1">
-                        
-                    </Grid>
+                <Grid>
+                    <controls:DevToolsControl/>
+                </Grid>
+                <Grid Grid.Column="1">
+                    <devcontrols:LibraryControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                </Grid>
+                <Grid Grid.Column="2">
+                    <devcontrols:MusicLibraryControl VerticalAlignment="Stretch"/>
                 </Grid>
             </Grid>
         </ScrollViewer>

@@ -1,9 +1,11 @@
-﻿using CorePlanetMusicPlayer.Models;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CorePlanetMusicPlayer.Models;
 using CorePlanetMusicPlayer.PlayCore;
 using CorePlanetMusicPlayer6.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +13,7 @@ using System.Windows.Input;
 
 namespace CorePlanetMusicPlayer6.ViewModels
 {
-    public class MusicMenuViewModel : Notify
+    public class MusicMenuViewModel : ObservableObject
     {
         private IMusic _menuMusic;
 
@@ -25,7 +27,7 @@ namespace CorePlanetMusicPlayer6.ViewModels
             set { _menuMusic = value; OnPropertyChanged(); }
         }
 
-        private IPlayEngine PlayEngine
+        public IPlayEngine PlayEngine
         {
             get { return _playEngine; }
             set { _playEngine = value; OnPropertyChanged(); }
@@ -41,7 +43,13 @@ namespace CorePlanetMusicPlayer6.ViewModels
 
         public MusicMenuViewModel()
         {
-            Play = new ActionCommand(OnPlayClick);
+            //Play = new ActionCommand(OnPlayClick);
+            //PlayNext = new ActionCommand(OnPlayNextClick);
+            //AddToPlayQueue = new ActionCommand(OnAddToPlayQueueClick);
+            //ViewAlbum = new ActionCommand(OnViewAlbumClick);
+            //ViewArtist = new ActionCommand(OnViewArtistClick);
+            //ViewInfo = new ActionCommand(OnViewInfoClick);
+            //SaveToPlayList = new ActionCommand(OnSaveToPlayListClick);
         }
 
 
@@ -52,11 +60,22 @@ namespace CorePlanetMusicPlayer6.ViewModels
             set { _play = value; OnPropertyChanged(); }
         }
 
+        private void OnPlayClick()
+        {
+            PlayEngine.PlayMusic(MenuMusic, MusicCollection.ToList(), MusicCollection.IndexOf(MenuMusic));
+        }
+
         private ICommand _playNext;
         public ICommand PlayNext
         {
             get { return _playNext; }
             set { _playNext = value; OnPropertyChanged(); }
+        }
+
+        private void OnPlayNextClick()
+        {
+            PlayQueue playQueue = PlayEngine.GetPlayQueue();
+            playQueue.AddNextMusic(MenuMusic);
         }
 
         private ICommand _addToPlayQueue;
@@ -65,12 +84,22 @@ namespace CorePlanetMusicPlayer6.ViewModels
             get { return _addToPlayQueue; }
             set { _addToPlayQueue = value; OnPropertyChanged(); }
         }
+        private void OnAddToPlayQueueClick()
+        {
+            PlayQueue playQueue = PlayEngine.GetPlayQueue();
+            playQueue.AddMusic(MenuMusic);
+        }
+
 
         private ICommand _viewAlbum;
         public ICommand ViewAlbum
         {
             get { return _viewAlbum; }
             set { _viewAlbum = value; OnPropertyChanged(); }
+        }
+        private void OnViewAlbumClick()
+        {
+            //To-Do: View Album
         }
 
         private ICommand _viewArtist;
@@ -79,12 +108,21 @@ namespace CorePlanetMusicPlayer6.ViewModels
             get { return _viewArtist; }
             set { _viewArtist = value; OnPropertyChanged(); }
         }
+        private void OnViewArtistClick()
+        {
+            //To-Do: View Artist
+        }
 
         private ICommand _viewInfo;
         public ICommand ViewInfo
         {
             get { return _viewInfo; }
             set { _viewInfo = value; OnPropertyChanged(); }
+        }
+        private void OnViewInfoClick()
+        {
+            //To-Do: View Info
+            Debug.WriteLine("ViewInfo");
         }
 
         private ICommand _saveToPlayList;
@@ -93,12 +131,22 @@ namespace CorePlanetMusicPlayer6.ViewModels
             get { return _saveToPlayList; }
             set { _saveToPlayList = value; OnPropertyChanged(); }
         }
-
-
-
-        private void OnPlayClick()
+        private void OnSaveToPlayListClick()
         {
-            PlayEngine.PlayMusic(MenuMusic, MusicCollection.ToList(), MusicCollection.IndexOf(MenuMusic));
+            //To-Do: Save To PlayList
+        }
+
+        private ICommand _copyMusicTitle;
+
+        public ICommand CopyMusicTitle
+        {
+            get { return _copyMusicTitle; }
+            set { _copyMusicTitle = value; OnPropertyChanged(); }
+        }
+
+        private void OnCopyMusicTitleClick()
+        {
+            //To-Do: Copy Music Title
         }
     }
 }

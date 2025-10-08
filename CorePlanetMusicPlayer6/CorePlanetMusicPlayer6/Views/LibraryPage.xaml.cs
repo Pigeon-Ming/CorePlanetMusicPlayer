@@ -34,11 +34,11 @@ namespace CorePlanetMusicPlayer6.Views
         void UpdateData()
         {
             List<IMusic> musicList = new List<IMusic>();
-            musicList.AddRange(ProgramData.SystemLibraryMusic);
-            musicList.AddRange(ProgramData.OpenedFoldersMusic);
-            musicList.AddRange(ProgramData.OpenedMusic);
-            musicList.AddRange(ProgramData.StreamMusic);
-            MainMusicListControl.PlayEngine = ProgramData.PlayEngine;
+            musicList.AddRange(Library.LocalMusic);
+            //musicList.AddRange(ProgramData.OpenedFoldersMusic);
+            //musicList.AddRange(ProgramData.OpenedMusic);
+            //musicList.AddRange(ProgramData.StreamMusic);
+            //MainMusicListControl.ViewModel.PlayEngine = ProgramData.PlayEngine;
             MainMusicListControl.UpdateData(musicList);
             
         }
@@ -55,7 +55,7 @@ namespace CorePlanetMusicPlayer6.Views
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            MainMusicListControl.ShowItemWithCover = true;
+            //MainMusicListControl.ShowItemWithCover = true;
             UpdateData();
         }
 
