@@ -1,4 +1,5 @@
-﻿using CorePlanetMusicPlayer6.Models;
+﻿using CorePlanetMusicPlayer.Models;
+using CorePlanetMusicPlayer6.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,6 +21,8 @@ namespace CorePlanetMusicPlayer6.Controls.DevControls
 {
     public sealed partial class MusicLibraryControl : UserControl
     {
+        private List<IMusic> currentItems = new List<IMusic>();
+
         public MusicLibraryControl()
         {
             this.InitializeComponent();
@@ -32,9 +35,10 @@ namespace CorePlanetMusicPlayer6.Controls.DevControls
             switch (MusicSourceComboBox.SelectedIndex)
             {
                 case 0:
-                    MusicListView.ItemsSource = Library.LocalMusic;
+                    currentItems = Library.LocalMusic.ToList<IMusic>();
                     break;
             }
+            MusicListView.ItemsSource = currentItems;
         }
 
         private void ScanMusicLibrary_Click(object sender, RoutedEventArgs e)
@@ -51,6 +55,16 @@ namespace CorePlanetMusicPlayer6.Controls.DevControls
         {
             MusicSourceComboBox.Items.Clear();
             MusicSourceComboBox.Items.Add("本地音乐库");
+        }
+
+        private void MusicListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            Play((LocalMusic)MusicListView.SelectedItem);
+        }
+
+        void Play(IMusic music)
+        {
+            ProgramData.PlayEngine.PlayMusic(music, currentItems, currentItems.IndexOf(music));
         }
     }
 }

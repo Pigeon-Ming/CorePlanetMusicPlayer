@@ -44,15 +44,15 @@ namespace CorePlanetMusicPlayer6.ViewModels
             StateChanged?.Invoke(this, e);
         }
 
-        string GetPlayStateIconGlyph(PlayEngine.PlayState state)
+        string GetPlayStateIconGlyph(PlayState state)
         {
             switch(state)
             {
-                case CorePlanetMusicPlayer.PlayCore.PlayEngine.PlayState.Playing:
+                case CorePlanetMusicPlayer.PlayCore.PlayState.Playing:
                     return "\uE769";
-                case CorePlanetMusicPlayer.PlayCore.PlayEngine.PlayState.Paused:
+                case CorePlanetMusicPlayer.PlayCore.PlayState.Paused:
                     return "\uE768";
-                case CorePlanetMusicPlayer.PlayCore.PlayEngine.PlayState.Buffering:
+                case CorePlanetMusicPlayer.PlayCore.PlayState.Buffering:
                     return "\uF16A";
                 default:
                     return "";

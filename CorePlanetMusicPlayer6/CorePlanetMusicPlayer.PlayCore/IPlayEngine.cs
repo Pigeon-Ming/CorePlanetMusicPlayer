@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace CorePlanetMusicPlayer.PlayCore
 {
+    public enum PlayState { Playing, Paused, Stopped, Buffering }
+
     public interface IPlayEngine
     {
         void Play();
@@ -23,7 +25,10 @@ namespace CorePlanetMusicPlayer.PlayCore
         double GetVolume();
         void SetVolume(double volume);
 
-        PlayEngine.PlayState PlayState { get; set; }
+        TimeSpan GetPlayProgress();
+        
+
+        PlayState PlayState { get; set; }
 
         PlayQueue GetPlayQueue();
 

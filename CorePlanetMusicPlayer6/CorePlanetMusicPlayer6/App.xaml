@@ -8,6 +8,10 @@
             <Style TargetType="FontIcon">
                 <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
             </Style>
+
+            <Style TargetType="ListViewItem">
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

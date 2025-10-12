@@ -8,11 +8,29 @@ using UWPTools.Models;
 
 namespace CorePlanetMusicPlayer.Models
 {
+    public class Disc: ObservableCollection<IMusic>
+    {
+        public uint Number { get; set; } = 0;
+
+        public string Name { get; set; } = "";
+    }
+
     public class Album
     {
         public string Name { get; set; }
 
-        public List<List<IMusic>> Discs { get; set; } = new List<List<IMusic>>(); // 第一层List为专辑的碟片，通过碟片号访问歌曲
+        public string Description { get; set; } = "";
+
+        public List<Disc> Discs { get; set; } = new List<Disc>(); // 第一层List为专辑的碟片，通过碟片号访问歌曲
+
+        public int MusicCount
+        {
+            get
+            {
+                // 遍历所有子列表并累加数量
+                return GetMusicCount();
+            }
+        }
 
         /// <summary>
         /// 获取专辑中歌曲的总时长
@@ -22,9 +40,9 @@ namespace CorePlanetMusicPlayer.Models
         {
             // To-Do: 计算总时长
             TimeSpan totalDuration = TimeSpan.Zero;
-            foreach (List<IMusic>musicList in Discs)
+            foreach (Disc disc in Discs)
             {
-                totalDuration = totalDuration.Add(MusicHelper.GetTotalDuration(musicList));
+                totalDuration = totalDuration.Add(MusicHelper.GetTotalDuration(disc.ToList()));
             }
             return totalDuration;
         }
@@ -35,9 +53,7 @@ namespace CorePlanetMusicPlayer.Models
         /// <returns>参与该专辑的艺术家列表</returns>
         public List<Artist> GetArtists()
         {
-            // To-Do: 获取艺术家列表
-            
-            return new List<Artist>();
+            return ArtistManager.GetArtistsFromAlbum(this);
         }
 
         /// <summary>
@@ -48,7 +64,7 @@ namespace CorePlanetMusicPlayer.Models
         {
             if (Discs.Count != 0)
             {
-                List<IMusic> musicList = Discs.First();
+                List<IMusic> musicList = Discs.First().ToList();
                 if (musicList != null && musicList.Count != 0)
                 {
                     return musicList.First().Year;
@@ -64,12 +80,7 @@ namespace CorePlanetMusicPlayer.Models
         /// <returns>专辑歌曲数</returns>
         public int GetMusicCount()
         {
-            int count = 0;
-            foreach (List<IMusic> musicList in Discs)
-            {
-                count += musicList.Count;
-            }
-            return count;
+            return Discs.Sum(subList => subList?.ToList()?.Count ?? 0);
         }
 
         /// <summary>
@@ -81,7 +92,7 @@ namespace CorePlanetMusicPlayer.Models
         {
             if(Discs.Count >= discNumber && discNumber > 0)
             {
-                return Discs[discNumber].Count;
+                return Discs[discNumber].ToList().Count;
             }
             return -1;
         }
@@ -102,29 +113,46 @@ namespace CorePlanetMusicPlayer.Models
 
         public static void RefreshAlbumsList(List<IMusic> musicList)
         {
-            for (int i = 0; i < musicList.Count; i++)
+            Albums.Clear();
+            AddMusicToAlbum(musicList);
+        }
+
+        public static void AddMusicToAlbum(List<IMusic> musicList)
+        {
+            List<Album> albums = new List<Album>();
+
+            // 1. 按专辑名分组
+            var albumGroups = musicList.GroupBy(m => m.Album);
+
+            foreach (var albumGroup in albumGroups)
             {
-                string albumName = musicList[i].Album;
-                Album album = Albums.ToList().Find(x => x.Name == albumName);
-                if (album != null)
+                var album = new Album();
+                album.Name = albumGroup.Key;
+
+                // 2. 按 DiscNumber 分组
+                var discGroups = albumGroup.GroupBy(m => m.DiscNumber)
+                                           .OrderBy(g => g.Key);
+
+                // 3. 将每个碟片的曲目列表加入 Discs
+                foreach (var discGroup in discGroups)
                 {
-                    //album.Music.Add(music);
-                }
-                else
-                {
-                    //album = new Artist();
-                    //album.Name = artistNames[i];
-                    //album.Music.Add(music);
-                    //Albums.Add(album);
+                    List<IMusic> tracks = discGroup.OrderBy(m => m.TrackNumber).ToList();
+                    Disc disc = new Disc { Number = discGroup.First().DiscNumber };
+                    foreach (var track in tracks)
+                    {
+                        disc.Add(track);
+                    }
+                    album.Discs.Add(disc);
                 }
 
+                albums.Add(album);
             }
-            Albums.Clear();
+            Albums = new ObservableCollection<Album>(Albums.Concat<Album>(albums));
         }
 
         public static void AddMusicToAlbum()
         {
-            
+            throw new NotImplementedException();
         }
     }
 }

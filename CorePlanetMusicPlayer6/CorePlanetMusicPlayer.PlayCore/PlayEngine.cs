@@ -54,23 +54,22 @@ namespace CorePlanetMusicPlayer.PlayCore
     //    }
     //}
 
-    public class PlayEngine
-    {
-        public enum PlayState { Playing,Paused,Stoped, Buffering }
-    }
-
     public class SystemMediaPlayer : IPlayEngine
     {
         MediaPlayer MediaPlayer { get; }
 
         SystemMediaTransportControls SMTCConrtols { get; set; }
 
-        public PlayEngine.PlayState PlayState { get; set; }
+        public PlayState PlayState { get; set; }
 
         public PlayQueue PlayQueue { get; set; } = new PlayQueue();
 
         public event EventHandler PlayingEnded;
         public event EventHandler StateChanged;
+
+        /// <summary>
+        /// （未实现)
+        /// </summary>
         public event EventHandler PlayingChanging;
         public event EventHandler PlayingChanged;
 
@@ -102,19 +101,19 @@ namespace CorePlanetMusicPlayer.PlayCore
             switch(MediaPlayer.CurrentState)
             {
                 case MediaPlayerState.Playing:
-                    PlayState = PlayEngine.PlayState.Playing;
+                    PlayState = PlayState.Playing;
                     break;
                 case MediaPlayerState.Paused:
-                    PlayState = PlayEngine.PlayState.Paused;
+                    PlayState = PlayState.Paused;
                     break;
                 case MediaPlayerState.Stopped:
-                    PlayState = PlayEngine.PlayState.Stoped;
+                    PlayState = PlayState.Stopped;
                     break;
                 case MediaPlayerState.Buffering:
-                    PlayState = PlayEngine.PlayState.Buffering;
+                    PlayState = PlayState.Buffering;
                     break;
             }
-            StateChanged.Invoke(this,null);
+            StateChanged?.Invoke(this,null);
         }
 
         public PlayQueue GetPlayQueue()
@@ -142,7 +141,7 @@ namespace CorePlanetMusicPlayer.PlayCore
 
         public void PlayPause()
         {
-            if (PlayState == PlayEngine.PlayState.Playing)
+            if (PlayState == PlayState.Playing)
                 MediaPlayer.Pause();
             else
                 MediaPlayer.Play();
@@ -164,6 +163,7 @@ namespace CorePlanetMusicPlayer.PlayCore
         {
             MediaPlaybackList mediaPlaybackList = (MediaPlaybackList)MediaPlayer.Source;
             mediaPlaybackList.MoveTo((uint)index);
+            PlayingChanged?.Invoke(this,null);
         }
 
         public void PlayMusic(IMusic music, List<IMusic> newPlayQueue, int currentMusicIndex)
@@ -265,6 +265,12 @@ namespace CorePlanetMusicPlayer.PlayCore
         {
             MediaPlayer.Volume = volume;
             VolumeChanged?.Invoke(this,null);
+        }
+
+        public TimeSpan GetPlayProgress()
+        {
+            //MediaPlayer.PlaybackSession.BufferingProgress
+            return MediaPlayer.Position;
         }
     }
 }

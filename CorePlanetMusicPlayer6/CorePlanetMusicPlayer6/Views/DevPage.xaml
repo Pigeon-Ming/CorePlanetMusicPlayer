@@ -10,30 +10,82 @@
 
     <Grid>
         <!--库、音乐、正在播放、播放队列、艺术家、专辑、流派、播放列表-->
-        <ScrollViewer VerticalScrollBarVisibility="Hidden" VerticalScrollMode="Disabled" HorizontalScrollBarVisibility="Auto" HorizontalScrollMode="Enabled">
-            <Grid Width="2200" VerticalAlignment="Stretch">
+        <!--<ScrollViewer VerticalScrollBarVisibility="Hidden" VerticalScrollMode="Disabled" VerticalContentAlignment="Stretch" HorizontalScrollBarVisibility="Visible" HorizontalScrollMode="Enabled">
+            <Grid VerticalAlignment="Stretch">
                 <Grid.Resources>
-                    <Style TargetType="Grid">
+                    <Style x:Key="ControlGrid" TargetType="Grid">
                         <Setter Property="BorderBrush" Value="Gray"/>
                         <Setter Property="BorderThickness" Value="1"/>
+                        <Setter Property="Width" Value="600"/>
                     </Style>
                 </Grid.Resources>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="200"/>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Grid>
+                <Grid Style="{ThemeResource ControlGrid}" >
                     <controls:DevToolsControl/>
                 </Grid>
-                <Grid Grid.Column="1">
-                    <devcontrols:LibraryControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                <Grid Style="{ThemeResource ControlGrid}" Grid.Column="1">
+                    <devcontrols:LibraryControl/>
                 </Grid>
-                <Grid Grid.Column="2">
-                    <devcontrols:MusicLibraryControl VerticalAlignment="Stretch"/>
+                <Grid Style="{ThemeResource ControlGrid}" VerticalAlignment="Stretch" Grid.Column="2">
+                    <devcontrols:MusicLibraryControl/>
                 </Grid>
             </Grid>
-        </ScrollViewer>
+        </ScrollViewer>-->
+        <Hub>
+            <Hub.Resources>
+                <Style TargetType="HubSection">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </Hub.Resources>
+            <HubSection Header="开发者工具">
+                <DataTemplate>
+                    <controls:DevToolsControl/>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="本地音乐库来源" Width="400">
+                <DataTemplate>
+                    <devcontrols:LibraryControl/>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="音乐库" Width="400">
+                <DataTemplate>
+                    <devcontrols:MusicLibraryControl/>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="播放控制" Width="300">
+                <DataTemplate>
+                    <devcontrols:PlayingControl/>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="播放队列" Width="400">
+                <DataTemplate>
+                    <devcontrols:PlayQueueControl/>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="艺术家" Width="400" VerticalContentAlignment="Stretch">
+                <DataTemplate>
+                    <devcontrols:ArtistsControl/>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="专辑" Width="400" VerticalContentAlignment="Stretch">
+                <DataTemplate>
+                    <devcontrols:AlbumsControl/>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="流派" Width="400" VerticalContentAlignment="Stretch">
+                <DataTemplate>
+                    <devcontrols:GenresControl/>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="年份" Width="400" VerticalContentAlignment="Stretch">
+                <DataTemplate>
+                    <devcontrols:YearsControl/>
+                </DataTemplate>
+            </HubSection>
+        </Hub>
     </Grid>
 </Page>

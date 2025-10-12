@@ -131,6 +131,14 @@ namespace CorePlanetMusicPlayer.PlayCore
             }
         }
 
+        public List<IMusic> GetQueue()
+        {
+            if (CurrentPlayModeEnum == PlayModeEnum.Shuffle)
+                return ShuffleQueue;
+            else
+                return NormalQueue;
+        }
+
         public void AddNextMusic(IMusic music)//添加歌曲至下一首播放
         {
             if (CurrentPlayModeEnum == PlayModeEnum.Shuffle)

@@ -11,7 +11,7 @@ namespace CorePlanetMusicPlayer.Models
     {
         public string Name { get; set; }
 
-        public string Description { get; set; }
+        public string Description { get; set; } = "";
 
         public List<IMusic> Music { get; set; } = new List<IMusic>();
 
@@ -21,16 +21,19 @@ namespace CorePlanetMusicPlayer.Models
         /// <returns>与该艺术家合作过的艺术家列表</returns>
         public List<Artist> GetCollaboratingArtists()
         {
-            return new List<Artist>();
+            throw new NotImplementedException();
+            //return new List<Artist>();
         }
 
-
+        public List<Album> GetAlbums()
+        {
+            return AlbumManager.Albums.ToList().FindAll(x=> x.GetArtists().Contains(this));
+        }
     }
 
     public class ArtistManager
     {
         public static ObservableCollection<Artist> Artists { get; private set; } = new ObservableCollection<Artist>();
-
 
         public static void RefreshArtistsList(List<IMusic> musicList)
         {
@@ -109,6 +112,33 @@ namespace CorePlanetMusicPlayer.Models
                 }
             }
             return  artists;
+        }
+
+        public static List<Artist> GetArtistsFromAlbum(Album album)
+        {
+            // 1. 收集所有IMusic的Artist字符串
+            HashSet<string> artistNames = new HashSet<string>();
+            foreach (Disc disc in album.Discs)
+            {
+                foreach (IMusic music in disc)
+                {
+                    List<string> names = GetArtistNamesFromArtistString(music.Artist);
+                    foreach (string name in names)
+                    {
+                        artistNames.Add(name);
+                    }
+                }
+            }
+
+            // 2. 在全局Artist列表中查找对应Artist对象
+            List<Artist> result = new List<Artist>();
+            foreach (string name in artistNames)
+            {
+                Artist artist = Artists.FirstOrDefault(a => a.Name == name);
+                if (artist != null)
+                    result.Add(artist);
+            }
+            return result;
         }
 
         private static Artist GetArtistByName(string name)

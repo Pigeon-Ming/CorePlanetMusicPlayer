@@ -25,6 +25,16 @@ namespace CorePlanetMusicPlayer6.Models
         public static ObservableCollection<StreamMusic> StreamMusic { get; set; } = new ObservableCollection<StreamMusic>();//流式传输的歌曲
 
 
+        //Library
+        public static List<IMusic> GetAllMusicList()
+        {
+            List<IMusic> musicList = new List<IMusic>();
+            musicList.AddRange(LocalMusic);
+            musicList.AddRange(OpenedMusic.Keys.ToList());
+            musicList.AddRange(StreamMusic);
+            return musicList;
+        }
+
         //Folders
 
         /// <summary>

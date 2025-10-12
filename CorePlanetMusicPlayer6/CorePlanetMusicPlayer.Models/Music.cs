@@ -21,9 +21,22 @@ namespace CorePlanetMusicPlayer.Models
             TimeSpan totalDuration = TimeSpan.Zero;
             foreach (IMusic music in musicList)
             {
-                totalDuration = totalDuration.Add(StringHelper.ConvertToTimeSpan(music.Duration));
+                totalDuration = totalDuration.Add(StringHelper.ConvertMinuteAndSecondTimeToTimeSpan(music.Duration));
             }
             return totalDuration;
+        }
+
+        public static TimeSpan GetDurationTimeSpan(IMusic music)
+        {
+            if(String.IsNullOrEmpty(music.Duration))
+            {
+               return TimeSpan.Zero;
+            }
+            else
+            {
+                TimeSpan timeSpan = StringHelper.ConvertMinuteAndSecondTimeToTimeSpan(music.Duration);
+                return timeSpan;
+            }
         }
     }
     public interface IMusic

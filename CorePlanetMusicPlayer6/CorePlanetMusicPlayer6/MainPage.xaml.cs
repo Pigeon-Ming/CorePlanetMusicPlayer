@@ -54,14 +54,21 @@ namespace CorePlanetMusicPlayer6
             await Library.GetLocalMusicPropertiesAsync();
             // 启动可移动设备监听
             RemovableDeviceManager.StartWatcher();
+            // 获取分类信息 获取以后可以整个缓存🤔
+            List<IMusic> musicList = Library.GetAllMusicList();
 
-            //await ProgramData.RefreshSystemLibraryMusicListAsync();
-            //await ProgramData.RefreshOpenedFolderAsync();
-            //await ProgramData.RefreshOpenedFolderMusicListAsync();
-            //await ProgramData.RefreshViewMusicListAsync();
-            //GetCoverData();
-
-
+            DateTime dateTime = DateTime.Now;
+            DateTime dateTime1;
+            Debug.WriteLine($"{dateTime} - 开始整理分类信息");
+            
+            ArtistManager.RefreshArtistsList(musicList);
+            AlbumManager.RefreshAlbumsList(musicList);
+            GenreManager.RefreshGenresList(musicList);
+            YearManager.RefreshYearsList(musicList);
+            
+            dateTime1 = DateTime.Now;
+            Debug.WriteLine($"{dateTime1} - 分类信息整理完毕");
+            Debug.WriteLine($"整理分类信息共用时：{dateTime1 - dateTime1}");
             //Debug.WriteLine("系统音乐库歌曲数量："+ ProgramData.SystemLibraryMusic.Count);
         }
 

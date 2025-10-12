@@ -119,11 +119,41 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\DevControls\AlbumControl.xaml.cs">
+      <DependentUpon>AlbumControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\DevControls\AlbumsControl.xaml.cs">
+      <DependentUpon>AlbumsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\DevControls\ArtistControl.xaml.cs">
+      <DependentUpon>ArtistControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\DevControls\ArtistsControl.xaml.cs">
+      <DependentUpon>ArtistsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\DevControls\GenreControl.xaml.cs">
+      <DependentUpon>GenreControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\DevControls\GenresControl.xaml.cs">
+      <DependentUpon>GenresControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\DevControls\LibraryControl.xaml.cs">
       <DependentUpon>LibraryControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DevControls\MusicLibraryControl.xaml.cs">
       <DependentUpon>MusicLibraryControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\DevControls\PlayingControl.xaml.cs">
+      <DependentUpon>PlayingControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\DevControls\PlayQueueControl.xaml.cs">
+      <DependentUpon>PlayQueueControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\DevControls\YearControl.xaml.cs">
+      <DependentUpon>YearControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\DevControls\YearsControl.xaml.cs">
+      <DependentUpon>YearsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\LibraryPage\MusicListFilterControl.xaml.cs">
       <DependentUpon>MusicListFilterControl.xaml</DependentUpon>
@@ -195,11 +225,51 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\DevControls\AlbumControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\DevControls\AlbumsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\DevControls\ArtistControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\DevControls\ArtistsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\DevControls\GenreControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\DevControls\GenresControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\DevControls\LibraryControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\DevControls\MusicLibraryControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\DevControls\PlayingControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\DevControls\PlayQueueControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\DevControls\YearControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\DevControls\YearsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
