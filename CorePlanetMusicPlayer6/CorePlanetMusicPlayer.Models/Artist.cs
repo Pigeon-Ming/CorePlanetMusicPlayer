@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TagLib;
 
 namespace CorePlanetMusicPlayer.Models
 {
@@ -164,6 +166,30 @@ namespace CorePlanetMusicPlayer.Models
                 artists.Add(artistString);
             }
             return artists;
+        }
+
+        public static void RemoveMusicFromArtist(IMusic music)
+        {
+            List<string>artistNames = GetArtistNamesFromArtistString(music.Artist);
+            foreach (string artistName in artistNames)
+            {
+                Artist artist = GetArtistByName(artistName);
+                if (artist == null)
+                    continue;
+                artist.Music.Remove(music);
+                if (artist.Music.Count == 0)
+                {
+                    Artists.Remove(artist);
+                }
+            }
+        }
+
+        public static void RemoveMusicFromArtist(List<IMusic> musicList)
+        {
+            foreach (IMusic music in musicList)
+            {
+                RemoveMusicFromArtist(music);
+            }
         }
     }
 }

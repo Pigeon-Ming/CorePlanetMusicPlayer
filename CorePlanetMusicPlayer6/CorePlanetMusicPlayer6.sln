@@ -7,11 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorePlanetMusicPlayer6", "C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorePlanetMusicPlayer.Models", "CorePlanetMusicPlayer.Models\CorePlanetMusicPlayer.Models.csproj", "{40C2BA3D-E277-4012-8652-CF7D1B53EDDF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorePlanetMusicPlayer.External", "CorePlanetMusicPlayer.External\CorePlanetMusicPlayer.External.csproj", "{59156B04-A824-4F88-BEB3-0C82F1F1D28E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorePlanetMusicPlayer.PlayCore", "CorePlanetMusicPlayer.PlayCore\CorePlanetMusicPlayer.PlayCore.csproj", "{9ACFAE79-C80F-4668-83FC-9713C58B56C4}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorePlanetMusicPlayer.Controls", "CorePlanetMusicPlayer.Controls\CorePlanetMusicPlayer.Controls.csproj", "{6C71421F-747B-4E2C-A510-61BE12C53DAB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UWPTools.Models", "..\..\UWPTools\src\UWPTools.Models\UWPTools.Models.csproj", "{F1DF84D5-72CA-487F-8CB9-E0BCAB1DD7AB}"
 EndProject
@@ -93,30 +89,6 @@ Global
 		{40C2BA3D-E277-4012-8652-CF7D1B53EDDF}.Release|x64.Build.0 = Release|x64
 		{40C2BA3D-E277-4012-8652-CF7D1B53EDDF}.Release|x86.ActiveCfg = Release|x86
 		{40C2BA3D-E277-4012-8652-CF7D1B53EDDF}.Release|x86.Build.0 = Release|x86
-		{59156B04-A824-4F88-BEB3-0C82F1F1D28E}.Debug_WithoutTagLib|ARM.ActiveCfg = Debug_WithoutTagLib|ARM
-		{59156B04-A824-4F88-BEB3-0C82F1F1D28E}.Debug_WithoutTagLib|ARM.Build.0 = Debug_WithoutTagLib|ARM
-		{59156B04-A824-4F88-BEB3-0C82F1F1D28E}.Debug_WithoutTagLib|ARM64.ActiveCfg = Debug_WithoutTagLib|ARM64
-		{59156B04-A824-4F88-BEB3-0C82F1F1D28E}.Debug_WithoutTagLib|ARM64.Build.0 = Debug_WithoutTagLib|ARM64
-		{59156B04-A824-4F88-BEB3-0C82F1F1D28E}.Debug_WithoutTagLib|x64.ActiveCfg = Debug_WithoutTagLib|x64
-		{59156B04-A824-4F88-BEB3-0C82F1F1D28E}.Debug_WithoutTagLib|x64.Build.0 = Debug_WithoutTagLib|x64
-		{59156B04-A824-4F88-BEB3-0C82F1F1D28E}.Debug_WithoutTagLib|x86.ActiveCfg = Debug_WithoutTagLib|x86
-		{59156B04-A824-4F88-BEB3-0C82F1F1D28E}.Debug_WithoutTagLib|x86.Build.0 = Debug_WithoutTagLib|x86
-		{59156B04-A824-4F88-BEB3-0C82F1F1D28E}.Debug|ARM.ActiveCfg = Debug|ARM
-		{59156B04-A824-4F88-BEB3-0C82F1F1D28E}.Debug|ARM.Build.0 = Debug|ARM
-		{59156B04-A824-4F88-BEB3-0C82F1F1D28E}.Debug|ARM64.ActiveCfg = Debug|ARM64
-		{59156B04-A824-4F88-BEB3-0C82F1F1D28E}.Debug|ARM64.Build.0 = Debug|ARM64
-		{59156B04-A824-4F88-BEB3-0C82F1F1D28E}.Debug|x64.ActiveCfg = Debug|x64
-		{59156B04-A824-4F88-BEB3-0C82F1F1D28E}.Debug|x64.Build.0 = Debug|x64
-		{59156B04-A824-4F88-BEB3-0C82F1F1D28E}.Debug|x86.ActiveCfg = Debug|x86
-		{59156B04-A824-4F88-BEB3-0C82F1F1D28E}.Debug|x86.Build.0 = Debug|x86
-		{59156B04-A824-4F88-BEB3-0C82F1F1D28E}.Release|ARM.ActiveCfg = Release|ARM
-		{59156B04-A824-4F88-BEB3-0C82F1F1D28E}.Release|ARM.Build.0 = Release|ARM
-		{59156B04-A824-4F88-BEB3-0C82F1F1D28E}.Release|ARM64.ActiveCfg = Release|ARM64
-		{59156B04-A824-4F88-BEB3-0C82F1F1D28E}.Release|ARM64.Build.0 = Release|ARM64
-		{59156B04-A824-4F88-BEB3-0C82F1F1D28E}.Release|x64.ActiveCfg = Release|x64
-		{59156B04-A824-4F88-BEB3-0C82F1F1D28E}.Release|x64.Build.0 = Release|x64
-		{59156B04-A824-4F88-BEB3-0C82F1F1D28E}.Release|x86.ActiveCfg = Release|x86
-		{59156B04-A824-4F88-BEB3-0C82F1F1D28E}.Release|x86.Build.0 = Release|x86
 		{9ACFAE79-C80F-4668-83FC-9713C58B56C4}.Debug_WithoutTagLib|ARM.ActiveCfg = Debug_WithoutTagLib|ARM
 		{9ACFAE79-C80F-4668-83FC-9713C58B56C4}.Debug_WithoutTagLib|ARM.Build.0 = Debug_WithoutTagLib|ARM
 		{9ACFAE79-C80F-4668-83FC-9713C58B56C4}.Debug_WithoutTagLib|ARM64.ActiveCfg = Debug_WithoutTagLib|ARM64
@@ -141,30 +113,6 @@ Global
 		{9ACFAE79-C80F-4668-83FC-9713C58B56C4}.Release|x64.Build.0 = Release|x64
 		{9ACFAE79-C80F-4668-83FC-9713C58B56C4}.Release|x86.ActiveCfg = Release|x86
 		{9ACFAE79-C80F-4668-83FC-9713C58B56C4}.Release|x86.Build.0 = Release|x86
-		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Debug_WithoutTagLib|ARM.ActiveCfg = Debug_WithoutTagLib|ARM
-		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Debug_WithoutTagLib|ARM.Build.0 = Debug_WithoutTagLib|ARM
-		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Debug_WithoutTagLib|ARM64.ActiveCfg = Debug_WithoutTagLib|ARM64
-		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Debug_WithoutTagLib|ARM64.Build.0 = Debug_WithoutTagLib|ARM64
-		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Debug_WithoutTagLib|x64.ActiveCfg = Debug_WithoutTagLib|x64
-		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Debug_WithoutTagLib|x64.Build.0 = Debug_WithoutTagLib|x64
-		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Debug_WithoutTagLib|x86.ActiveCfg = Debug_WithoutTagLib|x86
-		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Debug_WithoutTagLib|x86.Build.0 = Debug_WithoutTagLib|x86
-		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Debug|ARM.ActiveCfg = Debug|ARM
-		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Debug|ARM.Build.0 = Debug|ARM
-		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Debug|ARM64.ActiveCfg = Debug|ARM64
-		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Debug|ARM64.Build.0 = Debug|ARM64
-		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Debug|x64.ActiveCfg = Debug|x64
-		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Debug|x64.Build.0 = Debug|x64
-		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Debug|x86.ActiveCfg = Debug|x86
-		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Debug|x86.Build.0 = Debug|x86
-		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Release|ARM.ActiveCfg = Release|ARM
-		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Release|ARM.Build.0 = Release|ARM
-		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Release|ARM64.ActiveCfg = Release|ARM64
-		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Release|ARM64.Build.0 = Release|ARM64
-		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Release|x64.ActiveCfg = Release|x64
-		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Release|x64.Build.0 = Release|x64
-		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Release|x86.ActiveCfg = Release|x86
-		{6C71421F-747B-4E2C-A510-61BE12C53DAB}.Release|x86.Build.0 = Release|x86
 		{F1DF84D5-72CA-487F-8CB9-E0BCAB1DD7AB}.Debug_WithoutTagLib|ARM.ActiveCfg = Debug|ARM
 		{F1DF84D5-72CA-487F-8CB9-E0BCAB1DD7AB}.Debug_WithoutTagLib|ARM.Build.0 = Debug|ARM
 		{F1DF84D5-72CA-487F-8CB9-E0BCAB1DD7AB}.Debug_WithoutTagLib|ARM64.ActiveCfg = Debug|ARM64

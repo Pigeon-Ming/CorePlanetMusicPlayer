@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -444,6 +445,49 @@ namespace CorePlanetMusicPlayer.Models
                     genreDict[music.Genre] = genre;
                 }
                 genre.Music.Add(music);
+            }
+        }
+
+        public static void AddMusicToGenre(IMusic music)
+        {
+            var genreList = Genres.Where(x => x.Id == music.Genre).ToList();
+            Genre genre = null;
+            if (genreList != null && genreList.Count != 0)
+            {
+                genre.Music.Add(music);
+            }
+            else
+            {
+                genre = new Genre(music.Genre);
+                genre.Music.Add(music);
+                Genres.Add(genre);
+            }
+        }
+
+        public static void RemoveMusicFromGenre(IMusic music)
+        {
+            List<Genre> genres = Genres.ToList();
+            Genre genre = genres.Find(x => x.Id == music.Genre);
+            if (genre == null)
+                return;
+            bool isSucceed = genre.Music.Remove(music);
+            Debug.WriteLine($"从流派中移除音乐：{music.Title} 是否成功？ {isSucceed}");
+            if (genre.Music.Count == 0)
+                Genres.Remove(genre);
+        }
+
+        public static void RemoveMusicFromGenre(List<IMusic>musicList)
+        {
+            List<Genre> genres = Genres.ToList();
+            foreach (IMusic music in musicList)
+            {
+                Genre genre = genres.Find(x => x.Id == music.Genre);
+                if (genre == null)
+                    continue;
+                bool isSucceed = genre.Music.Remove(music);
+                Debug.WriteLine($"从流派中移除音乐：{music.Title} 是否成功？ {isSucceed}");
+                if (genre.Music.Count == 0)
+                    Genres.Remove(genre);
             }
         }
     }

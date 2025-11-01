@@ -1,5 +1,4 @@
-﻿using CorePlanetMusicPlayer.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -10,16 +9,16 @@ using UWPTools.Models;
 using Windows.Devices.Enumeration;
 using Windows.Storage;
 
-namespace CorePlanetMusicPlayer6.Models
+namespace CorePlanetMusicPlayer.Models
 {
     public class RemovableDevice
     {
         public string Name { get; set; }
         public StorageFolder StorageFolder { get; set; }
 
-        public List<LocalMusic> Music { get; set; }
+        public List<RemovableMusic> Music { get; set; }
 
-        public List<Artist> Artists {  get; set; }
+        public List<Artist> Artists { get; set; }
 
         public List<Album> Albums { get; set; }
 
@@ -70,7 +69,7 @@ namespace CorePlanetMusicPlayer6.Models
             {
                 devices.Add(CreateRemovableDevice(folder));
             }
-            RemovableDevices.Concat(devices);
+            RemovableDevices = new ObservableCollection<RemovableDevice>(devices);
         }
 
         private static RemovableDevice CreateRemovableDevice(StorageFolder storageFolder)
@@ -89,6 +88,15 @@ namespace CorePlanetMusicPlayer6.Models
         private static async void RemovableDevicesWatcher_Added(DeviceWatcher sender, DeviceInformation args)
         {
             await RefreshDevicesListAsync();
+        }
+
+        public static async Task GetRemovableDeviceMusicListAsync(RemovableDevice removableDevice)
+        {
+            if (await StorageHelper.IsFolderExistAsync(removableDevice.StorageFolder, "music"))
+                removableDevice.Music = await RemovableMusicManager.GetRemovableMusicFromStorageFolderAsync(await removableDevice.StorageFolder.GetFolderAsync("music"), removableDevice);
+            else
+                removableDevice.Music = await RemovableMusicManager.GetRemovableMusicFromStorageFolderAsync(removableDevice.StorageFolder, removableDevice);
+            Debug.WriteLine(removableDevice.Music.Count);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CorePlanetMusicPlayer.Models;
+using CorePlanetMusicPlayer6.Controls.DevControls;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -25,6 +27,8 @@ namespace CorePlanetMusicPlayer6.Views
         public DevPage()
         {
             this.InitializeComponent();
+
+            
         }
     }
 }

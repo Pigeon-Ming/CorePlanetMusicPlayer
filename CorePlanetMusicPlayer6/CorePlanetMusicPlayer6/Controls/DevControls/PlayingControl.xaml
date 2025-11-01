@@ -22,7 +22,7 @@
         <Image Grid.Row="0" MinWidth="200" MinHeight="200"/>
         <TextBlock Grid.Row="1" Name="TitleTextBlock"/>
         <TextBlock Grid.Row="2" Name="MessagesTextBlock"/>
-        <Slider Grid.Row="3" Margin="8" Name="ProgressSlider"/>
+        <Slider Grid.Row="3" Margin="8" Name="ProgressSlider" RightTapped="ProgressSlider_RightTapped" ValueChanged="ProgressSlider_ValueChanged"/>
         <Grid Grid.Row="4">
             <TextBlock Name="ProgressTextBlock"/>
             <TextBlock Name="DurationTextBlock" HorizontalAlignment="Right"/>
@@ -49,7 +49,7 @@
             <Button Grid.Column="2" Name="PlayAndPauseButton" Click="PlayAndPauseButton_Click">
                 <FontIcon Glyph="&#xE768;" Name="PlayAndPauseIcon"/>
             </Button>
-            <Button Grid.Column="3" Name="NextButton" Click="NextButton_Click">
+            <Button Grid.Column="3" Name="NextButton" Click="NextButton_Click" RightTapped="NextButton_RightTapped">
                 <FontIcon Glyph="&#xE893;" />
             </Button>
             <Button Grid.Column="4" Name="VolumeButton">

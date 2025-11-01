@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Media.Playback;
 
 namespace CorePlanetMusicPlayer.PlayCore
 {
@@ -24,6 +25,8 @@ namespace CorePlanetMusicPlayer.PlayCore
 
         double GetVolume();
         void SetVolume(double volume);
+
+        MediaPlaybackList SetMediaSource(int index, List<IMusic> newPlayQueue);
 
         TimeSpan GetPlayProgress();
         

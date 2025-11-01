@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ using UWPTools.Models;
 
 namespace CorePlanetMusicPlayer.Models
 {
-    public class Disc: ObservableCollection<IMusic>
+    public class Disc: List<IMusic>
     {
         public uint Number { get; set; } = 0;
 
@@ -150,9 +151,65 @@ namespace CorePlanetMusicPlayer.Models
             Albums = new ObservableCollection<Album>(Albums.Concat<Album>(albums));
         }
 
-        public static void AddMusicToAlbum()
+        public static void AddMusicToAlbum(IMusic music)
         {
-            throw new NotImplementedException();
+            var albums = Albums.Where(x=>x.Name == music.Album);
+            if(albums != null)
+            {
+                Album album = albums.ToList().First();
+                Disc disc = album.Discs.Find(x=> x.Number == music.DiscNumber);
+                if (disc == null)
+                {
+                    disc = new Disc();
+                    disc.Number = music.DiscNumber;
+                    disc.Add(music);
+                    album.Discs.Add(disc);
+                }
+                else
+                {
+                    disc.Add(music);
+                    var newDisc = disc.OrderBy(x => x.DiscNumber).ToList();
+                    disc.Clear();
+                    disc.AddRange(newDisc);
+                }
+            }
+            else
+            {
+                Album album = new Album();
+                album.Name = music.Album;
+                Disc disc = new Disc();
+                disc.Add(music);
+                album.Discs.Add(disc);
+            }
+        }
+
+        public static void RemoveMusicFromAlbum(IMusic music)
+        {
+            List<Album> albums = Albums.ToList();
+            Album album = albums.Find(x=>x.Name == music.Album);
+            if (album == null)
+                return;
+            Disc disc = album.Discs.Find(x=>x.Number == music.DiscNumber);
+            if (disc == null)
+                return;
+            bool isSucceed = disc.Remove(music);
+            Debug.WriteLine($"从专辑中移除音乐：{music.Title} 是否成功？ {isSucceed}");
+        }
+
+        public static void RemoveMusicFromAlbum(List<IMusic> musicList)
+        {
+            List<Album> albums = Albums.ToList();
+            foreach (IMusic music in musicList)
+            {
+                Album album = albums.Find(x => x.Name == music.Album);
+                if (album == null)
+                    return;
+                Disc disc = album.Discs.Find(x => x.Number == music.DiscNumber);
+                if (disc == null)
+                    return;
+                bool isSucceed = disc.Remove(music);
+                Debug.WriteLine($"从专辑中移除音乐：{music.Title} 是否成功？ {isSucceed}");
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using CorePlanetMusicPlayer.Models;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,7 +24,6 @@ namespace CorePlanetMusicPlayer6.Models
 
 
         public static ObservableCollection<StreamMusic> StreamMusic { get; set; } = new ObservableCollection<StreamMusic>();//流式传输的歌曲
-
 
         //Library
         public static List<IMusic> GetAllMusicList()
@@ -116,11 +116,52 @@ namespace CorePlanetMusicPlayer6.Models
         }
 
         //StreamMusic
-        public static async Task AddStreamMusicAsync(StreamMusic streamMusic)
+        public static async Task SaveStreamMusicAsync(StreamMusic streamMusic)
         {
-            StreamMusic.Add(streamMusic);
+            var a = StreamMusic.Where(x => x.Url == streamMusic.Url).ToList();
+            StreamMusic oldItem = null;
+            if (a != null && a.Count != 0)
+                oldItem = a.First();
+            if (oldItem != null)
+            {
+                oldItem.Title = streamMusic.Title;
+                oldItem.Artist = streamMusic.Artist;
+                oldItem.Album = streamMusic.Album;
+                oldItem.Duration = streamMusic.Duration;
+                oldItem.Bitrate = streamMusic.Bitrate;
+                oldItem.DiscNumber = streamMusic.DiscNumber;
+                oldItem.TrackNumber = streamMusic.TrackNumber;
+                oldItem.Genre = streamMusic.Genre;
+                oldItem.Year = streamMusic.Year;
+                oldItem.CoverUrl = streamMusic.CoverUrl;
+            }
+            else
+            {
+                StreamMusic.Add(streamMusic);
+                AlbumManager.AddMusicToAlbum(streamMusic);
+                ArtistManager.AddMusicToArtist(streamMusic);
+                GenreManager.AddMusicToGenre(streamMusic);
+                YearManager.AddMusicToYears(streamMusic);
+            }
             await DataBaseManager.UpdateStreamMusicDataAsync(StreamMusic.ToList());
+
+            
+            
         }
+
+        public static async Task DeleteStreamMusicAsync(List<StreamMusic>streamMusicList)
+        {
+            await DataBaseManager.DeleteStreamMusicDataAsync(streamMusicList);
+
+            List<IMusic> musicList = streamMusicList.ToList<IMusic>();
+
+            ArtistManager.RemoveMusicFromArtist(musicList);
+            AlbumManager.RemoveMusicFromAlbum(musicList);
+            YearManager.RemoveMusicFromYear(musicList);
+            GenreManager.RemoveMusicFromGenre(musicList);
+            await GetStreamMusicAsync();
+        }
+        
 
         public static async Task GetStreamMusicAsync()
         {
@@ -165,5 +206,11 @@ namespace CorePlanetMusicPlayer6.Models
             else
                 return false;
         }
+
+        
+
+        
+
+        
     }
 }

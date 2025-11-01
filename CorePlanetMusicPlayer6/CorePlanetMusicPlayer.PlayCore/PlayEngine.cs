@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Media;
@@ -62,7 +64,7 @@ namespace CorePlanetMusicPlayer.PlayCore
 
         public PlayState PlayState { get; set; }
 
-        public PlayQueue PlayQueue { get; set; } = new PlayQueue();
+        public PlayQueue PlayQueue { get; set; } 
 
         public event EventHandler PlayingEnded;
         public event EventHandler StateChanged;
@@ -80,11 +82,25 @@ namespace CorePlanetMusicPlayer.PlayCore
             MediaPlayer = new MediaPlayer();
             MediaPlayer.SystemMediaTransportControls.IsEnabled = false;
             SMTCConrtols = MediaPlayer.SystemMediaTransportControls;//SystemMediaTransportControls.GetForCurrentView(); ;
-            
+
+            PlayQueue = new PlayQueue(this);
+
             //SMTCConrtols.DisplayUpdater.Type = MediaPlaybackType.Music;
-            
+
             MediaPlayer.CurrentStateChanged += MediaPlayer_CurrentStateChanged;
             MediaPlayer.MediaOpened += MediaPlayer_MediaOpened;
+            MediaPlayer.BufferingStarted += MediaPlayer_BufferingStarted;
+        }
+
+        private void MediaPlayer_BufferingStarted(MediaPlayer sender, object args)
+        {
+            Debug.WriteLine("BufferingStarted!");
+        }
+
+        public MediaPlayer GetMediaPlayer()
+        {
+            Debug.WriteLine("GetMediaPlayer方法仅供开发使用！");
+            return MediaPlayer;
         }
 
         private void MediaPlayer_MediaOpened(MediaPlayer sender, object args)
@@ -147,28 +163,55 @@ namespace CorePlanetMusicPlayer.PlayCore
                 MediaPlayer.Play();
         }
 
-        private void playMusic(MediaPlaybackList mediaPlaybackList,int index)
-        {
+        //private void playMusic(MediaPlaybackList mediaPlaybackList,int index)
+        //{
             
-            if (mediaPlaybackList != null)
-            {
-                mediaPlaybackList.StartingItem = mediaPlaybackList.Items[index];
-                MediaPlayer.Source = mediaPlaybackList;
-                MediaPlayer.Play();
-            }
+        //    if (mediaPlaybackList != null)
+        //    {
+        //        mediaPlaybackList.StartingItem = mediaPlaybackList.Items[index];
+        //        MediaPlayer.Play();
+        //    }
             
-        }
+        //}
 
         private void playMusic(int index)
         {
             MediaPlaybackList mediaPlaybackList = (MediaPlaybackList)MediaPlayer.Source;
             mediaPlaybackList.MoveTo((uint)index);
+            MediaPlayer.Play();
             PlayingChanged?.Invoke(this,null);
         }
 
         public void PlayMusic(IMusic music, List<IMusic> newPlayQueue, int currentMusicIndex)
         {
-            if(MediaPlayer.Source != null)
+
+            MediaPlaybackList mediaPlaybackList = SetMediaSource(currentMusicIndex, newPlayQueue);
+            PlayQueue.SetQueue(newPlayQueue);
+            PlayQueue.SetCurrentIndex(currentMusicIndex);
+            playMusic(currentMusicIndex);
+            SMTCManager.UpdateSMTC(mediaPlaybackList.Items[currentMusicIndex], PlayQueue.GetCurrentMusic());
+            //SMTCManager.UpdateSMTC(SMTCConrtols, PlayQueue.GetCurrentMusic());
+        }
+
+        private void MediaPlaybackList_CurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
+        {
+            Debug.WriteLine("Reason: "+ args.Reason);
+            PlayingChanging?.Invoke(args.Reason, null);
+            
+            if ((int)sender.CurrentItemIndex >= PlayQueue.NormalQueue.Count)
+                return;
+            if (PlayQueue.CurrentIndex != (int)sender.CurrentItemIndex)
+                PlayQueue.SetCurrentIndex((int)sender.CurrentItemIndex);
+            MediaPlaybackList mediaPlaybackList = (MediaPlaybackList)MediaPlayer.Source;
+            if (mediaPlaybackList.Items.Count <= sender.CurrentItemIndex)
+                return;
+            SMTCManager.UpdateSMTC(mediaPlaybackList.Items[(int)sender.CurrentItemIndex], PlayQueue.GetCurrentMusic());
+            Debug.WriteLine($"CurrentItemChanged:{PlayQueue.CurrentIndex}");
+        }
+
+        public MediaPlaybackList SetMediaSource(int index, List<IMusic> newPlayQueue)
+        {
+            if (MediaPlayer.Source != null)
             {
                 ((MediaPlaybackList)MediaPlayer.Source).CurrentItemChanged -= MediaPlaybackList_CurrentItemChanged;
             }
@@ -176,20 +219,10 @@ namespace CorePlanetMusicPlayer.PlayCore
             mediaPlaybackList.CurrentItemChanged += MediaPlaybackList_CurrentItemChanged;
 
             if (mediaPlaybackList == null)
-                return;
-            
-            PlayQueue.SetQueue(newPlayQueue);
-            PlayQueue.SetCurrentIndex(currentMusicIndex);
-            playMusic(mediaPlaybackList,currentMusicIndex);
-            SMTCManager.UpdateSMTC(mediaPlaybackList.Items[currentMusicIndex], PlayQueue.GetCurrentMusic());
-            //SMTCManager.UpdateSMTC(SMTCConrtols, PlayQueue.GetCurrentMusic());
-        }
-
-        private void MediaPlaybackList_CurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
-        {
-            PlayQueue.SetCurrentIndex((int)sender.CurrentItemIndex);
-            SMTCManager.UpdateSMTC(((MediaPlaybackList)MediaPlayer.Source).Items[(int)sender.CurrentItemIndex], PlayQueue.GetCurrentMusic());
-            Debug.WriteLine($"CurrentItemChanged:{PlayQueue.CurrentIndex}");
+                return null;
+            mediaPlaybackList.StartingItem = mediaPlaybackList.Items[index];
+            MediaPlayer.Source = mediaPlaybackList;
+            return mediaPlaybackList;
         }
 
         private MediaPlaybackList GetMediaPlayBackListFromIMusicList(List<IMusic>musicList)
@@ -235,8 +268,14 @@ namespace CorePlanetMusicPlayer.PlayCore
             }
             else if(music is StreamMusic)
             {
-                //To-Do:OnlineMusic的播放
-                return null;
+                MediaSource mediaSource = MediaSource.CreateFromUri(new Uri(((StreamMusic)music).Url));
+                mediaPlaybackItem = new MediaPlaybackItem(mediaSource);
+                return mediaPlaybackItem;
+            } else if (music is RemovableMusic)
+            {
+                MediaSource mediaSource = MediaSource.CreateFromStorageFile(((RemovableMusic)music).StorageFile);
+                mediaPlaybackItem = new MediaPlaybackItem(mediaSource);
+                return mediaPlaybackItem;
             }
             else return null;
         }

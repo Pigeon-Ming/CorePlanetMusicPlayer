@@ -1,4 +1,5 @@
 ﻿using CorePlanetMusicPlayer.Models;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,22 +7,42 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using UWPTools.Models;
+using Windows.Storage;
 
 namespace CorePlanetMusicPlayer.PlayCore
 {
     public class PlayQueue
     {
-        public PlayQueue()
+        private static StorageFile LastPlayQueueFile { get; set; }
+
+        private IPlayEngine playEngine { get; set; }
+
+        public static async Task Init()
+        {
+            StorageFolder storageFolder = await StorageHelper.GetApplicationDataFolderAsync("Data");
+            LastPlayQueueFile = await StorageHelper.GetStorageFileFromStorageFolderAsync(storageFolder,"LastPlayQueue.json");
+        }
+
+
+        public PlayQueue(IPlayEngine playEngine)
         {
             PlayModes.Add(new PlayMode.RepeatAll(this));
             PlayModes.Add(new PlayMode.Shuffle(this));
             PlayModes.Add(new PlayMode.RepeatOne(this));
             PlayModes.Add(new PlayMode.Reverse(this));
+
+            this.playEngine = playEngine;
         }
         
         private int currentIndex = -1;
 
-        public int CurrentIndex { get { return currentIndex; } set { currentIndex = value; } }
+        public int CurrentIndex { get { return currentIndex; } 
+            set 
+            { 
+                currentIndex = value; 
+            } 
+        }
 
         public List<IMusic> NormalQueue { get;private set; } = new List<IMusic>();
 
@@ -39,6 +60,8 @@ namespace CorePlanetMusicPlayer.PlayCore
 
 
         public event EventHandler PlayQueueChanged;
+
+        public event EventHandler CurrentIndexChanging;
 
         public event EventHandler CurrentIndexChanged;
 
@@ -129,6 +152,8 @@ namespace CorePlanetMusicPlayer.PlayCore
                     ShuffleQueue = CreateShuffleQueue(NormalQueue);
                     break;
             }
+            //if(true)//To-Do: To-Do: 添加判断是否存储恢复播放列表的数据
+                SavePlayQueueToStorage();
         }
 
         public List<IMusic> GetQueue()
@@ -208,7 +233,10 @@ namespace CorePlanetMusicPlayer.PlayCore
 
         public void SetCurrentIndex(int newIndex)//设置正在播放索引
         {
+            CurrentIndexChanging?.Invoke(this, null);
             CurrentIndex = newIndex;
+            //if()//To-Do: 添加判断是否存储恢复播放列表的数据
+            SavePlayQueueIndexToStorage();
             CurrentIndexChanged?.Invoke(this,null);
         }
 
@@ -227,17 +255,51 @@ namespace CorePlanetMusicPlayer.PlayCore
                 case PlayModeEnum.RepeatAll:
                 case PlayModeEnum.RepeatOne:
                 case PlayModeEnum.Reverse:
-                    if (NormalQueue.Count > 0 && NormalQueue.Count > CurrentIndex)
+                    if (NormalQueue.Count > 0 && currentIndex != -1 && NormalQueue.Count > CurrentIndex)
                         return NormalQueue[CurrentIndex];
                     else
                         return null;
                 case PlayModeEnum.Shuffle:
-                    if (ShuffleQueue.Count > 0 && ShuffleQueue.Count > CurrentIndex)
+                    if (ShuffleQueue.Count > 0 && currentIndex != -1 && ShuffleQueue.Count > CurrentIndex)
                         return ShuffleQueue[CurrentIndex];
                     else
                         return null;
             }
             return null;
+        }
+
+        public void SavePlayQueueToStorage()
+        {
+            List<JMusic> jMusicList;
+            if (CurrentPlayModeEnum == PlayModeEnum.Shuffle)
+                jMusicList = JMusicHelper.GetJMusicList(ShuffleQueue);
+            else
+                jMusicList = JMusicHelper.GetJMusicList(NormalQueue);
+            string json = JMusicHelper.GetJMusicListJsonString(jMusicList);
+            //Debug.WriteLine($"设置上次播放列表：{json}");
+            _ = StorageHelper.WriteStringToFileAsync(LastPlayQueueFile,json);
+        }
+
+        public void SavePlayQueueIndexToStorage()
+        {
+            SettingsManager.SetSetting("CorePlanetMusicPlayer_LastPlayQueueIndex", CurrentIndex.ToString());
+            Debug.WriteLine($"设置上次播放列表播放项索引：{currentIndex}");
+        }
+
+        public async Task ResumePlayQueueAsync(List<LocalMusic> localMusicList)
+        {
+            string json = await StorageHelper.ReadFileAsStringAsync(LastPlayQueueFile);
+            if (String.IsNullOrEmpty(json))
+                return;
+            JArray jArray = JArray.Parse(json);
+            List<IMusic> queue= JMusicHelper.GetMusicFromJArray(jArray, localMusicList);
+            SetQueue(queue);
+            string indexStr = SettingsManager.GetSettingContent("CorePlanetMusicPlayer_LastPlayQueueIndex").ToString();
+            int index = Convert.ToInt32(indexStr);
+            if (index >= localMusicList.Count || index < 0)
+                index = 0;
+            SetCurrentIndex(index);
+            playEngine.SetMediaSource(index, queue);
         }
     }
 }

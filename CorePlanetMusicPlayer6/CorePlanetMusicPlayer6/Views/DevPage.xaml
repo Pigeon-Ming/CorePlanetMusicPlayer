@@ -86,6 +86,21 @@
                     <devcontrols:YearsControl/>
                 </DataTemplate>
             </HubSection>
+            <HubSection Header="播放统计" Width="400">
+                <DataTemplate>
+                    <devcontrols:PlayRecordsControl/>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="播放列表" Width="400">
+                <DataTemplate>
+                    <devcontrols:PlaylistsControl/>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="歌词" Width="400">
+                <DataTemplate>
+                    <devcontrols:LyricControl/>
+                </DataTemplate>
+            </HubSection>
         </Hub>
     </Grid>
 </Page>

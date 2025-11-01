@@ -16,7 +16,7 @@ namespace CorePlanetMusicPlayer6.Models
         const string CreateLocalMusicTableSQL = "create table if not exists local_music (" +
                              //"id integer primary key autoincrement,"+
                              "filepath varchar(255) primary key not null unique," +
-                             "title varchar(50),"+
+                             "title varchar(200),"+
                              "artist varchar(50),"+
                              "album varchar(50),"+
                              "duration varchar(8),"+
@@ -37,7 +37,7 @@ namespace CorePlanetMusicPlayer6.Models
         const string CreateStreamMusicTableSQL = "create table if not exists stream_music (" +
                              "url varchar(1024) primary key not null unique," +
                              "cover_url varchar(1024)," +
-                             "title varchar(50)," +
+                             "title varchar(200)," +
                              "artist varchar(50)," +
                              "album varchar(50)," +
                              "duration varchar(8)," +
@@ -54,6 +54,8 @@ namespace CorePlanetMusicPlayer6.Models
         // 插入StreamMusic表数据
         const string InsertStreamMusicTableSQL = "insert or replace into stream_music (url, cover_url, title, artist, album, duration, bitrate, track, disc, year, genre) VALUES";
 
+        // 删除StreamMusic表数据
+        const string DeleteStreamMusicSQL = "delete from stream_music where url=";
 
         // 初始化所有要用到的数据库
         public static async Task InitDataBasesAsync()
@@ -157,6 +159,20 @@ namespace CorePlanetMusicPlayer6.Models
             SQLCommand = SQLCommand.Substring(0, SQLCommand.Length - 1);
             SQLCommand += ";";
             await SQLiteConnection.ExecuteNonQueryAsync(SQLCommand);
+            SQLiteConnection.Dispose();
+        }
+
+        public static async Task DeleteStreamMusicDataAsync(List<StreamMusic> delateData)
+        {
+            if (delateData.Count == 0)
+                return;
+            StorageFolder folder = await StorageHelper.GetApplicationDataFolderAsync("Data");
+            StorageFile file = await StorageHelper.GetStorageFileFromStorageFolderAsync(folder, "Music.db");
+            SQLiteConnection SQLiteConnection = new SQLiteConnection(file.Path);
+            foreach (StreamMusic streamMusic in delateData)
+            {
+                await SQLiteConnection.ExecuteNonQueryAsync($"{DeleteStreamMusicSQL}'{streamMusic.Url}';");
+            }
             SQLiteConnection.Dispose();
         }
 

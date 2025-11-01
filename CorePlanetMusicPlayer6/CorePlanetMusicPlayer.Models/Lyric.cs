@@ -16,7 +16,13 @@ namespace CorePlanetMusicPlayer.Models
 
     public class LyricManager
     {
-        public List<Lyric> GetLyricListFromLRCContent(string str)
+
+        /// <summary>
+        /// 从LRC文本中获取歌词
+        /// </summary>
+        /// <param name="str">LRC文本</param>
+        /// <returns></returns>
+        public static List<Lyric> GetLyricsFromLRCContent(string str)
         {
             List<Lyric> lyrics = new List<Lyric>();
 
@@ -56,6 +62,7 @@ namespace CorePlanetMusicPlayer.Models
                         }
                     }
                 }
+                lyrics.Add(lyric);
                 //if (IgnoreEmptyLine == false || !String.IsNullOrEmpty(lyric.Content) || !String.IsNullOrEmpty(lyric.Translation))
                 //    lyrics.Add(lyric);
                 if (str_LineFeed_Index == -1 && str_LineFeed_Index + 1 < str.Length - 1)
@@ -81,9 +88,10 @@ namespace CorePlanetMusicPlayer.Models
                     //    if (IgnoreEmptyLine == false || !String.IsNullOrEmpty(lyric.Content) || !String.IsNullOrEmpty(lyric.Translation))
                     //        lyrics.Add(lyric);
                     //}
+                    lyrics.Add(lyric);
                     break;
                 }
-
+                
                 //Debug.WriteLine(str_DoseBracket_Index+"|"+str_LineFeed_Index+"\n"+str);
                 str = str.Substring(str_LineFeed_Index + 1);
             }
@@ -101,6 +109,19 @@ namespace CorePlanetMusicPlayer.Models
                 }
             }
             return lyrics;
+        }
+
+        public static int GetCurrentLyricIndex(List<Lyric>lyrics, TimeSpan currentTime)
+        {
+            // 验证输入参数
+            if (lyrics == null || lyrics.Count == 0)
+                return -1;
+
+            // 查找最后一个时间小于等于当前播放时间的歌词
+            var matchedLyric = lyrics.LastOrDefault(l => l.Time <= currentTime);
+
+            // 返回找到的歌词索引，未找到则返回-1
+            return matchedLyric != null ? lyrics.IndexOf(matchedLyric) : -1;
         }
     }
 }

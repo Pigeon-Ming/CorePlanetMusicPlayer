@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -29,14 +30,30 @@ namespace CorePlanetMusicPlayer6.Controls.DevControls
             refreshSourceList();
         }
 
-        private void MusicSourceComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void MusicSourceComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            await SourceChangedAsync();
+        }
+
+        async Task SourceChangedAsync()
         {
             MusicListView.ItemsSource = null;
-            switch (MusicSourceComboBox.SelectedIndex)
+            Menu_Remove.IsEnabled = false;
+            if (MusicSourceComboBox.SelectedIndex == 0)
             {
-                case 0:
-                    currentItems = Library.LocalMusic.ToList<IMusic>();
-                    break;
+                currentItems = Library.LocalMusic.ToList<IMusic>();
+            }
+            else if (MusicSourceComboBox.SelectedIndex == 1)
+            {
+                currentItems = Library.StreamMusic.ToList<IMusic>();
+                Menu_Remove.IsEnabled = true;
+            }
+            else if (MusicSourceComboBox.SelectedIndex != -1)
+            {
+                RemovableDevice removableDevice = RemovableDeviceManager.RemovableDevices[MusicSourceComboBox.SelectedIndex - 1];
+                if (removableDevice.Music == null)
+                    await RemovableDeviceManager.GetRemovableDeviceMusicListAsync(removableDevice);
+                currentItems = removableDevice.Music.ToList<IMusic>();
             }
             MusicListView.ItemsSource = currentItems;
         }
@@ -55,16 +72,62 @@ namespace CorePlanetMusicPlayer6.Controls.DevControls
         {
             MusicSourceComboBox.Items.Clear();
             MusicSourceComboBox.Items.Add("本地音乐库");
+            MusicSourceComboBox.Items.Add("流式传输音乐库");
+            foreach (RemovableDevice removableDevice in RemovableDeviceManager.RemovableDevices)
+            {
+                MusicSourceComboBox.Items.Add($"[可移动设备] - {removableDevice.Name}");
+            }
         }
 
         private void MusicListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            Play((LocalMusic)MusicListView.SelectedItem);
+            if (MusicListView.SelectedItem is LocalMusic)
+                Play((LocalMusic)MusicListView.SelectedItem);
+            else if(MusicListView.SelectedItem is StreamMusic)
+                Play((StreamMusic)MusicListView.SelectedItem);
+            else if(MusicListView.SelectedItem is RemovableMusic)
+                Play((RemovableMusic)MusicListView.SelectedItem);
         }
 
         void Play(IMusic music)
         {
             ProgramData.PlayEngine.PlayMusic(music, currentItems, currentItems.IndexOf(music));
+        }
+
+        IMusic rightClickedMusic;
+
+        private void Menu_SaveToPlaylist_Click(object sender, RoutedEventArgs e)
+        {
+            if (rightClickedMusic != null)
+                _ = SaveToPlaylistAsync(rightClickedMusic);
+        }
+
+        async Task SaveToPlaylistAsync(IMusic music)
+        {
+            await ContentDialogManager.ShowContentDialogAsync(new SaveToPlaylistControl(music));
+        }
+
+        private void MusicListView_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            if ((e.OriginalSource as FrameworkElement) != null)
+                rightClickedMusic = (IMusic)(e.OriginalSource as FrameworkElement).DataContext;
+        }
+
+        private void AddStreamMusicButton_Click(object sender, RoutedEventArgs e)
+        {
+            _ = AddStreamMusicAsync();
+        }
+
+        async Task AddStreamMusicAsync()
+        {
+            await ContentDialogManager.ShowContentDialogAsync(new SaveStreamMusicControl());
+        }
+
+        private async void Menu_Remove_Click(object sender, RoutedEventArgs e)
+        {
+            List<StreamMusic> streamMusic = new List<StreamMusic>();
+            streamMusic.Add(rightClickedMusic as StreamMusic);
+            await Library.DeleteStreamMusicAsync(streamMusic);
         }
     }
 }

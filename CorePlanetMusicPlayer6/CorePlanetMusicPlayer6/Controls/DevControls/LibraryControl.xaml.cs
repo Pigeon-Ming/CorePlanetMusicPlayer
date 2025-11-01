@@ -1,13 +1,16 @@
-﻿using CorePlanetMusicPlayer6.Models;
+﻿using CorePlanetMusicPlayer.Models;
+using CorePlanetMusicPlayer6.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -26,6 +29,15 @@ namespace CorePlanetMusicPlayer6.Controls.DevControls
         {
             this.InitializeComponent();
             refreshListView();
+            RemovableDeviceManager.RemovableDevices.CollectionChanged += RemovableDevices_CollectionChanged;
+        }
+
+        private async void RemovableDevices_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                refreshListView();
+            });
         }
 
         public class ListItem
@@ -41,6 +53,10 @@ namespace CorePlanetMusicPlayer6.Controls.DevControls
             foreach (var item in Library.Folders)
             {
                 list.Add(new ListItem { Token = item.Value, StorageFolder = item.Key});
+            }
+            foreach (var item in RemovableDeviceManager.RemovableDevices)
+            {
+                list.Add(new ListItem { Token = "[可移动设备]", StorageFolder = item.StorageFolder});
             }
             FolderListView.ItemsSource = null;
             FolderListView.ItemsSource = list;

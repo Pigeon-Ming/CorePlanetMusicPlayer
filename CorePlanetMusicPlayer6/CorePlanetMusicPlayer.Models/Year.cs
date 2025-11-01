@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TagLib;
 
 namespace CorePlanetMusicPlayer.Models
 {
@@ -70,8 +72,9 @@ namespace CorePlanetMusicPlayer.Models
 
         public static void AddMusicToYears(IMusic music)
         {
-            Year year = Years.ToList().Find(x => x.ReleaseYear == music.Year);
-            if (year != null)
+            var yearList = Years.Where(x => x.ReleaseYear == music.Year).ToList();
+            Year year = null;
+            if(yearList != null && yearList.Count != 0)
             {
                 year.Music.Add(music);
             }
@@ -80,6 +83,33 @@ namespace CorePlanetMusicPlayer.Models
                 year = new Year(music.Year);
                 year.Music.Add(music);
                 Years.Add(year);
+            }
+        }
+
+        public static void RemoveMusicFromYear(IMusic music)
+        {
+            List<Year> years = Years.ToList();
+            Year year = years.Find(x => x.ReleaseYear == music.Year);
+            if (year == null)
+                return;
+            bool isSucceed = year.Music.Remove(music);
+            Debug.WriteLine($"从年份中移除音乐：{music.Title} 是否成功？ {isSucceed}");
+            if (year.Music.Count == 0)
+                Years.Remove(year);
+        }
+
+        public static void RemoveMusicFromYear(List<IMusic> musicList)
+        {
+            List<Year> years = Years.ToList();
+            foreach (IMusic music in musicList)
+            {
+                Year year = years.Find(x => x.ReleaseYear == music.Year);
+                if (year == null)
+                    continue;
+                bool isSucceed = year.Music.Remove(music);
+                Debug.WriteLine($"从年份中移除音乐：{music.Title} 是否成功？ {isSucceed}");
+                if (year.Music.Count == 0)
+                    Years.Remove(year);
             }
         }
     }

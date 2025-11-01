@@ -10,6 +10,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Media.Playback;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -97,6 +98,21 @@ namespace CorePlanetMusicPlayer6.Controls.DevControls
         private void PlayModeButton_Click(object sender, RoutedEventArgs e)
         {
             playEngine.Previous();
+        }
+
+        private void ProgressSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            
+        }
+
+        private void ProgressSlider_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            ((SystemMediaPlayer)playEngine).GetMediaPlayer().Position = TimeSpan.FromMinutes(3);
+        }
+
+        private void NextButton_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            ((SystemMediaPlayer)playEngine).GetMediaPlayer().Position = ((SystemMediaPlayer)playEngine).GetMediaPlayer().Position + TimeSpan.FromSeconds(5);
         }
     }
 }
