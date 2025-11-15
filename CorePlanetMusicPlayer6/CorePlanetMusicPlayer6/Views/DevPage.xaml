@@ -1,0 +1,106 @@
+﻿<Page
+    x:Class="CorePlanetMusicPlayer6.Views.DevPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:CorePlanetMusicPlayer6.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:devcontrols="using:CorePlanetMusicPlayer6.Controls.DevControls" xmlns:controls="using:UWPTools.Controls"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <!--库、音乐、正在播放、播放队列、艺术家、专辑、流派、播放列表-->
+        <!--<ScrollViewer VerticalScrollBarVisibility="Hidden" VerticalScrollMode="Disabled" VerticalContentAlignment="Stretch" HorizontalScrollBarVisibility="Visible" HorizontalScrollMode="Enabled">
+            <Grid VerticalAlignment="Stretch">
+                <Grid.Resources>
+                    <Style x:Key="ControlGrid" TargetType="Grid">
+                        <Setter Property="BorderBrush" Value="Gray"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                        <Setter Property="Width" Value="600"/>
+                    </Style>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid Style="{ThemeResource ControlGrid}" >
+                    <controls:DevToolsControl/>
+                </Grid>
+                <Grid Style="{ThemeResource ControlGrid}" Grid.Column="1">
+                    <devcontrols:LibraryControl/>
+                </Grid>
+                <Grid Style="{ThemeResource ControlGrid}" VerticalAlignment="Stretch" Grid.Column="2">
+                    <devcontrols:MusicLibraryControl/>
+                </Grid>
+            </Grid>
+        </ScrollViewer>-->
+        <Hub>
+            <Hub.Resources>
+                <Style TargetType="HubSection">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </Hub.Resources>
+            <HubSection Header="开发者工具">
+                <DataTemplate>
+                    <controls:DevToolsControl/>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="本地音乐库来源" Width="400">
+                <DataTemplate>
+                    <devcontrols:LibraryControl/>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="音乐库" Width="400">
+                <DataTemplate>
+                    <devcontrols:MusicLibraryControl/>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="播放控制" Width="300">
+                <DataTemplate>
+                    <devcontrols:PlayingControl/>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="播放队列" Width="400">
+                <DataTemplate>
+                    <devcontrols:PlayQueueControl/>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="艺术家" Width="400" VerticalContentAlignment="Stretch">
+                <DataTemplate>
+                    <devcontrols:ArtistsControl/>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="专辑" Width="400" VerticalContentAlignment="Stretch">
+                <DataTemplate>
+                    <devcontrols:AlbumsControl/>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="流派" Width="400" VerticalContentAlignment="Stretch">
+                <DataTemplate>
+                    <devcontrols:GenresControl/>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="年份" Width="400" VerticalContentAlignment="Stretch">
+                <DataTemplate>
+                    <devcontrols:YearsControl/>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="播放统计" Width="400">
+                <DataTemplate>
+                    <devcontrols:PlayRecordsControl/>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="播放列表" Width="400">
+                <DataTemplate>
+                    <devcontrols:PlaylistsControl/>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="歌词" Width="400">
+                <DataTemplate>
+                    <devcontrols:LyricControl/>
+                </DataTemplate>
+            </HubSection>
+        </Hub>
+    </Grid>
+</Page>

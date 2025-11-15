@@ -1,0 +1,40 @@
+﻿<UserControl
+    x:Class="CorePlanetMusicPlayer6.Controls.DevControls.PlayRecordsControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:CorePlanetMusicPlayer6.Controls.DevControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:models="using:CorePlanetMusicPlayer.Models"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <ScrollViewer>
+            <StackPanel>
+                <Button Content="测试" Name="TestButton" Click="TestButton_Click"/>
+                <DatePicker Name="QueryDatePicker"/>
+                <Button Content="尝试获取指定年月日的数据" Name="QueryDateDataButton" Click="QueryDateDataButton_Click"/>
+            </StackPanel>
+        </ScrollViewer>
+        <ListView Grid.Row="1" Name="PlayRecordsListView">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="models:PlayRecord">
+                    <Grid>
+                        <StackPanel>
+                            <TextBlock Text="{Binding Title}"/>
+                            <TextBlock Text="{Binding Artist}"/>
+                            <TextBlock Text="{Binding Album}"/>
+                            <TextBlock Text="{Binding Duration}"/>
+                            <TextBlock Text="{Binding DateTime}"/>
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</UserControl>
