@@ -62,7 +62,7 @@ namespace CorePlanetMusicPlayer.Models
         public static async Task DeletePlaylistAsync(string PlaylistName)
         {
             StorageFolder storageFolder = await StorageManager.GetApplicationDataFolder("Playlists");
-            if(await StorageManager.IsItemExsitAsync(storageFolder, PlaylistName+".pmplist5"))
+            if(await StorageManager.IsItemExistAsync(storageFolder, PlaylistName+".pmplist5"))
             {
                 await (await storageFolder.GetFileAsync(PlaylistName + ".pmplist5")).DeleteAsync();
                 Playlist playlist = Library.Playlists.Find(x=>x.Name == PlaylistName);
@@ -77,7 +77,7 @@ namespace CorePlanetMusicPlayer.Models
         {
             var picker = new Windows.Storage.Pickers.FileOpenPicker();
             picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
-            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
+            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.Desktop;
             picker.FileTypeFilter.Add(".pmplist4");
             picker.FileTypeFilter.Add(".pmplist5");
 
@@ -117,7 +117,8 @@ namespace CorePlanetMusicPlayer.Models
             savePicker.SuggestedFileName = PlaylistName;
             String str = await StorageManager.ReadFile(await StorageManager.GetApplicationDataFolder("Playlists"),PlaylistName+".pmplist5");
             StorageFile file1 = await savePicker.PickSaveFileAsync();
-            await Windows.Storage.FileIO.WriteTextAsync(file1, str);
+            if(file1 != null)
+                await Windows.Storage.FileIO.WriteTextAsync(file1, str);
             
         }
 

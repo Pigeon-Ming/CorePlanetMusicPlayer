@@ -13,6 +13,7 @@ using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 using Windows.UI.Core;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace CorePlanetMusicPlayer.Models
@@ -131,9 +132,11 @@ namespace CorePlanetMusicPlayer.Models
 
         public static async void PlayMusic(Music music, List<Music> playQueue, int playingMusicIndex)
         {
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.High,
+            () =>
             {
-                CurrentMusicChanging.Invoke(null, null);
+                CurrentMusicChanging?.Invoke(null, null);
                 PlayQueue.playingMusicIndex = playingMusicIndex;
                 if (music == null)
                     return;
@@ -155,6 +158,7 @@ namespace CorePlanetMusicPlayer.Models
                 CurrentMusic = music;
                 PlayQueue.SetList(playQueue);
             });
+            
 
         }
 
@@ -239,22 +243,28 @@ namespace CorePlanetMusicPlayer.Models
 
         public static async Task RefreshSMTCAsync(MediaPlaybackItem playbackItem, Music music)
         {
-            MediaItemDisplayProperties props = playbackItem.GetDisplayProperties();
-            props.Type = Windows.Media.MediaPlaybackType.Music;
-            props.MusicProperties.Title = music.Title;
-            props.MusicProperties.Artist = music.Artist;
-            props.MusicProperties.AlbumTitle = music.Album;
-            props.MusicProperties.TrackNumber = music.TrackNumber;
+            ////MediaItemDisplayProperties props = playbackItem.GetDisplayProperties();
+            ////props.Type = Windows.Media.MediaPlaybackType.Music;
+            ////props.MusicProperties.Title = music.Title;
+            ////props.MusicProperties.Artist = music.Artist;
+            ////props.MusicProperties.AlbumTitle = music.Album;
+            ////props.MusicProperties.TrackNumber = music.TrackNumber;
             StorageFile storageFile = LibraryManager.GetLocalMusicFile(music);
             if (storageFile != null)
             {
                 StorageItemThumbnail thumbnail = await storageFile.GetThumbnailAsync(ThumbnailMode.SingleItem);
-                props.Thumbnail = RandomAccessStreamReference.CreateFromStream(thumbnail);
+                MainMediaPlayer.MediaPlayer.SystemMediaTransportControls.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromStream(thumbnail);
             }
-            
-            playbackItem.ApplyDisplayProperties(props);
 
+            //playbackItem.ApplyDisplayProperties(props);
 
+            await Task.Delay(500);
+            MainMediaPlayer.MediaPlayer.SystemMediaTransportControls.DisplayUpdater.MusicProperties.Title = music.Title;
+            MainMediaPlayer.MediaPlayer.SystemMediaTransportControls.DisplayUpdater.MusicProperties.Artist = music.Artist;
+            MainMediaPlayer.MediaPlayer.SystemMediaTransportControls.DisplayUpdater.MusicProperties.AlbumTitle = music.Album;
+            MainMediaPlayer.MediaPlayer.SystemMediaTransportControls.DisplayUpdater.MusicProperties.TrackNumber = music.TrackNumber;
+            MainMediaPlayer.MediaPlayer.SystemMediaTransportControls.DisplayUpdater.Update();
+            //await MainMediaPlayer.MediaPlayer.SystemMediaTransportControls.DisplayUpdater.CopyFromFileAsync(Windows.Media.MediaPlaybackType.Music,storageFile);
         }
 
         public static event EventHandler PlayModeChanged;
@@ -300,7 +310,7 @@ namespace CorePlanetMusicPlayer.Models
             {
                 if (normalList.Equals(musicList))
                 {
-                    Debug.WriteLine("相同");
+                    //Debug.WriteLine("相同");
                     PlayQueueChanged(null, new EventArgs());
                     return;
                 }
@@ -366,6 +376,23 @@ namespace CorePlanetMusicPlayer.Models
             PlayQueueChanged(null, new EventArgs());
         }
 
+        public static void AddPlayNextMusic(List<Music>musicList)
+        {
+            if (playingMusicIndex == -1 || playingMusicIndex >= normalList.Count)
+                return;
+            if (PlayCore.playMode != PlayCore.PlayMode.Shuffle)
+            {
+                normalList.InsertRange(playingMusicIndex + 1,musicList);
+            }
+            else
+            {
+                shuffleList.InsertRange(playingMusicIndex + 1, musicList);
+            }
+            if (SavePlayQueue)
+                SavePlayQueueAsync();
+            PlayQueueChanged(null, new EventArgs());
+        }
+
         public static void RemoveItemFromPlayQueue(Music music)
         {
             if (PlayCore.playMode != PlayCore.PlayMode.Shuffle)
@@ -410,14 +437,18 @@ namespace CorePlanetMusicPlayer.Models
                 shuffleList.Clear();
                 List<Music> list = normalList.ToList();
                 Random random = new Random();
-                int index;
-                for (int i = 0; i < normalList.Count; i++)
+
+                // 使用Fisher-Yates洗牌算法优化性能
+                for (int i = list.Count - 1; i > 0; i--)
                 {
-                    
-                    index = random.Next(0, list.Count);
-                    shuffleList.Add(list[index]);
-                    list.RemoveAt(index);
+                    int index = random.Next(0, i + 1);
+                    // 交换元素
+                    Music temp = list[i];
+                    list[i] = list[index];
+                    list[index] = temp;
                 }
+
+                shuffleList = list;
             }
             if (SavePlayQueue)
                 SavePlayQueueAsync();

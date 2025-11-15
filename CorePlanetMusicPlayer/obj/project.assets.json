@@ -7170,7 +7170,7 @@
       ]
     },
     "Microsoft.NETCore.Platforms/2.1.0": {
-      "sha512": "GmkKfoyerqmsHMn7OZj0AKpcBabD+GaafqphvX2Mw406IwiJRy1pKcKqdCfKJfYmkRyJ6+e+RaUylgdJoDa1jQ==",
+      "sha512": "ok+RPAtESz/9MUXeIEz6Lv5XAGQsaNmEYXMsgVALj4D7kqC8gveKWXWXbufLySR2fWrwZf8smyN5RmHu0e4BHA==",
       "type": "package",
       "path": "microsoft.netcore.platforms/2.1.0",
       "files": [
@@ -11779,22 +11779,23 @@
     ]
   },
   "packageFolders": {
-    "G:\\NuGet": {},
-    "H:\\VSSDK\\NuGetPackages": {},
+    "C:\\Users\\zouqi\\.nuget\\packages\\": {},
+    "D:\\VS2022SDK\\NuGetPackages": {},
     "C:\\Program Files (x86)\\Microsoft SDKs\\UWPNuGetPackages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "G:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj",
+      "projectUniqueName": "D:\\Projects\\CorePmp_Old\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj",
       "projectName": "CorePlanetMusicPlayer",
-      "projectPath": "G:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj",
-      "packagesPath": "G:\\NuGet",
-      "outputPath": "G:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\obj\\",
+      "projectPath": "D:\\Projects\\CorePmp_Old\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj",
+      "packagesPath": "C:\\Users\\zouqi\\.nuget\\packages\\",
+      "outputPath": "D:\\Projects\\CorePmp_Old\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\obj\\",
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
+      "UsingMicrosoftNETSdk": false,
       "fallbackFolders": [
-        "H:\\VSSDK\\NuGetPackages",
+        "D:\\VS2022SDK\\NuGetPackages",
         "C:\\Program Files (x86)\\Microsoft SDKs\\UWPNuGetPackages\\"
       ],
       "configFilePaths": [
@@ -11807,7 +11808,6 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "G:\\Projects\\NugetPackges": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {

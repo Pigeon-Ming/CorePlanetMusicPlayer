@@ -125,9 +125,17 @@ namespace CorePlanetMusicPlayer.Models
                 return musicList[0];
             return null;
         }
+
+        public static Music GetMusicFromDataCode(String dataCode)
+        {
+            List<Music> musicList = Library.Music.Where(x=> x.DataCode == dataCode).ToList();
+            if (musicList.Count > 0)
+                return musicList[0];
+            return null;
+        }
         public static Music GetMusic(Music music)
         {
-            if (music.MusicType == MusicType.Removable)
+            if (music!=null && music.MusicType == MusicType.Removable)
             {
                 return RemovableDeviceManager.GetMusic(music);
             }
@@ -144,6 +152,25 @@ namespace CorePlanetMusicPlayer.Models
         public static void AddOnlineMusic(Music music)
         {
             Library.Music.Add(music);
+            SQLiteManager.MusicDataBasesHelper.SetTableData(StorageManager.LocalFolderPath + "\\DataBases\\MusicLibrary.db", "OnlineMusic", music);
+        }
+
+        public static void EditOnlineMusic(Music music)
+        {
+            Music oldMusic = Library.Music.Find(x=>x.DataCode == music.DataCode);
+            if (oldMusic != null)
+            {
+                int index = Library.Music.IndexOf(oldMusic);
+                if(index!=-1)
+                {
+                    Library.Music[index] = music;
+                }
+                else
+                    Library.Music.Add(music);
+
+            }
+            else
+                Library.Music.Add(music);
             SQLiteManager.MusicDataBasesHelper.SetTableData(StorageManager.LocalFolderPath + "\\DataBases\\MusicLibrary.db", "OnlineMusic", music);
         }
 
@@ -220,7 +247,7 @@ namespace CorePlanetMusicPlayer.Models
 
         public static async Task<List<String>> GetExternalLocalMusicKeys()
         {
-            if (await StorageManager.IsItemExsitAsync(ApplicationData.Current.LocalFolder, "ExternalLocalMusic.json"))
+            if (await StorageManager.IsItemExistAsync(ApplicationData.Current.LocalFolder, "ExternalLocalMusic.json"))
             {
                 String fileStr = "";
                 fileStr = await StorageManager.ReadFile(ApplicationData.Current.LocalFolder, "ExternalLocalMusic.json");

@@ -150,15 +150,17 @@ namespace CorePlanetMusicPlayer.Models
                     {
                         folderQueue.Enqueue((StorageFolder)item);
                     }
-                    else
+                    else if(item is StorageFile)
                     {
-                        //MusicFileCount ++;
-                        string fileName = item.Name;
-                        //Debug.WriteLine(fileName+"|||"+fileName.Substring(fileName.LastIndexOf(".")));
-                        string fileSuffix = fileName.Substring(fileName.LastIndexOf("."));
+                        ////MusicFileCount ++;
+                        //string fileName = item.Name;
+                        ////Debug.WriteLine(fileName+"|||"+fileName.Substring(fileName.LastIndexOf(".")));
+                        //string fileSuffix = fileName.Substring(fileName.LastIndexOf("."));
+                        StorageFile storageFile = item as StorageFile;
+                        string fileSuffix = storageFile.FileType;
                         if (fileSuffix == ".mp3" || fileSuffix == ".flac" || fileSuffix == ".wma" || fileSuffix == ".m4a" || fileSuffix == ".ac3" || fileSuffix == ".aac")
                         {
-                            StorageFile storageFile = item as StorageFile;
+                            
                             files.Add(storageFile);
                         }
                     }

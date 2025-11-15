@@ -21,6 +21,7 @@ namespace CorePlanetMusicPlayer.Models
 
     public class LyricManager
     {
+        public static bool IgnoreEmptyLine { get; set; } = false;
         public static List<Lyric> CurrentLyrics { get; set; } = new List<Lyric>();
         public static int CurrentLyricIndex { get; set; } = -1;
         public static string CurrentLyricContent { get; set; } = "";
@@ -70,7 +71,7 @@ namespace CorePlanetMusicPlayer.Models
             if (KnownFolders.MusicLibrary == null)
                 return null;
             StorageFolder LyricFolder = await StorageManager.GetApplicationDataFolder("Lyrics");
-            if (await StorageManager.IsItemExsitAsync(LyricFolder, StorageManager.RemoveIllegalCharacter(music.Artist + " - " + music.Title + " - " + music.Album + ".lrc")))
+            if (await StorageManager.IsItemExistAsync(LyricFolder, StorageManager.RemoveIllegalCharacter(music.Artist + " - " + music.Title + " - " + music.Album + ".lrc")))
             {
                 return ProcessLyricsFromLRCFileString(await StorageManager.ReadFile(await LyricFolder.GetFileAsync(StorageManager.RemoveIllegalCharacter(music.Artist + " - " + music.Title + " - " + music.Album + ".lrc"))));
             }
@@ -143,6 +144,18 @@ namespace CorePlanetMusicPlayer.Models
             return null;
         }
 
+        public static async Task<List<Lyric>> LoadLyricsFromLRCStorageFileAsync(Music music, StorageFile file)
+        {
+            
+            if (file == null) return null;
+            StorageFolder LyricFolder = await StorageManager.GetApplicationDataFolder("Lyrics");
+            await RemoveLyricAsync(music);
+            file = await file.CopyAsync(LyricFolder, StorageManager.RemoveIllegalCharacter(music.Artist + " - " + music.Title + " - " + music.Album + ".lrc"));
+            if (file.FileType == ".lrc")
+                return ProcessLyricsFromLRCFileString(await StorageManager.ReadFile(file));
+            return null;
+        }
+
         public static async Task<List<Lyric>> LoadLyricsFromMusicFile(Music music)
         {
             if (music == null)
@@ -187,13 +200,17 @@ namespace CorePlanetMusicPlayer.Models
                 if (str_DoseBracket_Index == -1) break;
                 Lyric lyric = new Lyric();
                 str_LineFeed_Index = str.IndexOf("\r");
-                if (str.IndexOf("[0") == -1 || str.IndexOf("[0") > 0)
+                int left_index = str.IndexOf("[");
+                if (left_index == -1 || left_index > 0 || str.Length > left_index+1 && !char.IsDigit(str[left_index + 1]))
                 {
                     str = str.Substring(str_LineFeed_Index + 1);
                     continue;
                 }
                 lyric.Time = str.Substring(1, str_DoseBracket_Index - 1);
-
+                Debug.WriteLine("LyricTime:" + lyric.Time);
+                String timeStr = "00:" + lyric.Time;
+                TimeSpan timeSpan = TimeSpan.Parse(timeStr);
+                Debug.WriteLine($"{timeSpan.Hours}小时{timeSpan.Minutes}分{timeSpan.Seconds}秒{timeSpan.Milliseconds}毫秒");
 
                 if (str.IndexOf("\r") - str.IndexOf("]") - 1 <= 0)
                     lyric.Content = "";
@@ -211,7 +228,8 @@ namespace CorePlanetMusicPlayer.Models
                         }
                     }
                 }
-                lyrics.Add(lyric);
+                if (IgnoreEmptyLine == false || !String.IsNullOrEmpty(lyric.Content) || !String.IsNullOrEmpty(lyric.Translation))
+                    lyrics.Add(lyric);
                 if (str_LineFeed_Index == -1 && str_LineFeed_Index + 1 < str.Length - 1)
                 {
                     str_DoseBracket_Index = str.IndexOf("]");
@@ -232,7 +250,8 @@ namespace CorePlanetMusicPlayer.Models
                     }
                     else
                     {
-                        lyrics.Add(lyric);
+                        if (IgnoreEmptyLine == false || !String.IsNullOrEmpty(lyric.Content) || !String.IsNullOrEmpty(lyric.Translation))
+                            lyrics.Add(lyric);
                     }
                     break;
                 }

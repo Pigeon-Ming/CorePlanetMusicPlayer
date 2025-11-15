@@ -337,16 +337,15 @@ namespace CorePlanetMusicPlayer.Models
             //string dbpath = ApplicationData.Current.LocalFolder.Path + "\\"+ dataBaseName+".db";
         }
 
-        public static void RunSQLCommand(string dataBasePath, string Command)
+        public static void RunSQLCommand(string dataBasePath, string command)
         {
-            //Debug.WriteLine("执行SQL命令：[" + dataBasePath + "]" + Command);
-            //StorageFolder storageFolder = await StorageManager.GetFolder(ApplicationData.Current.LocalFolder, "DataBases");
-            using (SqliteConnection db =
-                   new SqliteConnection($"Filename={dataBasePath}"))
+            using (SqliteConnection db = new SqliteConnection($"Filename={dataBasePath}"))
             {
                 db.Open();
-                SqliteCommand sqliteCommand = new SqliteCommand(Command, db);
-                sqliteCommand.ExecuteReader();
+                using (SqliteCommand sqliteCommand = new SqliteCommand(command, db))
+                {
+                    sqliteCommand.ExecuteNonQuery();
+                }
                 db.Close();
             }
         }

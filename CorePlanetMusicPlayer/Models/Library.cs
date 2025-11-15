@@ -29,29 +29,48 @@ namespace CorePlanetMusicPlayer.Models
     public class LibraryManager
     {
         public static string InitWhatDataStr { get; set; } = "整理音乐库……";
-        public static async Task InitAllDataAsync()
+
+        public enum InitWhatDataEnum { CacheData,FilesData,ExternalMusic,OnlineMusic,TempMusicList,PlaylistsData,ImageData,ArtistsData,AlbumsData}
+
+        public static InitWhatDataEnum InitWhatData = InitWhatDataEnum.CacheData;
+
+        public static async Task<Exception> InitAllDataAsync()
         {
-            InitWhatDataStr = "查询缓存信息……";
-            await GetMusicCacheData();
-            InitWhatDataStr = "查找文件……";
-            await GetMusicFilesDataAsync();
-            InitWhatDataStr = "获取外部文件……";
-            await GetExternalMusicStorageFiles();
-            InitWhatDataStr = "获取在线音乐信息……";
-            GetOnlineMusicData();
-            InitWhatDataStr = "处理临时文件……";
-            await AddTempMusicListToExternalMusic();
-            InitWhatDataStr = "获取播放列表信息……";
-            await RefreshPlaylistsData();
-            if (CorePMPSettings.Library_GetMusicCoverWhenLoad)
+            try
             {
-                InitWhatDataStr = "获取歌曲封面……";
-                RefreshImagesDataAsync();
+                //InitWhatDataStr = "查询缓存信息……";
+                InitWhatData = InitWhatDataEnum.CacheData;
+                await GetMusicCacheData();
+                //InitWhatDataStr = "查找文件……";
+                InitWhatData = InitWhatDataEnum.FilesData;
+                await GetMusicFilesDataAsync();
+                //InitWhatDataStr = "获取外部文件……";
+                InitWhatData = InitWhatDataEnum.ExternalMusic;
+                await GetExternalMusicStorageFiles();
+                //InitWhatDataStr = "获取在线音乐信息……";
+                InitWhatData = InitWhatDataEnum.OnlineMusic;
+                GetOnlineMusicData();
+                //InitWhatDataStr = "处理临时文件……";
+                InitWhatData = InitWhatDataEnum.ExternalMusic;
+                await AddTempMusicListToExternalMusic();
+                //InitWhatDataStr = "获取播放列表信息……";
+                InitWhatData = InitWhatDataEnum.PlaylistsData;
+                await RefreshPlaylistsData();
+                //InitWhatDataStr = "获取歌曲封面……";
+                InitWhatData = InitWhatDataEnum.ImageData;
+                await  RefreshImagesDataAsync();
+                //InitWhatDataStr = "整理艺术家……";
+                InitWhatData = InitWhatDataEnum.ArtistsData;
+                await RefreshArtistsData();
+                //InitWhatDataStr = "整理专辑……";
+                InitWhatData = InitWhatDataEnum.AlbumsData;
+                await RefreshAlbumsData();
             }
-            InitWhatDataStr = "整理艺术家……";
-            await RefreshArtistsData();
-            InitWhatDataStr = "整理专辑……";
-            await RefreshAlbumsData();
+            catch(Exception ex)
+            {
+                return ex;
+            }
+            return null;
         }
 
         public static async Task AddTempMusicListToExternalMusic()
@@ -79,6 +98,7 @@ namespace CorePlanetMusicPlayer.Models
 
         public static async Task GetMusicFilesDataAsync()
         {
+            Library.Music.Clear();
             Library.MusicFiles.Clear();
             Queue<StorageFolder> folderQueue = new Queue<StorageFolder>();
             folderQueue.Enqueue(KnownFolders.MusicLibrary);
@@ -98,7 +118,7 @@ namespace CorePlanetMusicPlayer.Models
                         //Debug.WriteLine(fileName+"|||"+fileName.Substring(fileName.LastIndexOf(".")));
                         StorageFile storageFile = item as StorageFile;
                         string fileSuffix = storageFile.FileType;
-                        if (fileSuffix == ".mp3" || fileSuffix == ".flac" || fileSuffix == ".wma" || fileSuffix == ".m4a" || fileSuffix == ".ac3" || fileSuffix == ".aac")
+                        if (fileSuffix == ".mp3" || fileSuffix == ".flac" || fileSuffix == ".wma" || fileSuffix == ".m4a" || fileSuffix == ".ac3" || fileSuffix == ".aac" || fileSuffix == ".wav")
                         {
                             //StorageFile storageFile = item as StorageFile;
                             Library.MusicFiles.Add(storageFile);
@@ -223,6 +243,15 @@ namespace CorePlanetMusicPlayer.Models
                 if (Library.Music[i].MusicType == MusicType.Local || Library.Music[i].MusicType == MusicType.ExternalLocal)
                      await ImageManager.GetLocalMusicCoverForLibrary(Library.Music[i]);
             }
+        }
+
+        public static void TryDisposeImagesData()
+        {
+            Library.MusicCovers.Clear();
+            //for (int i = 0; i < Library.MusicCovers.Count; i++)
+            //{
+            //    Library.MusicCovers[i].BitmapImage.SetSource(null);
+            //}
         }
 
         //RemovableDevices

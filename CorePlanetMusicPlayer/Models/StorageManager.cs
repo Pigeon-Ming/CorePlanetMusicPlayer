@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,9 +39,17 @@ namespace CorePlanetMusicPlayer.Models
 
         public static async Task<string> ReadFile(StorageFile storageFile)
         {
-            if (storageFile == null)
+            try
+            {
+                if (storageFile == null)
+                    return "";
+                return await Windows.Storage.FileIO.ReadTextAsync(storageFile, Windows.Storage.Streams.UnicodeEncoding.Utf8);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ReadFile failed: {ex.Message}");
                 return "";
-            return await Windows.Storage.FileIO.ReadTextAsync(storageFile,Windows.Storage.Streams.UnicodeEncoding.Utf8);
+            }
         }
 
         //public static async Task<string> ReadFile(StorageFile storageFile)
@@ -53,26 +62,37 @@ namespace CorePlanetMusicPlayer.Models
         public static async Task<StorageFolder> GetApplicationDataFolder(string folderName)
         {
             StorageFolder folder = ApplicationData.Current.LocalFolder;
-            if (await IsItemExsitAsync(folder, folderName))
-                return await folder.GetFolderAsync(folderName);
-            return await folder.CreateFolderAsync(folderName);
+            try
+            {
+                return await folder.CreateFolderAsync(folderName, CreationCollisionOption.OpenIfExists);
+            }
+            catch (Exception)
+            {
+                // 如果创建/打开失败，重新抛出异常或者根据业务需求处理
+                throw;
+            }
         }
 
         public static async Task<StorageFolder> GetFolder(StorageFolder paretntFolder, string folderName)
         {
-            if (await IsItemExsitAsync(paretntFolder, folderName))
+            if (await IsItemExistAsync(paretntFolder, folderName))
                 return await paretntFolder.GetFolderAsync(folderName);
+
             return await paretntFolder.CreateFolderAsync(folderName);
         }
 
-        public static async Task<bool> IsItemExsitAsync(StorageFolder parentFolder, string itemName)
+        public static async Task<bool> IsItemExistAsync(StorageFolder parentFolder, string itemName)
         {
-
-            IStorageItem storageItem = await parentFolder.TryGetItemAsync(itemName);
-            if (storageItem == null)
+            try
+            {
+                IStorageItem storageItem = await parentFolder.TryGetItemAsync(itemName);
+                return storageItem != null;
+            }
+            catch (Exception)
+            {
+                // 可根据实际需求记录日志
                 return false;
-            else
-                return true;
+            }
         }
 
         public static string RemoveIllegalCharacter(String str)
@@ -87,7 +107,7 @@ namespace CorePlanetMusicPlayer.Models
             return true;
         }
 
-        public static List<string> SupportedMusicFileTypes { get; private set; } = new List<string> {".mp3"/*,".flac",".wma",".m4a",".ac3",".aac"*/};
+        public static List<string> SupportedMusicFileTypes { get; private set; } = new List<string> {".mp3", ".flac", ".wma", ".m4a", ".ac3", ".aac" };
 
         public static async Task<List<StorageFolder>> GetRemovableDevicesAsync()
         {

@@ -1,21 +1,22 @@
 {
   "format": 1,
   "restore": {
-    "G:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj": {}
+    "D:\\Projects\\CorePmp_Old\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj": {}
   },
   "projects": {
-    "G:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj": {
+    "D:\\Projects\\CorePmp_Old\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "G:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj",
+        "projectUniqueName": "D:\\Projects\\CorePmp_Old\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj",
         "projectName": "CorePlanetMusicPlayer",
-        "projectPath": "G:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj",
-        "packagesPath": "G:\\NuGet",
-        "outputPath": "G:\\Projects\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\obj\\",
+        "projectPath": "D:\\Projects\\CorePmp_Old\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer.csproj",
+        "packagesPath": "C:\\Users\\zouqi\\.nuget\\packages\\",
+        "outputPath": "D:\\Projects\\CorePmp_Old\\CorePlanetMusicPlayer\\CorePlanetMusicPlayer\\obj\\",
         "projectStyle": "PackageReference",
         "skipContentFileWrite": true,
+        "UsingMicrosoftNETSdk": false,
         "fallbackFolders": [
-          "H:\\VSSDK\\NuGetPackages",
+          "D:\\VS2022SDK\\NuGetPackages",
           "C:\\Program Files (x86)\\Microsoft SDKs\\UWPNuGetPackages\\"
         ],
         "configFilePaths": [
@@ -28,7 +29,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "G:\\Projects\\NugetPackges": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {

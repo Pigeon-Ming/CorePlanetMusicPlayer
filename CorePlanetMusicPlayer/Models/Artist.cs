@@ -97,11 +97,11 @@ namespace CorePlanetMusicPlayer.Models
             {
                 StorageFolder folder = await StorageManager.GetApplicationDataFolder("Images");
                 folder = await StorageManager.GetFolder(folder, "Artists");
-                if (await StorageManager.IsItemExsitAsync(folder, artist.Name + ".jpg"))
+                if (await StorageManager.IsItemExistAsync(folder, artist.Name + ".jpg"))
                 {
                     await (await folder.GetFileAsync(artist.Name + ".jpg")).DeleteAsync();
                 }
-                else if (await StorageManager.IsItemExsitAsync(folder, artist.Name + ".png"))
+                else if (await StorageManager.IsItemExistAsync(folder, artist.Name + ".png"))
                 {
                     await (await folder.GetFileAsync(artist.Name + ".png")).DeleteAsync();
                 }

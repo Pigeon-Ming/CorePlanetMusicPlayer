@@ -11,7 +11,7 @@
     <AssemblyName>CorePlanetMusicPlayer</AssemblyName>
     <DefaultLanguage>zh-CN</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.19041.0</TargetPlatformVersion>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.18362.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -131,7 +131,6 @@
     <Compile Include="Models\PlayCore.cs" />
     <Compile Include="Models\Playlist.cs" />
     <Compile Include="Models\RemovableDevice.cs" />
-    <Compile Include="Models\Settings.cs" />
     <Compile Include="Models\SQLiteManager.cs" />
     <Compile Include="Models\Statistics\PlayHistoryItem.cs" />
     <Compile Include="Models\StorageManager.cs" />
