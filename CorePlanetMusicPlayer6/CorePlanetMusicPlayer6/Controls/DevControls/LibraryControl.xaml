@@ -16,9 +16,14 @@
         </Grid.RowDefinitions>
         
         <CommandBar DefaultLabelPosition="Right">
-            <AppBarButton Label="读取文件夹列表" Icon="Refresh" Name="RefreshButton" Click="RefreshButton_Click"/>
-            <AppBarButton Label="添加" Icon="Add" Name="AddButton" Click="AddButton_Click"/>
-            <AppBarButton Label="移除" Icon="Remove" Name="RemoveButton" Click="RemoveButton_Click"/>
+            <CommandBar.PrimaryCommands>
+                <AppBarButton Label="读取文件夹列表" Icon="Refresh" Name="RefreshButton" Click="RefreshButton_Click"/>
+                <AppBarButton Label="添加" Icon="Add" Name="AddButton" Click="AddButton_Click"/>
+                <AppBarButton Label="移除" Icon="Remove" Name="RemoveButton" Click="RemoveButton_Click"/>
+            </CommandBar.PrimaryCommands>
+            <CommandBar.SecondaryCommands>
+                <AppBarButton Label="尝试读取可移动设备中的文件" Icon="OpenFile" Name="TryOpenRemovableDeviceFileViaPathButton" Click="TryOpenRemovableDeviceFileViaPathButton_Click"/>
+            </CommandBar.SecondaryCommands>
         </CommandBar>
         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Margin="8" Text="音乐库位置"/>
         <ListView Grid.Row="1" Name="FolderListView">

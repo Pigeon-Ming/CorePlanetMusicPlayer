@@ -1,7 +1,8 @@
 ﻿using CorePlanetMusicPlayer.Models;
-using CorePlanetMusicPlayer6.Models;
+using CorePlanetMusicPlayer.App;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -10,6 +11,7 @@ using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.Storage.FileProperties;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -94,6 +96,19 @@ namespace CorePlanetMusicPlayer6.Controls.DevControls
             if (FolderListView.SelectedItem == null)
                 return;
             await Library.RemoveFolderAsync(((ListItem)FolderListView.SelectedItem).StorageFolder);
+        }
+
+        private async void TryOpenRemovableDeviceFileViaPathButton_Click(object sender, RoutedEventArgs e)
+        {
+            await TryOpenRemovableDeviceFileViaPathAsync();
+        }
+
+        async Task TryOpenRemovableDeviceFileViaPathAsync()
+        {
+            StorageFile storageFile = await StorageFile.GetFileFromPathAsync("F:\\杂项\\1.flac");
+            BasicProperties basicProperties = await storageFile.GetBasicPropertiesAsync();
+            Debug.WriteLine(storageFile.Name);
+            Debug.WriteLine(basicProperties.Size);
         }
     }
 }

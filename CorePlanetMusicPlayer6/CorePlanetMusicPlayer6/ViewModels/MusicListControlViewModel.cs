@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using CorePlanetMusicPlayer.Models;
 using CorePlanetMusicPlayer.PlayCore;
-using CorePlanetMusicPlayer6.Models;
+using CorePlanetMusicPlayer.App;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

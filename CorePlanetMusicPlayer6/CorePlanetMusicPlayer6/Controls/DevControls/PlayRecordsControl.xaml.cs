@@ -38,7 +38,8 @@ namespace CorePlanetMusicPlayer6.Controls.DevControls
 
         async Task QueryDateDataAsync()
         {
-            List<PlayRecord> playRecords = await PlayRecordHelper.GetByYearMonthDayAsync(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            DateTime dateTime = QueryDatePicker.Date.DateTime;
+            List<PlayRecord> playRecords = await PlayRecordHelper.GetByYearMonthDayAsync(dateTime.Year, dateTime.Month, dateTime.Day);
             SetListView(playRecords);
         }
 

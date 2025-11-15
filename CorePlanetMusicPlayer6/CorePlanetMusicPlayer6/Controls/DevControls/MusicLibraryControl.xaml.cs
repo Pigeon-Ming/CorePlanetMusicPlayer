@@ -1,5 +1,5 @@
 ﻿using CorePlanetMusicPlayer.Models;
-using CorePlanetMusicPlayer6.Models;
+using CorePlanetMusicPlayer.App;
 using System;
 using System.Collections.Generic;
 using System.IO;

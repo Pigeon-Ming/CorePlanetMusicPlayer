@@ -1,6 +1,6 @@
 ﻿using CorePlanetMusicPlayer.Models;
 using CorePlanetMusicPlayer.PlayCore;
-using CorePlanetMusicPlayer6.Models;
+using CorePlanetMusicPlayer.App;
 using CorePlanetMusicPlayer6.Views;
 using System;
 using System.Collections.Generic;

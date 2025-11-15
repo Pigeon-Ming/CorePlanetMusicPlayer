@@ -388,6 +388,10 @@
       <Project>{F1DF84D5-72CA-487F-8CB9-E0BCAB1DD7AB}</Project>
       <Name>UWPTools.Models</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CorePlanetMusicPlayer.App\CorePlanetMusicPlayer.App.csproj">
+      <Project>{197500d6-b74e-4408-96cd-39f14de23ba3}</Project>
+      <Name>CorePlanetMusicPlayer.App</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CorePlanetMusicPlayer.Models\CorePlanetMusicPlayer.Models.csproj">
       <Project>{40C2BA3D-E277-4012-8652-CF7D1B53EDDF}</Project>
       <Name>CorePlanetMusicPlayer.Models</Name>

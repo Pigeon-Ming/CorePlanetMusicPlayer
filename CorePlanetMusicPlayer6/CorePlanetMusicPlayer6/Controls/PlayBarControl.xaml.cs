@@ -1,4 +1,4 @@
-﻿using CorePlanetMusicPlayer6.Models;
+﻿using CorePlanetMusicPlayer.App;
 using CorePlanetMusicPlayer6.ViewModels;
 using CorePlanetMusicPlayer6.ViewModels.DataModels;
 using System;

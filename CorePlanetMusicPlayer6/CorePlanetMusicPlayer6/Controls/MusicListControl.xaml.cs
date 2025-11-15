@@ -1,6 +1,6 @@
 ﻿using CorePlanetMusicPlayer.Models;
 using CorePlanetMusicPlayer.PlayCore;
-using CorePlanetMusicPlayer6.Models;
+using CorePlanetMusicPlayer.App;
 using CorePlanetMusicPlayer6.ViewModels;
 using CorePlanetMusicPlayer6.ViewModels.DataModels;
 using System;
@@ -63,7 +63,7 @@ namespace CorePlanetMusicPlayer6.Controls
         {
             MainListView.ItemTemplate = (DataTemplate)Resources["BasicListViewItemTemplateWithCover"];
             List<ViewMusic> viewMusicList = new List<ViewMusic>();
-            viewMusicList = await ViewMusicManager.FindViewMusicListInViewMusicListAsync(ProgramData.ViewMusic,musicList);
+            //viewMusicList = await ViewMusicManager.FindViewMusicListInViewMusicListAsync(ProgramData.ViewMusic,musicList);
             MainListView.ItemsSource = viewMusicList;
         }
 

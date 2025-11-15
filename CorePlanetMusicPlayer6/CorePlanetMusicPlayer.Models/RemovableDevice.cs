@@ -14,6 +14,9 @@ namespace CorePlanetMusicPlayer.Models
     public class RemovableDevice
     {
         public string Name { get; set; }
+
+        public string Id { get; set; }
+
         public StorageFolder StorageFolder { get; set; }
 
         public List<RemovableMusic> Music { get; set; }
@@ -63,6 +66,7 @@ namespace CorePlanetMusicPlayer.Models
         public static async Task RefreshDevicesListAsync()
         {
             RemovableDevices.Clear();
+            
             List<StorageFolder> folders = await StorageHelper.GetRemovableDevicesStorageFolderAsync();
             List<RemovableDevice> devices = new List<RemovableDevice>();
             foreach (StorageFolder folder in folders)
@@ -76,6 +80,9 @@ namespace CorePlanetMusicPlayer.Models
         {
             RemovableDevice removableDevice = new RemovableDevice();
             removableDevice.StorageFolder = storageFolder;
+            /*To-Do: 增加可移动设备的唯一标识*/
+            //removableDevice.Id = storageFolder.Properties.;
+            //Debug.WriteLine($"可移动设备：{storageFolder.Name}（{storageFolder.Path}）的Id为：{removableDevice.Id}");
             removableDevice.Name = storageFolder.Name;
             return removableDevice;
         }

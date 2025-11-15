@@ -1,6 +1,6 @@
 ﻿using CorePlanetMusicPlayer.Models;
 using CorePlanetMusicPlayer.PlayCore;
-using CorePlanetMusicPlayer6.Models;
+using CorePlanetMusicPlayer.App;
 using CorePlanetMusicPlayer6.ViewModels.DataModels;
 using System;
 using System.Collections.Generic;
@@ -81,8 +81,8 @@ namespace CorePlanetMusicPlayer6.ViewModels
         {
             await CoreApplication.GetCurrentView().Dispatcher.RunAsync(CoreDispatcherPriority.Normal,async () =>
             {
-                ViewMusic viewMusic = await ViewMusicManager.FindViewMusicInViewMusicListAsync(ProgramData.ViewMusic, CurrentMusic, true);
-                CurrentMusicCover = viewMusic.Cover;
+                //ViewMusic viewMusic = await ViewMusicManager.FindViewMusicInViewMusicListAsync(ProgramData.ViewMusic, CurrentMusic, true);
+                //CurrentMusicCover = viewMusic.Cover;
                 
             });
             await Task.Delay(500);

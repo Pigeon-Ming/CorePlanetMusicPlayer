@@ -1,5 +1,5 @@
 ﻿using CorePlanetMusicPlayer.Models;
-using CorePlanetMusicPlayer6.Models;
+using CorePlanetMusicPlayer.App;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using ContentDialogManager = CorePlanetMusicPlayer.App.ContentDialogManager;
 
 //https://go.microsoft.com/fwlink/?LinkId=234236 上介绍了“用户控件”项模板
 
@@ -50,7 +51,7 @@ namespace CorePlanetMusicPlayer6.Controls.DevControls
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            Models.ContentDialogManager.HideContentDialog();
+            ContentDialogManager.HideContentDialog();
         }
 
         private async void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -62,7 +63,7 @@ namespace CorePlanetMusicPlayer6.Controls.DevControls
             }
 
             await SaveAsync();
-            Models.ContentDialogManager.HideContentDialog();
+            ContentDialogManager.HideContentDialog();
         }
 
         async Task SaveAsync()
