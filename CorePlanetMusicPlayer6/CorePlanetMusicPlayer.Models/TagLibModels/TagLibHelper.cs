@@ -105,6 +105,7 @@ namespace CorePlanetMusicPlayer.Models.TagLibModels
             if (file.Tag.Pictures.Length <= 0) return null;
             await stream.WriteAsync(file.Tag.Pictures[0].Data.Data.AsBuffer());
             stream.Seek(0);
+
             //Debug.WriteLine(stream == null);
             try
             {
@@ -115,6 +116,13 @@ namespace CorePlanetMusicPlayer.Models.TagLibModels
                 return null;
             }
             return bitmapImage;
+        }
+
+        public static async Task<byte[]> GetCoverByteArrayAsync(TagLib.File file)
+        {
+            InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream();
+            if (file == null || file.Tag.Pictures.Length <= 0) return null;
+            return file.Tag.Pictures[0].Data.Data;
         }
 
         public static TagLib.File GetTagLibFile(StorageFile storageFile)//获取TagLib.File对象，以获取更多信息

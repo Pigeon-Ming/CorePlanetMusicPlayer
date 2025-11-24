@@ -11,7 +11,7 @@
     <AssemblyName>CorePlanetMusicPlayer.App</AssemblyName>
     <DefaultLanguage>zh-CN</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.22621.0</TargetPlatformVersion>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.17763.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.16299.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -120,15 +120,17 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ContentDialogManager.cs" />
+    <Compile Include="CoverLoaderConverter.cs" />
+    <Compile Include="CoverLoaderService.cs" />
     <Compile Include="DataBaseManager.cs" />
     <Compile Include="FutureAccessListManager.cs" />
+    <Compile Include="IArtistsSelectControl.cs" />
     <Compile Include="Library.cs" />
+    <Compile Include="NavigateManager.cs" />
     <Compile Include="ObservableDictionary.cs" />
     <Compile Include="PlayRecordManager.cs" />
     <Compile Include="ProgramData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SystemHelper.cs" />
     <Compile Include="ViewHelper.cs" />
     <EmbeddedResource Include="Properties\CorePlanetMusicPlayer.App.rd.xml" />
   </ItemGroup>

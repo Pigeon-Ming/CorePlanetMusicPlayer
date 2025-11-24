@@ -17,7 +17,7 @@ namespace CorePlanetMusicPlayer.PlayCore
     {
         public static async void UpdateSMTC(SystemMediaTransportControls SMTCControl, IMusic music)//该方法未正确实现
         {
-            //To-Do:添加封面
+            //TODO:添加封面
 
             //StorageFile storageFile = LibraryManager.GetLocalMusicFile(music);
             //if (storageFile != null)

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UWPTools.Models;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 
@@ -14,7 +15,7 @@ namespace CorePlanetMusicPlayer.App
     {
         public static IPlayEngine PlayEngine { get; set; } = new SystemMediaPlayer();
 
-
+        public static ContentDialogManager ContentDialogManager { get; } = new ContentDialogManager();
 
 
         //public static List<LocalMusic> SystemLibraryMusic { get; set; } = new List<LocalMusic>();//系统音乐库中的音乐

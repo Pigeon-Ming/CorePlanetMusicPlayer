@@ -166,7 +166,7 @@ namespace CorePlanetMusicPlayer.Models
         //                break;
         //            case 2:
         //                RemovableMusic removableMusic = new RemovableMusic();
-        //                //To-Do:RemovableMusic
+        //                //TODO:RemovableMusic
         //                break;
         //            default:
         //                music.Add(new Music { Title = jObject["Key"].ToString() });

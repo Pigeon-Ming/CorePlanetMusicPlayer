@@ -22,6 +22,26 @@ namespace CorePlanetMusicPlayer.Models
 
         public List<IMusic> Music {  get; set; } = new List<IMusic>();
 
+        public string CoverPath
+        {
+            get
+            {
+                return GetCoverPath();
+            }
+        }
+
+        private string GetCoverPath()
+        {
+            foreach (IMusic music in Music)
+            {
+                if (music is LocalMusic)
+                {
+                    return ((LocalMusic)music).Path;
+                }
+            }
+            return "";
+        }
+
         /// <summary>
         /// 获取该年份里包含的专辑
         /// </summary>

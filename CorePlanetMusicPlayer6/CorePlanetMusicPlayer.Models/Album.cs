@@ -13,6 +13,10 @@ namespace CorePlanetMusicPlayer.Models
     {
         public uint Number { get; set; } = 0;
 
+        public string Key { get { return Number.ToString(); } }
+
+        public delegate string GetKeyDelegate(IMusic item);
+
         public string Name { get; set; } = "";
     }
 
@@ -24,6 +28,16 @@ namespace CorePlanetMusicPlayer.Models
 
         public List<Disc> Discs { get; set; } = new List<Disc>(); // 第一层List为专辑的碟片，通过碟片号访问歌曲
 
+        public string CoverPath 
+        {
+            get
+            {
+                //TODO: 设置专辑封面图
+                // 思路：查询所有的音乐，如果有此专辑中有本地音频文件，就从本地读取封面；如果全是StreamMusic默认为空，可以单独设置冯敏URL地址
+                return GetCoverPath();
+            }
+        }
+
         public int MusicCount
         {
             get
@@ -33,13 +47,52 @@ namespace CorePlanetMusicPlayer.Models
             }
         }
 
+        public uint ReleaseYear
+        {
+            get
+            {
+                return GetReleaseYear();
+            }
+        }
+
+        public string ArtistsString
+        {
+            get 
+            {
+                List<Artist> artists = GetArtists();
+                StringBuilder stringBuilder = new StringBuilder();
+                foreach (Artist artist in artists)
+                {
+                    stringBuilder.Append(artist.Name);
+                    stringBuilder.Append("; ");
+                }
+                string finalString = stringBuilder.ToString();
+                if (String.IsNullOrEmpty(finalString))
+                {
+                    return "未知艺术家";
+                }
+                else
+                {
+                    return finalString.Substring(0, finalString.Length-2);
+                }
+            }
+        }
+
+        public string DuationString
+        {
+            get
+            {
+                return GetTotalDuration().ToString(@"mm\:ss");
+            }
+        }
+
         /// <summary>
         /// 获取专辑中歌曲的总时长
         /// </summary>
         /// <returns>专辑中歌曲的总时长</returns>
         public TimeSpan GetTotalDuration()
         {
-            // To-Do: 计算总时长
+            // TODO: 计算总时长
             TimeSpan totalDuration = TimeSpan.Zero;
             foreach (Disc disc in Discs)
             {
@@ -105,6 +158,25 @@ namespace CorePlanetMusicPlayer.Models
         public int GetDiscCount()
         {
             return Discs.Count;
+        }
+
+        /// <summary>
+        /// 获取专辑的封面Path，如果这个专辑中没有本地音乐,就返回找到的第一个StreamMusic的封面
+        /// </summary>
+        /// <returns></returns>
+        private string GetCoverPath()
+        {
+            foreach (Disc disc in Discs)
+            {
+                foreach (IMusic music in disc)
+                {
+                    if(music is LocalMusic)
+                    {
+                        return ((LocalMusic)music).Path;
+                    }
+                }
+            }
+            return "";
         }
     }
 

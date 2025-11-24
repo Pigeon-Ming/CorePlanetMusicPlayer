@@ -29,8 +29,8 @@ namespace CorePlanetMusicPlayer.PlayCore
         MediaPlaybackList SetMediaSource(int index, List<IMusic> newPlayQueue);
 
         TimeSpan GetPlayProgress();
-        
 
+        TimeSpan GetMediaDuration();
         PlayState PlayState { get; set; }
 
         PlayQueue GetPlayQueue();

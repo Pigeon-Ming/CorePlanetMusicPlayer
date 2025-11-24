@@ -311,5 +311,10 @@ namespace CorePlanetMusicPlayer.PlayCore
             //MediaPlayer.PlaybackSession.BufferingProgress
             return MediaPlayer.Position;
         }
+
+        public TimeSpan GetMediaDuration()
+        {
+            return MediaPlayer.NaturalDuration;
+        }
     }
 }
