@@ -19,9 +19,21 @@ namespace CorePlanetMusicPlayer.App
 
         public static Type ArtistPage { get; set; }
 
+        public static Type YearPage { get; set; }
+
+        public static Type PlaylistPage { get; set; }
+
+        public static Type SearchPage { get; set; }
+
         public static Type ArtistsSelectControl { get; set; }
 
         public static Type SaveToPlaylistControl { get; set; }
+
+        public static Type PlaylistEditControl { get; set; }
+
+        public static Type MusicInfoControl { get; set; }
+
+        
 
         public static void NavigateToAlbumPage(Album album)
         {
@@ -31,6 +43,16 @@ namespace CorePlanetMusicPlayer.App
         public static void NavigateToArtistPage(Artist artist)
         {
             ContentFrame.Navigate(ArtistPage, artist);
+        }
+
+        public static void NavigateToYearPage(Year year)
+        {
+            ContentFrame.Navigate(YearPage, year);
+        }
+
+        public static void NavigateToPlaylistPage(Playlist playlist)
+        {
+            ContentFrame.Navigate(PlaylistPage, playlist);
         }
 
         public static async void NavigateToArtistPage(List<Artist> artists)
@@ -56,6 +78,13 @@ namespace CorePlanetMusicPlayer.App
             }
         }
 
+        public static void NavigateToSearchPage(string searchingString)
+        {
+            if (String.IsNullOrEmpty(searchingString))
+                return;
+            ContentFrame.Navigate(SearchPage, searchingString);
+        }
+
         public static async void SaveToPlaylist(IMusic music)
         {
             Type[] parameterTypes = new Type[] { typeof(IMusic) };
@@ -75,6 +104,30 @@ namespace CorePlanetMusicPlayer.App
             if (parameterizedConstructor != null)
             {
                 object[] parameters = new object[] { musicList };
+                object instance = parameterizedConstructor.Invoke(parameters);
+                await ProgramData.ContentDialogManager.ShowContentDialogAsync(instance);
+            }
+        }
+
+        public static async void ShowMusicInfo(IMusic music)
+        {
+            Type[] parameterTypes = new Type[] { typeof(IMusic) };
+            ConstructorInfo parameterizedConstructor = MusicInfoControl.GetConstructor(parameterTypes);
+            if (parameterizedConstructor != null)
+            {
+                object[] parameters = new object[] { music };
+                object instance = parameterizedConstructor.Invoke(parameters);
+                await ProgramData.ContentDialogManager.ShowContentDialogAsync(instance);
+            }
+        }
+
+        public static async void EditPlaylist(Playlist playlist)
+        {
+            Type[] parameterTypes = new Type[] { typeof(Playlist) };
+            ConstructorInfo parameterizedConstructor = PlaylistEditControl.GetConstructor(parameterTypes);
+            if (parameterizedConstructor != null)
+            {
+                object[] parameters = new object[] { playlist };
                 object instance = parameterizedConstructor.Invoke(parameters);
                 await ProgramData.ContentDialogManager.ShowContentDialogAsync(instance);
             }

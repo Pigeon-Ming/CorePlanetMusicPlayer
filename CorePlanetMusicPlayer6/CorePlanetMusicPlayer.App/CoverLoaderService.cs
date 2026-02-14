@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UWPTools.Models;
 using Windows.Storage;
 
 namespace CorePlanetMusicPlayer.App
@@ -19,6 +20,8 @@ namespace CorePlanetMusicPlayer.App
         private readonly ConcurrentDictionary<string, Task<byte[]>> _loadingTasks = new ConcurrentDictionary<string, Task<byte[]>>();
 
         public static CoverLoaderService Instance { get; } = new CoverLoaderService();
+
+        List<string> imageFile = new List<string> { ".png",".jpg",".jpeg" };
 
         public async Task<byte[]> LoadCoverAsync(StorageFile storageFile)
         {
@@ -36,8 +39,15 @@ namespace CorePlanetMusicPlayer.App
             // 2. 避免并发加载同一文件
             var loadTask = _loadingTasks.GetOrAdd(filePath, key => Task.Run(async () =>
             {
-                var file = TagLibHelper.GetTagLibFile(storageFile);
-                return await TagLibHelper.GetCoverByteArrayAsync(file);
+                if (imageFile.Contains(storageFile.FileType))
+                {
+                    return await StorageHelper.ReadFileAsBytesAsync(storageFile);
+                }
+                else
+                {
+                    var file = TagLibHelper.GetTagLibFile(storageFile);
+                    return await TagLibHelper.GetCoverByteArrayAsync(file);
+                }
             }));
 
             try

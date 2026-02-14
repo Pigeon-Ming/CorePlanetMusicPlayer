@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using TagLib.Riff;
 using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -35,9 +37,7 @@ namespace CorePlanetMusicPlayer.App
                 return cached;
             }
 
-            // 创建占位 BitmapImage 并立即返回（保证返回类型是 ImageSource）
-            var placeholder = new BitmapImage();
-            Cache[filePath] = placeholder;
+            
 
             // 异步加载并在完成后更新 placeholder
             if (filePath.StartsWith("http") && filePath.Contains("://"))
@@ -45,14 +45,19 @@ namespace CorePlanetMusicPlayer.App
                 //TODO: 优化网络封面的加载
                 BitmapImage bitmapImage = new BitmapImage();
                 bitmapImage.UriSource = new Uri(filePath);
+                return bitmapImage;
             }
             else
             {
+                // 创建占位 BitmapImage 并立即返回（保证返回类型是 ImageSource）
+                var placeholder = new BitmapImage();
+                Cache[filePath] = placeholder;
                 _ = LoadAndSetAsync(filePath, placeholder);
+                return placeholder;
             }
 
             //Debug.WriteLine($"[CoverLoaderConverter] Returning placeholder for '{filePath}'.");
-            return placeholder;
+            
         }
 
         private async Task LoadAndSetAsync(string filePath, BitmapImage bitmap)
@@ -72,6 +77,7 @@ namespace CorePlanetMusicPlayer.App
                 }
 
                 byte[] coverBytes = null;
+                
                 try
                 {
                     coverBytes = await CoverLoaderService.Instance.LoadCoverAsync(file);

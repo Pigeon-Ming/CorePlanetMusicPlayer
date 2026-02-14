@@ -40,7 +40,7 @@ namespace CorePlanetMusicPlayer6.Controls.DevControls
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            ContentDialogManager.HideContentDialog();
+            ProgramData.ContentDialogManager.HideContentDialog();
         }
 
         private async void PlaylistsListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -48,7 +48,7 @@ namespace CorePlanetMusicPlayer6.Controls.DevControls
             Playlist playlist = (Playlist)e.ClickedItem;
             playlist.Music = new ObservableCollection<IMusic>(playlist.Music.Concat(musicList));
             await PlaylistManager.SavePlaylistAsync(playlist);
-            ContentDialogManager.HideContentDialog();
+            ProgramData.ContentDialogManager.HideContentDialog();
         }
     }
 }

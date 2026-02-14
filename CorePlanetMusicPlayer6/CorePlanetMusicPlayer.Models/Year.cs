@@ -30,6 +30,26 @@ namespace CorePlanetMusicPlayer.Models
             }
         }
 
+        public string DurationString
+        {
+            get
+            {
+                return GetTotalDuration().ToString(@"mm\:ss");
+            }
+        }
+
+        /// <summary>
+        /// 获取专辑中歌曲的总时长
+        /// </summary>
+        /// <returns>专辑中歌曲的总时长</returns>
+        public TimeSpan GetTotalDuration()
+        {
+            // TODO: 计算总时长
+            TimeSpan totalDuration = TimeSpan.Zero;
+            totalDuration = totalDuration.Add(MusicHelper.GetTotalDuration(Music));
+            return totalDuration;
+        }
+
         private string GetCoverPath()
         {
             foreach (IMusic music in Music)
@@ -41,6 +61,7 @@ namespace CorePlanetMusicPlayer.Models
             }
             return "";
         }
+
 
         /// <summary>
         /// 获取该年份里包含的专辑

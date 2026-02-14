@@ -1,12 +1,14 @@
 ﻿using CorePlanetMusicPlayer.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Devices.Enumeration;
 using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Playback;
@@ -60,7 +62,7 @@ namespace CorePlanetMusicPlayer.PlayCore
     {
         MediaPlayer MediaPlayer { get; }
 
-        SystemMediaTransportControls SMTCConrtols { get; set; }
+        SystemMediaTransportControls SMTCControls { get; set; }
 
         public PlayState PlayState { get; set; }
 
@@ -69,9 +71,6 @@ namespace CorePlanetMusicPlayer.PlayCore
         public event EventHandler PlayingEnded;
         public event EventHandler StateChanged;
 
-        /// <summary>
-        /// （未实现)
-        /// </summary>
         public event EventHandler PlayingChanging;
         public event EventHandler PlayingChanged;
 
@@ -81,7 +80,7 @@ namespace CorePlanetMusicPlayer.PlayCore
         {
             MediaPlayer = new MediaPlayer();
             MediaPlayer.SystemMediaTransportControls.IsEnabled = false;
-            SMTCConrtols = MediaPlayer.SystemMediaTransportControls;//SystemMediaTransportControls.GetForCurrentView(); ;
+            SMTCControls = MediaPlayer.SystemMediaTransportControls;//SystemMediaTransportControls.GetForCurrentView(); ;
 
             PlayQueue = new PlayQueue(this);
 
@@ -196,7 +195,7 @@ namespace CorePlanetMusicPlayer.PlayCore
         private void MediaPlaybackList_CurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
         {
             Debug.WriteLine("Reason: "+ args.Reason);
-            PlayingChanging?.Invoke(args.Reason, null);
+            PlayingChanging?.Invoke(this, new EventArgs());
             
             if ((int)sender.CurrentItemIndex >= PlayQueue.NormalQueue.Count)
                 return;
@@ -207,6 +206,7 @@ namespace CorePlanetMusicPlayer.PlayCore
                 return;
             SMTCManager.UpdateSMTC(mediaPlaybackList.Items[(int)sender.CurrentItemIndex], PlayQueue.GetCurrentMusic());
             Debug.WriteLine($"CurrentItemChanged:{PlayQueue.CurrentIndex}");
+            PlayingChanged?.Invoke(this, new EventArgs());
         }
 
         public MediaPlaybackList SetMediaSource(int index, List<IMusic> newPlayQueue)
@@ -296,7 +296,7 @@ namespace CorePlanetMusicPlayer.PlayCore
 
         public double GetVolume()
         {
-            VolumeChanged?.Invoke(this,null);
+            //VolumeChanged?.Invoke(this,null);
             return MediaPlayer.Volume;
         }
 
@@ -304,6 +304,16 @@ namespace CorePlanetMusicPlayer.PlayCore
         {
             MediaPlayer.Volume = volume;
             VolumeChanged?.Invoke(this,null);
+        }
+
+        public DeviceInformation GetSoundOutputDevice()
+        {
+            return MediaPlayer.AudioDevice;
+        }
+
+        public void SetSoundOutputDevice(DeviceInformation deviceInformation)
+        {
+            MediaPlayer.AudioDevice = deviceInformation;
         }
 
         public TimeSpan GetPlayProgress()

@@ -78,7 +78,7 @@ namespace CorePlanetMusicPlayer.Models
             }
         }
 
-        public string DuationString
+        public string DurationString
         {
             get
             {
