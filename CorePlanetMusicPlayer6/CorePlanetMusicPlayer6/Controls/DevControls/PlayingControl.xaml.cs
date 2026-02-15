@@ -36,6 +36,13 @@ namespace CorePlanetMusicPlayer6.Controls.DevControls
             playEngine.StateChanged += PlayEngine_StateChanged;
             playEngine.PlayingChanged += PlayEngine_PlayingChanging;
             initProgressTimer();
+
+            ProgressSlider.AddHandler(UIElement.PointerReleasedEvent, new PointerEventHandler(ProgressChanged), true);
+        }
+
+        void ProgressChanged(object sender, PointerRoutedEventArgs e)
+        {
+            ProgramData.PlayEngine.SetPlayProgress(TimeSpan.FromSeconds(ProgressSlider.Value));
         }
 
         void initProgressTimer() 
@@ -52,7 +59,7 @@ namespace CorePlanetMusicPlayer6.Controls.DevControls
             ProgressTextBlock.Text = playProgress.ToString(@"mm\:ss");
         }
 
-        private async void PlayEngine_PlayingChanging(object sender, EventArgs e)
+        private async void PlayEngine_PlayingChanging(object sender, CurrentMediaPlaybackItemChangedEventArgs e)
         {
             IMusic music = playEngine.GetPlayQueue().GetCurrentMusic();
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>

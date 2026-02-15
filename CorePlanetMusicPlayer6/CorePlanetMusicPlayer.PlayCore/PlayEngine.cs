@@ -71,8 +71,8 @@ namespace CorePlanetMusicPlayer.PlayCore
         public event EventHandler PlayingEnded;
         public event EventHandler StateChanged;
 
-        public event EventHandler PlayingChanging;
-        public event EventHandler PlayingChanged;
+        public event EventHandler<CurrentMediaPlaybackItemChangedEventArgs> PlayingChanging;
+        public event EventHandler<CurrentMediaPlaybackItemChangedEventArgs> PlayingChanged;
 
         public event EventHandler VolumeChanged;
 
@@ -195,7 +195,7 @@ namespace CorePlanetMusicPlayer.PlayCore
         private void MediaPlaybackList_CurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
         {
             Debug.WriteLine("Reason: "+ args.Reason);
-            PlayingChanging?.Invoke(this, new EventArgs());
+            PlayingChanging?.Invoke(this, args);
             
             if ((int)sender.CurrentItemIndex >= PlayQueue.NormalQueue.Count)
                 return;
@@ -206,7 +206,7 @@ namespace CorePlanetMusicPlayer.PlayCore
                 return;
             SMTCManager.UpdateSMTC(mediaPlaybackList.Items[(int)sender.CurrentItemIndex], PlayQueue.GetCurrentMusic());
             Debug.WriteLine($"CurrentItemChanged:{PlayQueue.CurrentIndex}");
-            PlayingChanged?.Invoke(this, new EventArgs());
+            PlayingChanged?.Invoke(this, args);
         }
 
         public MediaPlaybackList SetMediaSource(int index, List<IMusic> newPlayQueue)
@@ -320,6 +320,11 @@ namespace CorePlanetMusicPlayer.PlayCore
         {
             //MediaPlayer.PlaybackSession.BufferingProgress
             return MediaPlayer.Position;
+        }
+
+        public void SetPlayProgress(TimeSpan newProgress)
+        {
+            MediaPlayer.Position = newProgress;
         }
 
         public TimeSpan GetMediaDuration()

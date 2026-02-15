@@ -37,6 +37,8 @@ namespace CorePlanetMusicPlayer.PlayCore
 
         TimeSpan GetPlayProgress();
 
+        void SetPlayProgress(TimeSpan newProgress);
+
         TimeSpan GetMediaDuration();
         PlayState PlayState { get; set; }
 
@@ -46,9 +48,9 @@ namespace CorePlanetMusicPlayer.PlayCore
 
         event EventHandler StateChanged;
 
-        event EventHandler PlayingChanging;
+        event EventHandler<CurrentMediaPlaybackItemChangedEventArgs> PlayingChanging;
 
-        event EventHandler PlayingChanged;
+        event EventHandler<CurrentMediaPlaybackItemChangedEventArgs> PlayingChanged;
 
         event EventHandler VolumeChanged;
     }
