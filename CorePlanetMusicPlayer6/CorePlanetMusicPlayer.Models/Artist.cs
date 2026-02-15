@@ -17,6 +17,8 @@ namespace CorePlanetMusicPlayer.Models
 
         public List<IMusic> Music { get; set; } = new List<IMusic>();
 
+        public string CoverPath { get; set; } = "";
+
         /// <summary>
         /// 获取与该艺术家合作过的艺术家
         /// </summary>
@@ -108,7 +110,7 @@ namespace CorePlanetMusicPlayer.Models
             foreach (string name in names)
             {
                 Artist artist = GetArtistByName(name);
-                if (artist == null)
+                if (artist != null)
                 {
                     artists.Add(artist);
                 }

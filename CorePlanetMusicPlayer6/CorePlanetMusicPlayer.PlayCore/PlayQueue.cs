@@ -12,6 +12,11 @@ using Windows.Storage;
 
 namespace CorePlanetMusicPlayer.PlayCore
 {
+    public enum PlayModeEnum
+    {
+        RepeatAll, Shuffle, RepeatOne, Reverse
+    }
+
     public class PlayQueue
     {
         private static StorageFile LastPlayQueueFile { get; set; }
@@ -48,10 +53,7 @@ namespace CorePlanetMusicPlayer.PlayCore
 
         public List<IMusic> ShuffleQueue { get;private set; } = new List<IMusic>();
 
-        public enum PlayModeEnum
-        {
-            RepeatAll, Shuffle, RepeatOne, Reverse
-        }
+        
 
         public List<IPlayMode> PlayModes { get; set; } = new List<IPlayMode>();
 
@@ -152,7 +154,7 @@ namespace CorePlanetMusicPlayer.PlayCore
                     ShuffleQueue = CreateShuffleQueue(NormalQueue);
                     break;
             }
-            //if(true)//To-Do: To-Do: 添加判断是否存储恢复播放列表的数据
+            //if(true)//TODO: TODO: 添加判断是否存储恢复播放列表的数据
                 SavePlayQueueToStorage();
         }
 
@@ -235,7 +237,7 @@ namespace CorePlanetMusicPlayer.PlayCore
         {
             CurrentIndexChanging?.Invoke(this, null);
             CurrentIndex = newIndex;
-            //if()//To-Do: 添加判断是否存储恢复播放列表的数据
+            //if()//TODO: 添加判断是否存储恢复播放列表的数据
             SavePlayQueueIndexToStorage();
             CurrentIndexChanged?.Invoke(this,null);
         }

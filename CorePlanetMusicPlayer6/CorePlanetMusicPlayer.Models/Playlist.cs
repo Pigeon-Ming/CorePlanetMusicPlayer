@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace CorePlanetMusicPlayer.Models
 {
     public enum PlaylistCoverType {Default, Local, Stream}
 
-    public class Playlist
+    public class Playlist : INotifyPropertyChanged
     {
         public Playlist()
         {
@@ -22,7 +23,20 @@ namespace CorePlanetMusicPlayer.Models
 
         public string Title { get; set; }
 
-        public string Description { get; set; } = "";
+        private string description = "";
+
+        public string Description 
+        {
+            get
+            {
+                return description;
+            }
+            set
+            {
+                description = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Description"));
+            }
+        }
 
         public DateTime CreateTime { get; set; }
 
@@ -32,9 +46,63 @@ namespace CorePlanetMusicPlayer.Models
 
         public string CoverUrl { get; set; }
 
-        public string CoverPath { get; set; }
+        private string coverPath;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string CoverPath 
+        { 
+            get 
+            {
+
+                //TODO: 完善播放列表自定义封面功能
+                switch (CoverType)
+                {
+                    default:
+                        return GetDefaultCoverPath();
+                    case PlaylistCoverType.Local:
+                        //if (string.IsNullOrEmpty(coverPath))
+                        //    return GetDefaultCoverPath();
+                        //else return coverPath;
+                        return string.IsNullOrEmpty(coverPath) ? GetDefaultCoverPath() : coverPath;
+                    case PlaylistCoverType.Stream:
+                        return string.IsNullOrEmpty(CoverUrl) ? GetDefaultCoverPath() : CoverUrl;
+                }
+            }
+            set
+            {
+                coverPath = value;
+            }
+        }
 
         public string UpdateURL { get; set; }
+
+        private string GetDefaultCoverPath()
+        {
+            foreach (IMusic music in Music)
+            {
+                if (music is LocalMusic)
+                {
+                    return ((LocalMusic)music).Path;
+                }
+            }
+            return "";
+        }
+
+        public string DurationString
+        {
+            get
+            {
+                return GetTotalDuration().ToString(@"mm\:ss");
+            }
+        }
+
+        public TimeSpan GetTotalDuration()
+        {
+            TimeSpan totalDuration = TimeSpan.Zero;
+            totalDuration = totalDuration.Add(MusicHelper.GetTotalDuration(Music.ToList()));
+            return totalDuration;
+        }
 
         public ObservableCollection<IMusic> Music { get; set; } = new ObservableCollection<IMusic>();
 
@@ -47,7 +115,7 @@ namespace CorePlanetMusicPlayer.Models
         public async Task SetLocalCoverAsync(StorageFile storageFile)
         {
             CoverType = PlaylistCoverType.Local;
-            StorageFile newFile = await StorageHelper.GetStorageFileFromStorageFolderAsync(PlaylistManager.CoverFolder, $"{Title}{storageFile.FileType}");
+            StorageFile newFile = await StorageHelper.GetStorageFileFromStorageFolderAsync(PlaylistManager.CoverFolder, $"{Guid.NewGuid().ToString()}{storageFile.FileType}");
             await storageFile.CopyAndReplaceAsync(newFile);
             CoverPath = newFile.Path;
             await PlaylistManager.SavePlaylistAsync(this);
@@ -166,7 +234,7 @@ namespace CorePlanetMusicPlayer.Models
         //                break;
         //            case 2:
         //                RemovableMusic removableMusic = new RemovableMusic();
-        //                //To-Do:RemovableMusic
+        //                //TODO:RemovableMusic
         //                break;
         //            default:
         //                music.Add(new Music { Title = jObject["Key"].ToString() });
@@ -218,6 +286,13 @@ namespace CorePlanetMusicPlayer.Models
         public static async Task RemoveMusicFromPlaylistAsync(Playlist playlist, IMusic music)
         {
             playlist.Music.Remove(music);
+            await SavePlaylistAsync(playlist);
+        }
+
+        public static async Task EditTitleAsync(Playlist playlist, string newTitle)
+        {
+            await DeletePlaylistAsync(playlist);
+            playlist.Title = newTitle;
             await SavePlaylistAsync(playlist);
         }
 

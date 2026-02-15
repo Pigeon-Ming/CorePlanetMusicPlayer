@@ -1,9 +1,11 @@
 ﻿using CorePlanetMusicPlayer.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Devices.Enumeration;
 using Windows.Media.Playback;
 
 namespace CorePlanetMusicPlayer.PlayCore
@@ -26,11 +28,18 @@ namespace CorePlanetMusicPlayer.PlayCore
         double GetVolume();
         void SetVolume(double volume);
 
+
+        DeviceInformation GetSoundOutputDevice();
+        void SetSoundOutputDevice(DeviceInformation deviceInformation);
+
+        
         MediaPlaybackList SetMediaSource(int index, List<IMusic> newPlayQueue);
 
         TimeSpan GetPlayProgress();
-        
 
+        void SetPlayProgress(TimeSpan newProgress);
+
+        TimeSpan GetMediaDuration();
         PlayState PlayState { get; set; }
 
         PlayQueue GetPlayQueue();
@@ -39,8 +48,10 @@ namespace CorePlanetMusicPlayer.PlayCore
 
         event EventHandler StateChanged;
 
-        event EventHandler PlayingChanging;
+        event EventHandler<CurrentMediaPlaybackItemChangedEventArgs> PlayingChanging;
 
-        event EventHandler PlayingChanged;
+        event EventHandler<CurrentMediaPlaybackItemChangedEventArgs> PlayingChanged;
+
+        event EventHandler VolumeChanged;
     }
 }

@@ -26,10 +26,9 @@ namespace CorePlanetMusicPlayer.App
             PlayRecordEnabled = true;
         }
 
-        private static async void PlayEngine_PlayingChanging(object sender, EventArgs e)
+        private static async void PlayEngine_PlayingChanging(object sender, CurrentMediaPlaybackItemChangedEventArgs e)
         {
-            
-            if (sender is MediaPlaybackItemChangedReason && (MediaPlaybackItemChangedReason)sender == MediaPlaybackItemChangedReason.EndOfStream)
+            if (e.Reason == MediaPlaybackItemChangedReason.EndOfStream)
             {
                 await InsertPlayRecordAsync();
             }

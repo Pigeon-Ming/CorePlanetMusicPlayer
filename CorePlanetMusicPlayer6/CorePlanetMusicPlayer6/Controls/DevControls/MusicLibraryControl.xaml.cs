@@ -104,7 +104,7 @@ namespace CorePlanetMusicPlayer6.Controls.DevControls
 
         async Task SaveToPlaylistAsync(IMusic music)
         {
-            await ContentDialogManager.ShowContentDialogAsync(new SaveToPlaylistControl(music));
+            await ProgramData.ContentDialogManager.ShowContentDialogAsync(new SaveToPlaylistControl(music));
         }
 
         private void MusicListView_RightTapped(object sender, RightTappedRoutedEventArgs e)
@@ -120,7 +120,7 @@ namespace CorePlanetMusicPlayer6.Controls.DevControls
 
         async Task AddStreamMusicAsync()
         {
-            await ContentDialogManager.ShowContentDialogAsync(new SaveStreamMusicControl());
+            await ProgramData.ContentDialogManager.ShowContentDialogAsync(new SaveStreamMusicControl());
         }
 
         private async void Menu_Remove_Click(object sender, RoutedEventArgs e)

@@ -25,6 +25,28 @@ namespace CorePlanetMusicPlayer.Models
         public uint Id { get; private set; }
 
         public List<IMusic> Music { get; set; } = new List<IMusic>();
+
+        public string CoverPath
+        {
+            get
+            {
+                //TODO: 设置专辑封面图
+                // 思路：查询所有的音乐，如果有此专辑中有本地音频文件，就从本地读取封面；如果全是StreamMusic默认为空，可以单独设置冯敏URL地址
+                return GetCoverPath();
+            }
+        }
+
+        private string GetCoverPath()
+        {
+            foreach (IMusic music in Music)
+            {
+                if (music is LocalMusic)
+                {
+                    return ((LocalMusic)music).Path;
+                }
+            }
+            return "";
+        }
     }
 
     public class GenreManager

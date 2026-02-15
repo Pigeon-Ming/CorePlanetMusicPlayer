@@ -6,15 +6,21 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UWPTools.Models;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace CorePlanetMusicPlayer.Models
 {
     public enum MusicType { Local, Stream };
+
+    public enum MusicListOrderBy { Title, Artist, Album, Duration, Bitrate, /*TrackNumber, DiscNumber,*/ Year/*, Genre*/}
+    public enum MusicListGroupBy { Title, Artist, Album, Duration, Bitrate, /*TrackNumber, DiscNumber,*/ Year, Genre}
+
     public class MusicHelper
     {
         public static List<string> SupportedMusicFileTypesString = new List<string> { ".mp3", ".flac" };
@@ -41,6 +47,51 @@ namespace CorePlanetMusicPlayer.Models
                 return timeSpan;
             }
         }
+
+        public static List<IMusic> OrderBy(List<IMusic> musicList, MusicListOrderBy orderBy)
+        {
+            switch (orderBy)
+            {
+                
+                case MusicListOrderBy.Artist:
+                    return musicList.OrderBy(x => x.Artist).ToList();
+                case MusicListOrderBy.Album:
+                    return musicList.OrderBy(x => x.Album).ToList();
+                case MusicListOrderBy.Duration:
+                    return musicList.OrderBy(x => x.Duration).ToList();
+                case MusicListOrderBy.Bitrate:
+                    return musicList.OrderBy(x => x.Bitrate).ToList();
+                case MusicListOrderBy.Year:
+                    return musicList.OrderBy(x => x.Year).ToList();
+                default:
+                /*case MusicListOrderBy.Title:*/
+                    return musicList.OrderBy(x => x.Title).ToList();
+            }
+        }
+
+        public static GroupCollection GroupBy(List<IMusic> musicList, MusicListGroupBy groupBy)
+        {
+            throw new NotImplementedException();
+            // TODO: 音乐列表的分组
+
+            //switch (groupBy)
+            //{
+
+            //    case MusicListOrderBy.Artist:
+            //        return musicList.OrderBy(x => x.Artist).ToList();
+            //    case MusicListOrderBy.Album:
+            //        return musicList.OrderBy(x => x.Album).ToList();
+            //    case MusicListOrderBy.Duration:
+            //        return musicList.OrderBy(x => x.Duration).ToList();
+            //    case MusicListOrderBy.Bitrate:
+            //        return musicList.OrderBy(x => x.Bitrate).ToList();
+            //    case MusicListOrderBy.Year:
+            //        return musicList.OrderBy(x => x.Year).ToList();
+            //    default:
+            //        /*case MusicListOrderBy.Title:*/
+            //        return musicList.OrderBy(x => x.Title).ToList();
+            //}
+        }
     }
     public interface IMusic
     {
@@ -61,6 +112,8 @@ namespace CorePlanetMusicPlayer.Models
         uint Year { get; set; }
 
         uint Genre { get; set; }
+
+        string Path { get; }
     }
 
     public class Music : IMusic
@@ -76,6 +129,7 @@ namespace CorePlanetMusicPlayer.Models
         public uint Genre { get; set; } = 0;
         public string Token { get; set; } = "";
         public MusicType Type { get; set; }
+        public string Path { get; set; }
     }
 
     public class LocalMusic : IMusic
@@ -89,6 +143,8 @@ namespace CorePlanetMusicPlayer.Models
         public uint DiscNumber { get; set; }
         public uint Year { get; set; }
         public uint Genre { get; set; }
+
+        public string Path { get { return StorageFile.Path; } }
 
         public StorageFile StorageFile { get; set; }
 
@@ -151,7 +207,7 @@ namespace CorePlanetMusicPlayer.Models
 
         public static void GetProperties_TagLib(LocalMusic localMusic)//仅使用TagLib获取音乐信息（不常用,信息缺失）
         {
-            Music2LocalMusic(localMusic,TagLibHelper.GetMusicProperties(TagLibHelper.GetTagLibFile(localMusic.StorageFile)));
+            Music2LocalMusic(localMusic, TagLibHelper.GetMusicProperties(TagLibHelper.GetTagLibFile(localMusic.StorageFile)));
         }
 
         public static async Task GetProperties_MixedAsync(LocalMusic localMusic)//使用系统API+TagLib获取音乐信息 常用，推荐使用
@@ -173,6 +229,14 @@ namespace CorePlanetMusicPlayer.Models
                 return new BitmapImage();
             else
                 return await TagLibHelper.GetCoverBitmapImageAsync(file);
+        }
+
+        public static async Task<byte[]> GetCoverByteArray_TagLibAsync(LocalMusic localMusic)
+        {
+            if (localMusic == null)
+                return null;
+            TagLib.File file = TagLibHelper.GetTagLibFile(localMusic.StorageFile);
+            return await TagLibHelper.GetCoverByteArrayAsync(file);
         }
 
 
@@ -205,6 +269,8 @@ namespace CorePlanetMusicPlayer.Models
 
         public string Url { get; set; }
 
+        public string Path { get { return Url; } }
+
         public string CoverUrl { get; set; } = "";
     }
 
@@ -227,6 +293,8 @@ namespace CorePlanetMusicPlayer.Models
         public uint DiscNumber { get; set; }
         public uint Year { get; set; }
         public uint Genre { get; set; }
+
+        public string Path { get { return StorageFile.Path; } }
         public RemovableDevice From { get; set; }
         public StorageFile StorageFile { get; set; }
 
@@ -318,6 +386,8 @@ namespace CorePlanetMusicPlayer.Models
         public uint DiscNumber { get; set; }
         public uint Year { get; set; }
         public uint Genre { get; set; }
+
+        public string Path { get { return ""; } }
     }
 
     public class JMusicHelper
@@ -347,7 +417,7 @@ namespace CorePlanetMusicPlayer.Models
             else if (music is RemovableMusic)
             {
                 return null;
-                // To-Do:RemovableMusic的保存
+                // TODO:RemovableMusic的保存
                 // 需要解决的问题：
                 // 当可移动磁盘的盘符改变时，该如何找到对应的RemovableMusic?
             }
@@ -407,7 +477,7 @@ namespace CorePlanetMusicPlayer.Models
                         break;
                     case 2:
                         RemovableMusic removableMusic = new RemovableMusic();
-                        //To-Do:RemovableMusic
+                        //TODO:RemovableMusic
                         break;
                     default:
                         music.Add(new Music { Title = jObject["Key"].ToString() });

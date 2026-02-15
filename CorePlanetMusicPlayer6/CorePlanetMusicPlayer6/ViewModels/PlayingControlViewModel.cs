@@ -63,13 +63,13 @@ namespace CorePlanetMusicPlayer6.ViewModels
         {
             switch (PlayEngine.GetPlayQueue().CurrentPlayModeEnum)
             {
-                case PlayQueue.PlayModeEnum.RepeatAll:
+                case PlayModeEnum.RepeatAll:
                     return "\uE8EE";
-                case PlayQueue.PlayModeEnum.Shuffle:
+                case PlayModeEnum.Shuffle:
                     return "\uE8B1";
-                case PlayQueue.PlayModeEnum.RepeatOne:
+                case PlayModeEnum.RepeatOne:
                     return "\uE8ED";
-                case PlayQueue.PlayModeEnum.Reverse:
+                case PlayModeEnum.Reverse:
                     return "\uE752";
                 default:
                     return "\uE9CE";

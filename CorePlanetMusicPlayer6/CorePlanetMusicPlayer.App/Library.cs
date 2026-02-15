@@ -44,6 +44,8 @@ namespace CorePlanetMusicPlayer.App
         {
             FolderPicker folderPicker = new FolderPicker();
             StorageFolder folder = await folderPicker.PickSingleFolderAsync();
+            if (folder == null)
+                return;
             if(Folders.ContainsKey(folder))
                 return;
             await AddFolderAsync(folder);
@@ -73,6 +75,8 @@ namespace CorePlanetMusicPlayer.App
         {
             Folders.Clear();
             List<string> tokens = await FutureAccessListManager.ReadFolderTokensAsync();
+            if (tokens == null)
+                return;
             foreach (string token in tokens)
             {
                 Folders.Add(await StorageHelper.GetStorageFolderFromFutureAccessListAsync(token), token);

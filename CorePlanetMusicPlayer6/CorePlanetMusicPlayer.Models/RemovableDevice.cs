@@ -80,7 +80,7 @@ namespace CorePlanetMusicPlayer.Models
         {
             RemovableDevice removableDevice = new RemovableDevice();
             removableDevice.StorageFolder = storageFolder;
-            /*To-Do: 增加可移动设备的唯一标识*/
+            /*TODO: 增加可移动设备的唯一标识*/
             //removableDevice.Id = storageFolder.Properties.;
             //Debug.WriteLine($"可移动设备：{storageFolder.Name}（{storageFolder.Path}）的Id为：{removableDevice.Id}");
             removableDevice.Name = storageFolder.Name;
