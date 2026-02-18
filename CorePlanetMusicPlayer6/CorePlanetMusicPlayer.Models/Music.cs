@@ -184,6 +184,7 @@ namespace CorePlanetMusicPlayer.Models
             }
             return localMusicList;
         }
+
         //音乐信息获取
         public static async Task GetPropertiesAsync(LocalMusic localMusic)//仅使用系统API获取音乐信息（兼容旧平台使用）
         {
@@ -239,6 +240,13 @@ namespace CorePlanetMusicPlayer.Models
             return await TagLibHelper.GetCoverByteArrayAsync(file);
         }
 
+        public static async Task<string> GetLyricStrFromFileAsync(LocalMusic localMusic)
+        {
+            if (localMusic == null)
+                return null;
+            TagLib.File file = TagLibHelper.GetTagLibFile(localMusic.StorageFile);
+            return TagLibHelper.GetLyricStr(file);
+        }
 
         public static void Music2LocalMusic(LocalMusic localMusic,Music music)
         {

@@ -6,7 +6,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <Style TargetType="FontIcon">
-                <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+                <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
             </Style>
 
             <Style TargetType="ListViewItem">

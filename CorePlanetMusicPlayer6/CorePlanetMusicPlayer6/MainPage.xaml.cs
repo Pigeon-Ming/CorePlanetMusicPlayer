@@ -51,7 +51,8 @@ namespace CorePlanetMusicPlayer6
             await PlayRecordManager.InitAsync(ProgramData.PlayEngine);
             // 启动播放记录
             PlayRecordManager.StartPlayRecord();
-            
+            // 初始化歌词服务
+            LyricService.InitService(ProgramData.PlayEngine);
             
             await GetDataAsync();
 

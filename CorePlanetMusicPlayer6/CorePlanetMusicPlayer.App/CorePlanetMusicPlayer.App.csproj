@@ -126,6 +126,7 @@
     <Compile Include="FutureAccessListManager.cs" />
     <Compile Include="IArtistsSelectControl.cs" />
     <Compile Include="Library.cs" />
+    <Compile Include="LyricService.cs" />
     <Compile Include="NavigateManager.cs" />
     <Compile Include="ObservableDictionary.cs" />
     <Compile Include="PlayRecordManager.cs" />
