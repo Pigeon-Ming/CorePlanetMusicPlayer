@@ -125,6 +125,12 @@ namespace CorePlanetMusicPlayer.Models.TagLibModels
             return file.Tag.Pictures[0].Data.Data;
         }
 
+        public static string GetLyricStr(TagLib.File file)
+        {
+            string lyricContent = file.Tag.Lyrics;
+            return lyricContent;
+        }
+
         public static TagLib.File GetTagLibFile(StorageFile storageFile)//获取TagLib.File对象，以获取更多信息
         {
             UwpStorageFileAbstraction uwpStorageFileAbstraction = new UwpStorageFileAbstraction(storageFile);

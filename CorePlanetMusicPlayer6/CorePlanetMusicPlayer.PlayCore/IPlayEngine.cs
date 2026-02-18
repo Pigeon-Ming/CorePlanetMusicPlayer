@@ -44,6 +44,8 @@ namespace CorePlanetMusicPlayer.PlayCore
 
         PlayQueue GetPlayQueue();
 
+        IMusic GetCurrentMusic();
+
         event EventHandler PlayingEnded;
 
         event EventHandler StateChanged;

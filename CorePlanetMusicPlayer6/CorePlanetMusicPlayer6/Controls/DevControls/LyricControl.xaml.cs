@@ -1,4 +1,4 @@
-﻿using CorePlanetMusicPlayer.Models;
+﻿ using CorePlanetMusicPlayer.Models;
 using CorePlanetMusicPlayer.PlayCore;
 using CorePlanetMusicPlayer.App;
 using System;
@@ -24,7 +24,6 @@ namespace CorePlanetMusicPlayer6.Controls.DevControls
 {
     public sealed partial class LyricControl : UserControl
     {
-        private DispatcherTimer LyricTimer = new DispatcherTimer();
 
         private List<Lyric> Lyrics = new List<Lyric>();
 
@@ -36,23 +35,27 @@ namespace CorePlanetMusicPlayer6.Controls.DevControls
 
             playEngine = ProgramData.PlayEngine;
 
-            LyricTimer.Interval = TimeSpan.FromMilliseconds(20);
-            LyricTimer.Tick += LyricTimer_Tick;
+            LyricService.CurrentLyricChanged += LyricService_CurrentLyricChanged;
+            LyricService.LyricsChanged += LyricService_LyricsChanged;
         }
 
-        /*
-        public void SetPlayEngine(IPlayEngine playEngine)
+        private void LyricService_LyricsChanged(object sender, EventArgs e)
         {
-            this.playEngine = playEngine;
+            Lyrics = LyricService.Lyrics;
+            UpdateLyrics();
         }
-        */
 
-        private void LyricTimer_Tick(object sender, object e)
+        private void LyricService_CurrentLyricChanged(object sender, int e)
         {
-            int index = LyricManager.GetCurrentLyricIndex(Lyrics,playEngine.GetPlayProgress());
+            UpdateView();
+        }
+
+        void UpdateView()
+        {
+            int index = LyricService.CurrentIndex;
             if (index < 0 || index >= Lyrics.Count)
                 return;
-            for(int i = 0; i < index; i++)
+            for (int i = 0; i < index; i++)
             {
                 ((LyricItemControl)LyricsStackPanel.Children[i]).SetAsNotCurrent();
             }
@@ -63,6 +66,13 @@ namespace CorePlanetMusicPlayer6.Controls.DevControls
             }
         }
 
+        /*
+        public void SetPlayEngine(IPlayEngine playEngine)
+        {
+            this.playEngine = playEngine;
+        }
+        */
+
         private async void Menu_OpenFile_Click(object sender, RoutedEventArgs e)
         {
             await OpenFileAsync();
@@ -70,23 +80,15 @@ namespace CorePlanetMusicPlayer6.Controls.DevControls
 
         public async Task OpenFileAsync()
         {
-            LyricTimer.Stop();
-            var picker = new Windows.Storage.Pickers.FileOpenPicker();
-            picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
-            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.MusicLibrary;
-            picker.FileTypeFilter.Add(".lrc");
-            Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
-            if (file == null)
-                return;
-            string lrcString = await StorageHelper.ReadFileAsStringAsync(file);
-            Lyrics = LyricManager.GetLyricsFromLRCContent(lrcString);
-            UpdateLyrics();
-            LyricTimer.Start();
+            IMusic music = playEngine.GetPlayQueue().GetCurrentMusic();
+            if (music != null) 
+                await LyricService.PickLyricFileForCurrentMusicAsync();
         }
 
         public void UpdateLyrics()
         {
             LyricsStackPanel.Children.Clear();
+            if (Lyrics is null) return;
             for (int i = 0; i < Lyrics.Count; i++)
             {
                 LyricsStackPanel.Children.Add(new LyricItemControl(Lyrics[i]));

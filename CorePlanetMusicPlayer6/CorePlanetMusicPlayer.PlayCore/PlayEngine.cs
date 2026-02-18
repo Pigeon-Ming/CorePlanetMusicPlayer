@@ -176,6 +176,8 @@ namespace CorePlanetMusicPlayer.PlayCore
         private void playMusic(int index)
         {
             MediaPlaybackList mediaPlaybackList = (MediaPlaybackList)MediaPlayer.Source;
+            if (mediaPlaybackList is null)
+                return;
             mediaPlaybackList.MoveTo((uint)index);
             MediaPlayer.Play();
             PlayingChanged?.Invoke(this,null);
@@ -330,6 +332,13 @@ namespace CorePlanetMusicPlayer.PlayCore
         public TimeSpan GetMediaDuration()
         {
             return MediaPlayer.NaturalDuration;
+        }
+
+        public IMusic GetCurrentMusic()
+        {
+            if (PlayQueue is null)
+                return null;
+            return PlayQueue.GetCurrentMusic();
         }
     }
 }

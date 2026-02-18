@@ -33,12 +33,30 @@ CorePlanetMusicPlayer（以下简称CorePMP），是一个UWP平台下的开源�
 
 ### 引用
 
-| 功能        | 项目名称及链接                                                         |
-| --------- | --------------------------------------------------------------- |
-| 读取音乐文件信息  | [mono/taglib-sharp](https://github.com/mono/taglib-sharp)       |
-| UWP C#帮助类 | [Pigeon-Ming/UWPTools](https://github.com/Pigeon-Ming/UWPTools) |
+| 项目名称及链接                                                         | 功能        |
+| --------------------------------------------------------------- | --------- |
+| [mono/taglib-sharp](https://github.com/mono/taglib-sharp)       | 读取音乐文件信息  |
+| [Pigeon-Ming/UWPTools](https://github.com/Pigeon-Ming/UWPTools) | UWP C#帮助类 |
 
+---
 
+### 项目架构
+
+- CorePlanetMusicPlayer6：实际运行的应用程序
+  
+  - 仅保留核心功能的PlanetMusicPlayer，主要供开发使用。
+
+- CorePlanetMusicPlayer.App：抽象应用/服务层
+  
+  * 应用范围的业务逻辑、状态管理、设置持久化、全局事件与服务封装。
+
+- CorePlanetMusicPlayer.PlayCore：播放核心
+  
+  - 媒体播放引擎、播放队列与播放模式逻辑、与 Windows.Media/SMTC 的交互。通过接口解耦引擎实现（可替换实现）。
+
+- CorePlanetMusicPlayer.Modals：
+  
+  - 表示音乐、元数据、歌词等领域对象；提供将平台对象（如 StorageFile）映射到领域模型的适配器（例如 UwpStorageFileAbstraction）。
 
 ---
 
