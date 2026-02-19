@@ -34,7 +34,7 @@ namespace CorePlanetMusicPlayer.Models
             Artist = music.Artist;
             Year = (int)music.Year;
             Genre = (int)music.Genre;
-            Duration = TimeSpan.Parse(music.Duration);
+            Duration = ParseDurationString(music.Duration);
             DateTime = DateTime.Now;
         }
 
@@ -55,6 +55,52 @@ namespace CorePlanetMusicPlayer.Models
         public TimeSpan Duration { get; set; }
 
         public DateTime DateTime { get; set; }
+
+        /// <summary>
+        /// 解析常见的时长字符串（支持 "mm:ss", "m:ss", "hh:mm:ss", "ss" 等），
+        /// 对 "mm:ss" 明确转换为 minutes/seconds，解析失败返回 TimeSpan.Zero。
+        /// </summary>
+        public static TimeSpan ParseDurationString(string s)
+        {
+            if (string.IsNullOrWhiteSpace(s))
+                return TimeSpan.Zero;
+
+            s = s.Trim();
+            var parts = s.Split(':');
+
+            try
+            {
+                if (parts.Length == 1)
+                {
+                    // 只有秒（可能包含小数）
+                    if (double.TryParse(parts[0], out double sec))
+                        return TimeSpan.FromSeconds(sec);
+                }
+                else if (parts.Length == 2)
+                {
+                    // mm:ss 或 m:ss（明确为 minutes + seconds）
+                    if (int.TryParse(parts[0], out int minutes) && double.TryParse(parts[1], out double seconds))
+                        return new TimeSpan(0, minutes, 0).Add(TimeSpan.FromSeconds(seconds));
+                }
+                else if (parts.Length == 3)
+                {
+                    // hh:mm:ss
+                    if (int.TryParse(parts[0], out int hours) &&
+                        int.TryParse(parts[1], out int minutes) &&
+                        double.TryParse(parts[2], out double seconds))
+                        return new TimeSpan(hours, minutes, 0).Add(TimeSpan.FromSeconds(seconds));
+                }
+            }
+            catch
+            {
+                // fall through to TryParse below
+            }
+
+            if (TimeSpan.TryParse(s, out TimeSpan result))
+                return result;
+
+            return TimeSpan.Zero;
+        }
     }
 
     public class PlayRecordHelper
@@ -125,7 +171,7 @@ namespace CorePlanetMusicPlayer.Models
                 Album = reader["album"].ToString(),
                 Year = Convert.ToInt32(reader["year"]),
                 Genre = Convert.ToInt32(reader["genre"]),
-                Duration = TimeSpan.Parse(reader["duration"].ToString()),
+                Duration = PlayRecord.ParseDurationString(reader["duration"].ToString()),
                 DateTime = DateTime.Parse(reader["datetime"].ToString())
             });
             SQLiteConnection.Dispose();
