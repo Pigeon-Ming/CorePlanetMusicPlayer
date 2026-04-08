@@ -2,6 +2,7 @@
     x:Class="CorePlanetMusicPlayer6.Controls.DevControls.PlayingControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CorePlanetMusicPlayer6.Controls"
     xmlns:coreconverter="using:CorePlanetMusicPlayer.App"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:CorePlanetMusicPlayer6.Controls.DevControls"
@@ -45,6 +46,10 @@
                     <Setter Property="HorizontalAlignment" Value="Stretch" />
                 </Style>
             </Grid.Resources>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
@@ -77,8 +82,28 @@
                 RightTapped="NextButton_RightTapped">
                 <FontIcon Glyph="&#xE893;" />
             </Button>
-            <Button Name="VolumeButton" Grid.Column="4">
-                <FontIcon Name="VolumeIcon" Glyph="&#xE767;" />
+            <Button
+                Name="VolumeButton"
+                Grid.Column="4"
+                Click="VolumeButton_Click">
+                <FontIcon Glyph="&#xE995;" />
+                <Button.Flyout>
+                    <Flyout x:Name="SoundSettingsFlyout" Opened="SoundSettingsFlyout_Opened">
+                        <StackPanel Width="300">
+                            <controls:VolumeControl x:Name="volumeControl" />
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+            <Button Grid.Row="1">
+                <FontIcon Glyph="&#xE9E9;" />
+                <Button.Flyout>
+                    <Flyout x:Name="EqualizerFlyout" Opened="EqualizerFlyout_Opened">
+                        <StackPanel Width="300" Height="260">
+                            <controls:EqualizerControl x:Name="equalizerControl"  Width="300" Height="260"/>
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
             </Button>
         </Grid>
 

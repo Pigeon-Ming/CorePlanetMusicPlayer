@@ -28,7 +28,6 @@ namespace CorePlanetMusicPlayer.PlayCore
         double GetVolume();
         void SetVolume(double volume);
 
-
         DeviceInformation GetSoundOutputDevice();
         void SetSoundOutputDevice(DeviceInformation deviceInformation);
 
@@ -55,5 +54,20 @@ namespace CorePlanetMusicPlayer.PlayCore
         event EventHandler<CurrentMediaPlaybackItemChangedEventArgs> PlayingChanged;
 
         event EventHandler VolumeChanged;
+
+        /// <summary>
+        /// 均衡器
+        /// </summary>
+        
+
+        bool IsEqualizerSupported { get; }
+        bool IsEqualizerEnabled { get; set; }
+        int EqualizerBandCount { get; }
+        double GetEqualizerBandFrequency(int bandIndex);
+        float GetEqualizerGain(int bandIndex);
+        void SetEqualizerGain(int bandIndex, float gain);
+        void ResetEqualizer();
+        float[] GetAllEqualizerGains();
+        void SetAllEqualizerGains(IEnumerable<float> gains);
     }
 }
