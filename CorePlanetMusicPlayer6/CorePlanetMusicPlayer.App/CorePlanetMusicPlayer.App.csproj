@@ -120,6 +120,7 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="IMusicCollectionTypeConverter.cs" />
     <Compile Include="CoverLoaderConverter.cs" />
     <Compile Include="CoverLoaderService.cs" />
     <Compile Include="DataBaseManager.cs" />

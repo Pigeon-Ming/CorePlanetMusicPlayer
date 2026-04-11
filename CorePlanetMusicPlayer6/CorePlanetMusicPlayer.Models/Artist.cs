@@ -9,7 +9,7 @@ using TagLib;
 
 namespace CorePlanetMusicPlayer.Models
 {
-    public class Artist
+    public class Artist: IMusicCollection
     {
         public string Name { get; set; }
 
@@ -18,6 +18,14 @@ namespace CorePlanetMusicPlayer.Models
         public List<IMusic> Music { get; set; } = new List<IMusic>();
 
         public string CoverPath { get; set; } = "";
+
+        public string Title => Name;
+
+        public IEnumerable<IMusic> MusicItems => Music;
+
+        public int MusicCount => Music.Count;
+
+        public TimeSpan TotalDuration => GetTotalDuration();
 
         /// <summary>
         /// 获取与该艺术家合作过的艺术家
@@ -32,6 +40,11 @@ namespace CorePlanetMusicPlayer.Models
         public List<Album> GetAlbums()
         {
             return AlbumManager.Albums.ToList().FindAll(x=> x.GetArtists().Contains(this));
+        }
+
+        public TimeSpan GetTotalDuration()
+        {
+            return MusicHelper.GetTotalDuration(Music);
         }
     }
 

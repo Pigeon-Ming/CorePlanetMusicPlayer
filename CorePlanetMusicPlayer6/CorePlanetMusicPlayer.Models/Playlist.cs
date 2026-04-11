@@ -14,7 +14,7 @@ namespace CorePlanetMusicPlayer.Models
 {
     public enum PlaylistCoverType {Default, Local, Stream}
 
-    public class Playlist : INotifyPropertyChanged
+    public class Playlist : IMusicCollection, INotifyPropertyChanged
     {
         public Playlist()
         {
@@ -105,6 +105,12 @@ namespace CorePlanetMusicPlayer.Models
         }
 
         public ObservableCollection<IMusic> Music { get; set; } = new ObservableCollection<IMusic>();
+
+        public IEnumerable<IMusic> MusicItems => Music;
+
+        public int MusicCount => Music.Count;
+
+        public TimeSpan TotalDuration => GetTotalDuration();
 
         public async Task SetToDefaultCoverAsync()
         {

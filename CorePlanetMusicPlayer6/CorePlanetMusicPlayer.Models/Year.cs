@@ -12,7 +12,7 @@ namespace CorePlanetMusicPlayer.Models
     /// <summary>
     /// 歌曲的年份列表
     /// </summary>
-    public class Year
+    public class Year: IMusicCollection
     {
         public Year(uint year)
         {
@@ -37,6 +37,15 @@ namespace CorePlanetMusicPlayer.Models
                 return GetTotalDuration().ToString(@"mm\:ss");
             }
         }
+
+        // TODO: 多语言支持
+        public string Title => $"{ReleaseYear}年";
+
+        public IEnumerable<IMusic> MusicItems => Music;
+
+        public int MusicCount => Music.Count;
+
+        public TimeSpan TotalDuration => GetTotalDuration();
 
         /// <summary>
         /// 获取专辑中歌曲的总时长

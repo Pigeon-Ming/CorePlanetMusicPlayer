@@ -20,7 +20,7 @@ namespace CorePlanetMusicPlayer.Models
         public string Name { get; set; } = "";
     }
 
-    public class Album
+    public class Album: IMusicCollection
     {
         public string Name { get; set; }
 
@@ -85,6 +85,12 @@ namespace CorePlanetMusicPlayer.Models
                 return GetTotalDuration().ToString(@"mm\:ss");
             }
         }
+
+        public string Title => Name;
+
+        public IEnumerable<IMusic> MusicItems => Discs.SelectMany(x => x);
+
+        public TimeSpan TotalDuration => GetTotalDuration();
 
         /// <summary>
         /// 获取专辑中歌曲的总时长

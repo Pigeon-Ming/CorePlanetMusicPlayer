@@ -124,6 +124,7 @@
     <Compile Include="AlphaKeyGroup.cs" />
     <Compile Include="Artist.cs" />
     <Compile Include="Genre.cs" />
+    <Compile Include="IMusicCollection.cs" />
     <Compile Include="Lyric.cs" />
     <Compile Include="Music.cs" />
     <Compile Include="Playlist.cs" />
