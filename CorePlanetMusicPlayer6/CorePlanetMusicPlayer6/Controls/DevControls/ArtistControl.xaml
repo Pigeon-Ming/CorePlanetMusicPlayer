@@ -20,12 +20,24 @@
         <Image Name="PictureImage" />
         <ScrollViewer>
             <StackPanel>
-                <Button Content="修改艺术家图片" />
+                <Button Content="修改艺术家图片" Name="EditArtistImageButton">
+                    <Button.Flyout>
+                        <Flyout>
+                            <!--<MenuFlyoutItem Text="从文件选择……" Name="OpenArtistProfileFileMenuFlyoutItem" Click="OpenArtistProfileFileMenuFlyoutItem_Click"/>
+                            <MenuFlyoutItem Text="从URL中加载图片……" Name="EditArtistProfileURLMenuFlyoutItem" Click="EditArtistProfileURLMenuFlyoutItem_Click"/>-->
+                            <StackPanel>
+                                <Button Content="从文件选择……" Name="OpenArtistProfileFileButton" Click="OpenArtistProfileFileButton_Click"/>
+                                <TextBox PlaceholderText="URL" Name="ProfilePathTextBox"/>
+                                <Button Content="设置url" Name="SetArtistProfileURLButton" Click="SetArtistProfileURLButton_Click"/>
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
                 <TextBlock Name="NameTextBlock" />
                 <TextBox Name="DescriptionTextBox" Header="简介" />
                 <TextBlock Name="MusicCountTextBlock" />
                 <TextBlock Name="AlbumsCountTextBlock" />
-                <Button Content="保存简介信息" />
+                <Button Content="保存简介信息" Name="SaveDescriptionButton" Click="SaveDescriptionButton_Click"/>
             </StackPanel>
         </ScrollViewer>
         <Grid Grid.Row="3">

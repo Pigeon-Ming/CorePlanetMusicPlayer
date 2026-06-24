@@ -15,6 +15,8 @@ namespace CorePlanetMusicPlayer.App
 
         public static Frame ContentFrame { get; set; }
 
+        public static Type MusicCollectionPage { get; set; }// TODO: 已引入统一的MusicCollectionPage，移除废弃的单独页面
+
         public static Type AlbumPage { get; set; }
 
         public static Type ArtistPage { get; set; }
@@ -33,7 +35,10 @@ namespace CorePlanetMusicPlayer.App
 
         public static Type MusicInfoControl { get; set; }
 
-        
+        public static void NavigateToMusicCollectionPage(IMusicCollection musicCollection)
+        {
+            ContentFrame.Navigate(MusicCollectionPage, musicCollection);
+        }
 
         public static void NavigateToAlbumPage(Album album)
         {

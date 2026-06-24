@@ -19,11 +19,11 @@
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                 </Style>
             </Hub.Resources>
-            <!--<HubSection Header="开发者工具">
+            <HubSection Header="开发者工具">
                 <DataTemplate>
                     <controls:DevToolsControl />
                 </DataTemplate>
-            </HubSection>-->
+            </HubSection>
             <HubSection Width="400" Header="本地音乐库来源">
                 <DataTemplate>
                     <devcontrols:LibraryControl />

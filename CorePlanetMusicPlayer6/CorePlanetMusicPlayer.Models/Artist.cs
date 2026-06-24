@@ -17,7 +17,19 @@ namespace CorePlanetMusicPlayer.Models
 
         public List<IMusic> Music { get; set; } = new List<IMusic>();
 
-        public string CoverPath { get; set; } = "";
+        public string CoverPath 
+        {    
+            get
+            {
+                return ProfilePath;
+            }
+            set
+            {
+                ProfilePath = value;
+            } 
+        }
+
+        public string ProfilePath { get; set; } = "";
 
         public string Title => Name;
 

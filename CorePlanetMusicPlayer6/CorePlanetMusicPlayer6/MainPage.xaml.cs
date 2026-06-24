@@ -95,6 +95,9 @@ namespace CorePlanetMusicPlayer6
             AlbumManager.RefreshAlbumsList(musicList);
             GenreManager.RefreshGenresList(musicList);
             YearManager.RefreshYearsList(musicList);
+
+            await Library.GetArtistsInfoAsync();
+            await Library.GetAlbumsInfoAsync();
             
             dateTime1 = DateTime.Now;
             Debug.WriteLine($"{dateTime1.ToString(@"yyyy/MM/dd HH:mm:ss.ff")} - 分类信息整理完毕");

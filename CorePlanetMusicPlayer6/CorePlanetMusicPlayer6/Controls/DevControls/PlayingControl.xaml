@@ -100,7 +100,10 @@
                 <Button.Flyout>
                     <Flyout x:Name="EqualizerFlyout" Opened="EqualizerFlyout_Opened">
                         <StackPanel Width="300" Height="260">
-                            <controls:EqualizerControl x:Name="equalizerControl"  Width="300" Height="260"/>
+                            <controls:EqualizerControl
+                                x:Name="equalizerControl"
+                                Width="300"
+                                Height="260" />
                         </StackPanel>
                     </Flyout>
                 </Button.Flyout>

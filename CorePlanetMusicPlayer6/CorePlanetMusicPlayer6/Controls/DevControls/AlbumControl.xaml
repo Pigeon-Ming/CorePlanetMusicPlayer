@@ -21,6 +21,7 @@
             <StackPanel>
                 <TextBlock Name="NameTextBlock" />
                 <TextBox Name="DescriptionTextBox" Header="简介" />
+                <Button Content="保存简介信息" Name="SaveButton" Click="SaveButton_Click"/>
                 <TextBlock Name="MusicCountTextBlock" />
                 <TextBlock Name="DiscCountTextBlock" />
                 <TextBlock Name="ArtistsTextBlock" />
