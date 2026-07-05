@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CorePlanetMusicPlayer.Models
 {
-    public class Genre
+    public class Genre: IMusicCollection
     {
         public Genre(uint id)
         {
@@ -36,6 +36,14 @@ namespace CorePlanetMusicPlayer.Models
             }
         }
 
+        public string Title => Name;
+
+        public IEnumerable<IMusic> MusicItems => Music;
+
+        public int MusicCount => Music.Count;
+
+        public TimeSpan TotalDuration => GetTotalDuration();
+
         private string GetCoverPath()
         {
             foreach (IMusic music in Music)
@@ -46,6 +54,11 @@ namespace CorePlanetMusicPlayer.Models
                 }
             }
             return "";
+        }
+
+        public TimeSpan GetTotalDuration()
+        {
+            return MusicHelper.GetTotalDuration(Music);
         }
     }
 

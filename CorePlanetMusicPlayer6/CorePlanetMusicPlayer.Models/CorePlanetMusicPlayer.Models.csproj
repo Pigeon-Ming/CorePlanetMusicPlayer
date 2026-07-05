@@ -11,7 +11,7 @@
     <AssemblyName>CorePlanetMusicPlayer.Models</AssemblyName>
     <DefaultLanguage>zh-CN</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.18362.0</TargetPlatformVersion>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.19041.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.16299.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -124,6 +124,7 @@
     <Compile Include="AlphaKeyGroup.cs" />
     <Compile Include="Artist.cs" />
     <Compile Include="Genre.cs" />
+    <Compile Include="IMusicCollection.cs" />
     <Compile Include="Lyric.cs" />
     <Compile Include="Music.cs" />
     <Compile Include="Playlist.cs" />

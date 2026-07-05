@@ -210,10 +210,36 @@ namespace CorePlanetMusicPlayer.App
                 return false;
         }
 
+        // TODO: 调用专辑和艺术家信息读取函数
+        // Artists
+        public static async Task GetArtistsInfoAsync()
+        {
+            List<Artist> artists = await DataBaseManager.GetArtistsDataAsync();
+            foreach (Artist item in ArtistManager.Artists)
+            {
+                Artist artist = artists.Find(x => x.Name.Equals(item.Name));
+                if (artist != null)
+                {
+                    item.Description = artist.Description;
+                    item.ProfilePath = artist.ProfilePath;
+                }
+            }
+        }
         
-
-        
-
+        public static async Task GetAlbumsInfoAsync()
+        {
+            List<Album> albums = await DataBaseManager.GetAlbumsDataAsync();
+            foreach (Album item in AlbumManager.Albums)
+            {
+                Album album = albums.Find(x => x.Name.Equals(item.Name));
+                if (album != null)
+                {
+                    item.Description = album.Description;
+                    item.CoverPath = album.CoverPath;
+                    item.ReleaseYear = album.ReleaseYear;
+                }
+            }
+        }
         
     }
 }

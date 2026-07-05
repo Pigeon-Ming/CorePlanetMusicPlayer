@@ -121,5 +121,20 @@ namespace CorePlanetMusicPlayer6.Controls.DevControls
         {
             ((SystemMediaPlayer)playEngine).GetMediaPlayer().Position = ((SystemMediaPlayer)playEngine).GetMediaPlayer().Position + TimeSpan.FromSeconds(5);
         }
+
+        private void VolumeButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void SoundSettingsFlyout_Opened(object sender, object e)
+        {
+            volumeControl.UpdateView();
+        }
+
+        private void EqualizerFlyout_Opened(object sender, object e)
+        {
+            
+        }
     }
 }

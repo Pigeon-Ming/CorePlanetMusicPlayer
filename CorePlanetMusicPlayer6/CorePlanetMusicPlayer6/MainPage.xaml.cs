@@ -37,12 +37,12 @@ namespace CorePlanetMusicPlayer6
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            
+            Frame.Navigate(typeof(DevPage));
+            //Frame.Navigate(typeof(RootPage));
 
             // 初始化设置管理
             SettingsManager.InitUserSettings(ApplicationData.Current.LocalSettings);
-            //Frame.Navigate(typeof(RootPage));
-            Frame.Navigate(typeof(DevPage));
+            
             // 初始化数据库
             await DataBaseManager.InitDataBasesAsync();
             // 初始化播放队列恢复文件
@@ -68,7 +68,6 @@ namespace CorePlanetMusicPlayer6
             // 获取Playlist
             await PlaylistManager.GetPlaylistsAsync();
 
-            
         }
 
         async Task GetDataAsync()
@@ -96,6 +95,9 @@ namespace CorePlanetMusicPlayer6
             AlbumManager.RefreshAlbumsList(musicList);
             GenreManager.RefreshGenresList(musicList);
             YearManager.RefreshYearsList(musicList);
+
+            await Library.GetArtistsInfoAsync();
+            await Library.GetAlbumsInfoAsync();
             
             dateTime1 = DateTime.Now;
             Debug.WriteLine($"{dateTime1.ToString(@"yyyy/MM/dd HH:mm:ss.ff")} - 分类信息整理完毕");

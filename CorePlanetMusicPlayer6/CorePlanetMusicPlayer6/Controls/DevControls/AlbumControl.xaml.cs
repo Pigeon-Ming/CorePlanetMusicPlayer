@@ -1,4 +1,5 @@
-﻿using CorePlanetMusicPlayer.Models;
+﻿using CorePlanetMusicPlayer.App;
+using CorePlanetMusicPlayer.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -47,6 +48,12 @@ namespace CorePlanetMusicPlayer6.Controls.DevControls
             ArtistsTextBlock.Text = stringBuilder.ToString();
 
             GroupedItemsViewSource.Source = album.Discs;
+        }
+
+        private async void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            album.Description = DescriptionTextBox.Text;
+            await DataBaseManager.UpdateAlbumsDataAsync(new List<Album> { album });
         }
     }
 }

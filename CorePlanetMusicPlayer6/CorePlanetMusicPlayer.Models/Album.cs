@@ -20,7 +20,7 @@ namespace CorePlanetMusicPlayer.Models
         public string Name { get; set; } = "";
     }
 
-    public class Album
+    public class Album: IMusicCollection
     {
         public string Name { get; set; }
 
@@ -28,13 +28,19 @@ namespace CorePlanetMusicPlayer.Models
 
         public List<Disc> Discs { get; set; } = new List<Disc>(); // 第一层List为专辑的碟片，通过碟片号访问歌曲
 
+        private string coverPath = "";
+
         public string CoverPath 
         {
             get
             {
                 //TODO: 设置专辑封面图
-                // 思路：查询所有的音乐，如果有此专辑中有本地音频文件，就从本地读取封面；如果全是StreamMusic默认为空，可以单独设置冯敏URL地址
-                return GetCoverPath();
+                // 思路：查询所有的音乐，如果有此专辑中有本地音频文件，就从本地读取封面；如果全是StreamMusic默认为空，可以单独设置封面URL地址
+                return String.IsNullOrEmpty(coverPath)? GetCoverPath() : coverPath;
+            }
+            set
+            {
+                coverPath = value;
             }
         }
 
@@ -47,34 +53,52 @@ namespace CorePlanetMusicPlayer.Models
             }
         }
 
+        private uint releaseYear = 0;
+
         public uint ReleaseYear
         {
             get
             {
-                return GetReleaseYear();
+                return releaseYear == 0? GetReleaseYear() : releaseYear;
+            }
+            set
+            {
+                releaseYear = value;
             }
         }
+
+        private string artistsString = "";
 
         public string ArtistsString
         {
             get 
             {
-                List<Artist> artists = GetArtists();
-                StringBuilder stringBuilder = new StringBuilder();
-                foreach (Artist artist in artists)
+                if (string.IsNullOrEmpty(artistsString))
                 {
-                    stringBuilder.Append(artist.Name);
-                    stringBuilder.Append("; ");
-                }
-                string finalString = stringBuilder.ToString();
-                if (String.IsNullOrEmpty(finalString))
-                {
-                    return "未知艺术家";
+                    List<Artist> artists = GetArtists();
+                    StringBuilder stringBuilder = new StringBuilder();
+                    foreach (Artist artist in artists)
+                    {
+                        stringBuilder.Append(artist.Name);
+                        stringBuilder.Append("; ");
+                    }
+                    string finalString = stringBuilder.ToString();
+                    if (String.IsNullOrEmpty(finalString))
+                    {
+                        return "未知艺术家";
+                    }
+                    else
+                    {
+                        return finalString.Substring(0, finalString.Length - 2);
+                    }
                 }
                 else
                 {
-                    return finalString.Substring(0, finalString.Length-2);
+                    return artistsString;
                 }
+            } set
+            {
+                artistsString = value;
             }
         }
 
@@ -85,6 +109,12 @@ namespace CorePlanetMusicPlayer.Models
                 return GetTotalDuration().ToString(@"mm\:ss");
             }
         }
+
+        public string Title => Name;
+
+        public IEnumerable<IMusic> MusicItems => Discs.SelectMany(x => x);
+
+        public TimeSpan TotalDuration => GetTotalDuration();
 
         /// <summary>
         /// 获取专辑中歌曲的总时长

@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using System.Diagnostics;
 
 //https://go.microsoft.com/fwlink/?LinkId=234236 上介绍了“用户控件”项模板
 
@@ -50,7 +51,9 @@ namespace CorePlanetMusicPlayer6.Controls.DevControls
             }
             else if (MusicSourceComboBox.SelectedIndex != -1)
             {
-                RemovableDevice removableDevice = RemovableDeviceManager.RemovableDevices[MusicSourceComboBox.SelectedIndex - 1];
+                Debug.WriteLine($"RemovableDeviceManager.RemovableDevices.Count: {RemovableDeviceManager.RemovableDevices.Count}");
+                Debug.WriteLine($"MusicSourceComboBox.SelectedIndex: {MusicSourceComboBox.SelectedIndex}");
+                RemovableDevice removableDevice = RemovableDeviceManager.RemovableDevices[MusicSourceComboBox.SelectedIndex - 2];
                 if (removableDevice.Music == null)
                     await RemovableDeviceManager.GetRemovableDeviceMusicListAsync(removableDevice);
                 currentItems = removableDevice.Music.ToList<IMusic>();
