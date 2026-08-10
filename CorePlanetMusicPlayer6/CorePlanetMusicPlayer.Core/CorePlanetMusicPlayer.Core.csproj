@@ -120,9 +120,19 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Albums\Album.cs" />
+    <Compile Include="Albums\AlbumId.cs" />
+    <Compile Include="Artists\Artist.cs" />
+    <Compile Include="Artists\ArtistId.cs" />
     <Compile Include="Common\EntityId.cs" />
     <Compile Include="Common\Guard.cs" />
     <Compile Include="Common\Result.cs" />
+    <Compile Include="History\PlaybackHistoryItem.cs" />
+    <Compile Include="Library\LibraryFolderAccessKind.cs" />
+    <Compile Include="Library\LibraryFolder.cs" />
+    <Compile Include="Library\LibraryFolderId.cs" />
+    <Compile Include="Lyrics\LyricDocument.cs" />
+    <Compile Include="Lyrics\LyricLine.cs" />
     <Compile Include="Music\LocalMusic.cs" />
     <Compile Include="Music\Music.cs" />
     <Compile Include="Music\MusicFileInfo.cs" />
@@ -130,6 +140,9 @@
     <Compile Include="Music\MusicMetadata.cs" />
     <Compile Include="Music\MusicSourceType.cs" />
     <Compile Include="Music\StreamMusic.cs" />
+    <Compile Include="Playlists\Playlist.cs" />
+    <Compile Include="Playlists\PlaylistId.cs" />
+    <Compile Include="Playlists\PlaylistItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\CorePlanetMusicPlayer.Core.rd.xml" />
   </ItemGroup>
@@ -138,14 +151,7 @@
       <Version>6.2.14</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Albums\" />
-    <Folder Include="Artists\" />
-    <Folder Include="History\" />
-    <Folder Include="Library\" />
-    <Folder Include="Lyrics\" />
-    <Folder Include="Playlists\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

@@ -5,23 +5,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CorePlanetMusicPlayer.Core.Music
+namespace CorePlanetMusicPlayer.Core.Albums
 {
-    /// <summary>
-    /// 音乐的唯一标识
-    /// </summary>
-    public struct MusicId : IEquatable<MusicId>
+    public struct AlbumId
     {
         public string Value { get; private set; }
 
-        public MusicId(string value)
+        public AlbumId(string value)
         {
             Value = EntityId.Normalize(value);
         }
 
-        public static MusicId NewId()
+        public static AlbumId NewId()
         {
-            return new MusicId(EntityId.New());
+            return new AlbumId(EntityId.New());
         }
 
         public bool IsEmpty
@@ -34,18 +31,17 @@ namespace CorePlanetMusicPlayer.Core.Music
             return Value;
         }
 
-        public bool Equals(MusicId other)
+        public bool Equals(AlbumId other)
         {
-            return string.Equals(Value, other.Value, StringComparison.Ordinal);
+            return Value == other.Value;
         }
 
         public override bool Equals(object obj)
         {
-            if (obj is MusicId)
-            {
-                return Equals((MusicId)obj);
-            }
-            return false;
+            if (obj is AlbumId)
+                return Equals((AlbumId)obj);
+            else
+                return false;
         }
 
         public override int GetHashCode()
@@ -53,12 +49,12 @@ namespace CorePlanetMusicPlayer.Core.Music
             return Value == null ? 0 : Value.GetHashCode();
         }
 
-        public static bool operator ==(MusicId left, MusicId right)
+        public static bool operator ==(AlbumId left, AlbumId right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(MusicId left, MusicId right)
+        public static bool operator !=(AlbumId left, AlbumId right)
         {
             return !left.Equals(right);
         }

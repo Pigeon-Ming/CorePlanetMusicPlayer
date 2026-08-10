@@ -9,7 +9,10 @@ namespace CorePlanetMusicPlayer.Core.Music
     /// <summary>
     /// 音乐来源类型
     /// </summary>
-    public class MusicSourceType
+    public enum MusicSourceType
     {
+        Local = 0,// 本地音乐
+        Stream = 1,// 流式传输音乐
+        Temporary = 2,// 临时添加的音乐（暂定）
     }
 }
