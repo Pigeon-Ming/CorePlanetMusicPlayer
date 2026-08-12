@@ -5,20 +5,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CorePlanetMusicPlayer.Core.Artists
+namespace CorePlanetMusicPlayer.Core.History
 {
-    public struct ArtistId
+    public struct PlaybackHistoryId : IEquatable<PlaybackHistoryId>
     {
         public string Value { get; private set; }
 
-        public ArtistId(string value)
+        public PlaybackHistoryId(string value)
         {
             Value = EntityId.Normalize(value);
         }
 
-        public static ArtistId NewId()
+        public static PlaybackHistoryId NewId()
         {
-            return new ArtistId(EntityId.New());
+            return new PlaybackHistoryId(EntityId.New());
         }
 
         public bool IsEmpty
@@ -31,17 +31,19 @@ namespace CorePlanetMusicPlayer.Core.Artists
             return Value;
         }
 
-        public bool Equals(ArtistId other)
+        public bool Equals(PlaybackHistoryId other)
         {
-            return Value == other.Value;
+            return string.Equals(Value, other.Value, StringComparison.Ordinal);
         }
 
         public override bool Equals(object obj)
         {
-            if (obj is ArtistId)
-                return Equals((ArtistId)obj);
-            else
-                return false;
+            if (obj is PlaybackHistoryId)
+            {
+                return Equals((PlaybackHistoryId)obj);
+            }
+
+            return false;
         }
 
         public override int GetHashCode()
@@ -49,12 +51,12 @@ namespace CorePlanetMusicPlayer.Core.Artists
             return Value == null ? 0 : Value.GetHashCode();
         }
 
-        public static bool operator ==(ArtistId left, ArtistId right)
+        public static bool operator ==(PlaybackHistoryId left, PlaybackHistoryId right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(ArtistId left, ArtistId right)
+        public static bool operator !=(PlaybackHistoryId left, PlaybackHistoryId right)
         {
             return !left.Equals(right);
         }

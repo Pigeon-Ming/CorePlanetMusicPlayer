@@ -9,10 +9,10 @@ namespace CorePlanetMusicPlayer.Core.Library
 {
     public class LibraryFolder
     {
-        public string Id { get; set; } = string.Empty;
-        
+        public LibraryFolderId Id { get; set; }
+
         public string DisplayName { get; set; } = string.Empty;
-        
+
         public string Path { get; set; } = string.Empty;
 
         public string AccessKey { get; set; } = string.Empty;
@@ -20,6 +20,17 @@ namespace CorePlanetMusicPlayer.Core.Library
         public LibraryFolderAccessKind AccessKind { get; set; }
 
         public DateTimeOffset AddedAt { get; set; }
+        public DateTimeOffset UpdatedAt { get; set; }
+
+        public bool HasDisplayName
+        {
+            get { return !string.IsNullOrWhiteSpace(DisplayName); }
+        }
+
+        public bool HasPath
+        {
+            get { return !string.IsNullOrWhiteSpace(Path); }
+        }
 
         public bool HasAccessKey
         {
@@ -31,9 +42,14 @@ namespace CorePlanetMusicPlayer.Core.Library
             get { return AccessKind == LibraryFolderAccessKind.FutureAccessList && HasAccessKey; }
         }
 
+        public bool IsSystemMusicLibrary
+        {
+            get { return AccessKind == LibraryFolderAccessKind.MusicLibrary; }
+        }
+
         public bool CanUseDirectPath
         {
-            get { return AccessKind == LibraryFolderAccessKind.DirectPath && !string.IsNullOrWhiteSpace(Path); }
+            get { return AccessKind == LibraryFolderAccessKind.DirectPath && HasPath; }
         }
 
         public static LibraryFolder CreateFutureAccessFolder(string displayName, string path, string accessKey)
@@ -42,12 +58,13 @@ namespace CorePlanetMusicPlayer.Core.Library
 
             return new LibraryFolder
             {
-                Id = EntityId.New(),
+                Id = LibraryFolderId.NewId(),
                 DisplayName = displayName ?? string.Empty,
                 Path = path ?? string.Empty,
                 AccessKey = accessKey,
                 AccessKind = LibraryFolderAccessKind.FutureAccessList,
-                AddedAt = DateTimeOffset.Now
+                AddedAt = DateTimeOffset.Now,
+                UpdatedAt = DateTimeOffset.Now
             };
         }
 
@@ -55,12 +72,13 @@ namespace CorePlanetMusicPlayer.Core.Library
         {
             return new LibraryFolder
             {
-                Id = EntityId.New(),
+                Id = LibraryFolderId.NewId(),
                 DisplayName = "Music Library",
                 Path = string.Empty,
                 AccessKey = string.Empty,
                 AccessKind = LibraryFolderAccessKind.MusicLibrary,
-                AddedAt = DateTimeOffset.Now
+                AddedAt = DateTimeOffset.Now,
+                UpdatedAt = DateTimeOffset.Now
             };
         }
 
@@ -70,13 +88,35 @@ namespace CorePlanetMusicPlayer.Core.Library
 
             return new LibraryFolder
             {
-                Id = EntityId.New(),
+                Id = LibraryFolderId.NewId(),
                 DisplayName = displayName ?? string.Empty,
                 Path = path,
                 AccessKey = string.Empty,
                 AccessKind = LibraryFolderAccessKind.DirectPath,
-                AddedAt = DateTimeOffset.Now
+                AddedAt = DateTimeOffset.Now,
+                UpdatedAt = DateTimeOffset.Now
             };
+        }
+
+        public void Rename(string displayName)
+        {
+            Guard.NotNullOrWhiteSpace(displayName, nameof(displayName));
+
+            DisplayName = displayName;
+            UpdatedAt = DateTimeOffset.Now;
+        }
+
+        public void UpdateAccessKey(string accessKey)
+        {
+            Guard.NotNullOrWhiteSpace(accessKey, nameof(accessKey));
+            AccessKey = accessKey;
+            UpdatedAt = DateTimeOffset.Now;
+        }
+
+        public void UpdatePath(string path)
+        {
+            Path = path ?? string.Empty;
+            UpdatedAt = DateTimeOffset.Now;
         }
     }
 }

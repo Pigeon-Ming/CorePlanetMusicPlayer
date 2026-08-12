@@ -127,12 +127,14 @@
     <Compile Include="Common\EntityId.cs" />
     <Compile Include="Common\Guard.cs" />
     <Compile Include="Common\Result.cs" />
+    <Compile Include="History\PlaybackHistoryId.cs" />
     <Compile Include="History\PlaybackHistoryItem.cs" />
     <Compile Include="Library\LibraryFolderAccessKind.cs" />
     <Compile Include="Library\LibraryFolder.cs" />
     <Compile Include="Library\LibraryFolderId.cs" />
     <Compile Include="Lyrics\LyricDocument.cs" />
     <Compile Include="Lyrics\LyricLine.cs" />
+    <Compile Include="Lyrics\LyricSourceType.cs" />
     <Compile Include="Music\LocalMusic.cs" />
     <Compile Include="Music\Music.cs" />
     <Compile Include="Music\MusicFileInfo.cs" />
