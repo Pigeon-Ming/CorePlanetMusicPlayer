@@ -120,10 +120,33 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Database\DatabaseConnectionFactory.cs" />
+    <Compile Include="Database\DatabaseMigrator.cs" />
+    <Compile Include="Database\LibraryDatabase.cs" />
+    <Compile Include="Database\LibraryDatabaseOptions.cs" />
+    <Compile Include="Entities\AlbumEntity.cs" />
+    <Compile Include="Entities\ArtistEntity.cs" />
+    <Compile Include="Entities\LibraryFolderEntity.cs" />
+    <Compile Include="Entities\LyricEntity.cs" />
+    <Compile Include="Entities\MusicEntity.cs" />
+    <Compile Include="Entities\PlaybackHistoryEntity.cs" />
+    <Compile Include="Entities\PlaylistEntity.cs" />
+    <Compile Include="Entities\PlaylistItemEntity.cs" />
+    <Compile Include="Mapping\AlbumDataMapper.cs" />
+    <Compile Include="Mapping\ArtistDataMapper.cs" />
+    <Compile Include="Mapping\DataValueConverter.cs" />
+    <Compile Include="Mapping\LibraryFolderDataMapper.cs" />
+    <Compile Include="Mapping\LyricDataMapper.cs" />
+    <Compile Include="Mapping\MusicDataMapper.cs" />
+    <Compile Include="Mapping\PlaybackHistoryDataMapper.cs" />
+    <Compile Include="Mapping\PlaylistDataMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\CorePlanetMusicPlayer.Data.rd.xml" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite">
+      <Version>10.0.11</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.14</Version>
     </PackageReference>
@@ -133,6 +156,9 @@
       <Project>{18a0c646-1bcd-4077-b569-cc05e6b0ecee}</Project>
       <Name>CorePlanetMusicPlayer.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Repositories\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
