@@ -124,6 +124,7 @@
     <Compile Include="Database\DatabaseMigrator.cs" />
     <Compile Include="Database\LibraryDatabase.cs" />
     <Compile Include="Database\LibraryDatabaseOptions.cs" />
+    <Compile Include="Database\SqliteDataReaderExtensions.cs" />
     <Compile Include="Entities\AlbumEntity.cs" />
     <Compile Include="Entities\ArtistEntity.cs" />
     <Compile Include="Entities\LibraryFolderEntity.cs" />
@@ -141,6 +142,20 @@
     <Compile Include="Mapping\PlaybackHistoryDataMapper.cs" />
     <Compile Include="Mapping\PlaylistDataMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\IAlbumRepository.cs" />
+    <Compile Include="Repositories\IArtistRepository.cs" />
+    <Compile Include="Repositories\ILibraryFolderRepository.cs" />
+    <Compile Include="Repositories\ILyricRepository.cs" />
+    <Compile Include="Repositories\IMusicRepository.cs" />
+    <Compile Include="Repositories\IPlaybackHistoryRepository.cs" />
+    <Compile Include="Repositories\IPlaylistRepository.cs" />
+    <Compile Include="Repositories\Sqlite\SqliteAlbumRepository.cs" />
+    <Compile Include="Repositories\Sqlite\SqliteArtistRepository.cs" />
+    <Compile Include="Repositories\Sqlite\SqliteLibraryFolderRepository.cs" />
+    <Compile Include="Repositories\Sqlite\SqliteLyricRepository.cs" />
+    <Compile Include="Repositories\Sqlite\SqliteMusicRepository.cs" />
+    <Compile Include="Repositories\Sqlite\SqlitePlaybackHistoryRepository.cs" />
+    <Compile Include="Repositories\Sqlite\SqlitePlaylistRepository.cs" />
     <EmbeddedResource Include="Properties\CorePlanetMusicPlayer.Data.rd.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -157,9 +172,7 @@
       <Name>CorePlanetMusicPlayer.Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Repositories\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
