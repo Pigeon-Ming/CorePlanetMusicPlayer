@@ -121,6 +121,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Queue\PlaybackQueue.cs" />
+    <Compile Include="Queue\PlaybackQueueBuilder.cs" />
+    <Compile Include="Queue\PlaybackQueueItem.cs" />
+    <Compile Include="Queue\PlaybackQueueSnapshot.cs" />
     <EmbeddedResource Include="Properties\CorePlanetMusicPlayer.Playback.rd.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -133,6 +137,11 @@
       <Project>{18a0c646-1bcd-4077-b569-cc05e6b0ecee}</Project>
       <Name>CorePlanetMusicPlayer.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Events\" />
+    <Folder Include="Modes\" />
+    <Folder Include="Player\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
