@@ -127,6 +127,8 @@
     <Compile Include="Modes\ReversePlaybackModeStrategy.cs" />
     <Compile Include="Modes\SequentialPlaybackModeStrategy.cs" />
     <Compile Include="Modes\ShufflePlaybackModeStrategy.cs" />
+    <Compile Include="Player\IAudioPlayer.cs" />
+    <Compile Include="Player\IPlaybackService.cs" />
     <Compile Include="Player\PlaybackPosition.cs" />
     <Compile Include="Player\PlaybackState.cs" />
     <Compile Include="Player\PlaybackStatus.cs" />
