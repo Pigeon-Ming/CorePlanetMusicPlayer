@@ -127,6 +127,10 @@
     <Compile Include="Modes\ReversePlaybackModeStrategy.cs" />
     <Compile Include="Modes\SequentialPlaybackModeStrategy.cs" />
     <Compile Include="Modes\ShufflePlaybackModeStrategy.cs" />
+    <Compile Include="Player\PlaybackPosition.cs" />
+    <Compile Include="Player\PlaybackState.cs" />
+    <Compile Include="Player\PlaybackStatus.cs" />
+    <Compile Include="Player\VolumeLevel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Queue\PlaybackQueue.cs" />
     <Compile Include="Queue\PlaybackQueueBuilder.cs" />
@@ -147,7 +151,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Events\" />
-    <Folder Include="Player\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
