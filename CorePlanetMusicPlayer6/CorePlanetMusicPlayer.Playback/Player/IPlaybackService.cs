@@ -1,4 +1,5 @@
 ﻿using CorePlanetMusicPlayer.Core.Music;
+using CorePlanetMusicPlayer.Playback.Events;
 using CorePlanetMusicPlayer.Playback.Modes;
 using CorePlanetMusicPlayer.Playback.Queue;
 using System;
@@ -14,6 +15,14 @@ namespace CorePlanetMusicPlayer.Playback.Player
         PlaybackState State { get; }
 
         PlaybackQueueSnapshot QueueSnapshot { get; }
+
+        event EventHandler<PlaybackStateChangedEventArgs> StateChanged;
+
+        event EventHandler<CurrentMusicChangedEventArgs> CurrentMusicChanged;
+
+        event EventHandler<PlaybackPositionChangedEventArgs> PositionChanged;
+
+        event EventHandler<PlaybackErrorEventArgs> PlaybackError;
 
         Task PlayAsync(MusicId musicId);
 

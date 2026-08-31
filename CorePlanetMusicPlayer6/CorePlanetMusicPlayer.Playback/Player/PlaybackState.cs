@@ -116,6 +116,12 @@ namespace CorePlanetMusicPlayer.Playback.Player
             Touch();
         }
 
+        public void UpdateMode(PlaybackMode mode)
+        {
+            Mode = mode;
+            Touch();
+        }
+
         private void Touch()
         {
             UpdatedAt = DateTime.Now;

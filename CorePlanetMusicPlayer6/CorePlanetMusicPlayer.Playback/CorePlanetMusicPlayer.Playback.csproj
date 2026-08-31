@@ -120,6 +120,10 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Events\CurrentMusicChangedEventArgs.cs" />
+    <Compile Include="Events\PlaybackErrorEventArgs.cs" />
+    <Compile Include="Events\PlaybackPositionChangedEventArgs.cs" />
+    <Compile Include="Events\PlaybackStateChangedEventArgs.cs" />
     <Compile Include="Modes\IPlaybackModeStrategy.cs" />
     <Compile Include="Modes\PlaybackMode.cs" />
     <Compile Include="Modes\RepeatAllPlaybackModeStrategy.cs" />
@@ -130,6 +134,7 @@
     <Compile Include="Player\IAudioPlayer.cs" />
     <Compile Include="Player\IPlaybackService.cs" />
     <Compile Include="Player\PlaybackPosition.cs" />
+    <Compile Include="Player\PlaybackService.cs" />
     <Compile Include="Player\PlaybackState.cs" />
     <Compile Include="Player\PlaybackStatus.cs" />
     <Compile Include="Player\VolumeLevel.cs" />
@@ -151,9 +156,7 @@
       <Name>CorePlanetMusicPlayer.Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Events\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
