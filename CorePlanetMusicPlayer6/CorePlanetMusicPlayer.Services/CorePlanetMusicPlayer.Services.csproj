@@ -120,7 +120,43 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Artwork\ArtworkReference.cs" />
+    <Compile Include="Artwork\ArtworkService.cs" />
+    <Compile Include="Artwork\ArtworkSourceKind.cs" />
+    <Compile Include="Artwork\IArtworkService.cs" />
+    <Compile Include="History\IPlaybackHistoryService.cs" />
+    <Compile Include="History\PlaybackHistoryService.cs" />
+    <Compile Include="Library\ILibraryScanner.cs" />
+    <Compile Include="Library\IMusicLibraryService.cs" />
+    <Compile Include="Library\LibraryQueryService.cs" />
+    <Compile Include="Library\LibraryRefreshResult.cs" />
+    <Compile Include="Library\LibraryScanner.cs" />
+    <Compile Include="Library\MusicIndexBuilder.cs" />
+    <Compile Include="Library\MusicLibraryService.cs" />
+    <Compile Include="Lyrics\ILyricParser.cs" />
+    <Compile Include="Lyrics\ILyricService.cs" />
+    <Compile Include="Lyrics\LrcParser.cs" />
+    <Compile Include="Lyrics\LyricParserCollection.cs" />
+    <Compile Include="Lyrics\LyricSearchService.cs" />
+    <Compile Include="Lyrics\LyricService.cs" />
+    <Compile Include="Metadata\IMusicMetadataEditService.cs" />
+    <Compile Include="Metadata\IMusicMetadataWriter.cs" />
+    <Compile Include="Metadata\MusicMetadataEditService.cs" />
+    <Compile Include="Metadata\MusicMetadataUpdateRequest.cs" />
+    <Compile Include="Playlists\IPlaylistService.cs" />
+    <Compile Include="Playlists\PlaylistService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings\AppSettings.cs" />
+    <Compile Include="Settings\ISettingsService.cs" />
+    <Compile Include="Settings\ISettingsStore.cs" />
+    <Compile Include="Settings\SettingsService.cs" />
+    <Compile Include="Statistics\AlbumPlaybackStat.cs" />
+    <Compile Include="Statistics\ArtistPlaybackStat.cs" />
+    <Compile Include="Statistics\DailyPlaybackStat.cs" />
+    <Compile Include="Statistics\IPlaybackStatisticsService.cs" />
+    <Compile Include="Statistics\MusicPlaybackStat.cs" />
+    <Compile Include="Statistics\PlaybackStatisticsService.cs" />
+    <Compile Include="Statistics\PlaybackStatisticsSummary.cs" />
     <EmbeddedResource Include="Properties\CorePlanetMusicPlayer.Services.rd.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -142,6 +178,7 @@
       <Name>CorePlanetMusicPlayer.Playback</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

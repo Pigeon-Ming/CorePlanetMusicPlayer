@@ -6,24 +6,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CorePlanetMusicPlayer.Data.Repositories
+namespace CorePlanetMusicPlayer.Services.History
 {
-    public interface IPlaybackHistoryRepository
+    public interface IPlaybackHistoryService
     {
-        Task<IReadOnlyList<PlaybackHistoryItem>> GetRecentAsync(int maxCount);
+        Task RecordPlaybackAsync(MusicId musicId, TimeSpan musicDuration, TimeSpan playedDuration, TimeSpan lastPosition);
 
         Task<IReadOnlyList<PlaybackHistoryItem>> GetByMusicIdAsync(MusicId musicId);
 
         Task<IReadOnlyList<PlaybackHistoryItem>> GetByDateRangeAsync(DateTimeOffset startTime, DateTimeOffset endTime);
 
-        Task<IReadOnlyList<PlaybackHistoryItem>> GetByMusicIdAndDateRangeAsync(MusicId musicId, DateTimeOffset startTime, DateTimeOffset endTime);
-
-        Task AddAsync(PlaybackHistoryItem item);
-
-        Task DeleteAsync(PlaybackHistoryId id);
+        Task DeleteAsync(PlaybackHistoryId historyId);
 
         Task DeleteBeforeAsync(DateTimeOffset time);
 
         Task ClearAsync();
+
+        bool IsCompleted(TimeSpan musicDUration, TimeSpan playedDuration);
     }
 }
