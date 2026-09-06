@@ -8,8 +8,10 @@ namespace CorePlanetMusicPlayer.Core.Library
 {
     public enum LibraryFolderAccessKind
     {
-        FutureAccessList = 0,
-        MusicLibrary = 1,
-        DirectPath = 2,
+        Unknown = 0,
+
+        FutureAccessList = 1,
+
+        DirectPath = 2
     }
 }

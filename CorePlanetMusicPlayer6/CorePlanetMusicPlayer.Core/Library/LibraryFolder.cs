@@ -42,11 +42,6 @@ namespace CorePlanetMusicPlayer.Core.Library
             get { return AccessKind == LibraryFolderAccessKind.FutureAccessList && HasAccessKey; }
         }
 
-        public bool IsSystemMusicLibrary
-        {
-            get { return AccessKind == LibraryFolderAccessKind.MusicLibrary; }
-        }
-
         public bool CanUseDirectPath
         {
             get { return AccessKind == LibraryFolderAccessKind.DirectPath && HasPath; }
@@ -63,20 +58,6 @@ namespace CorePlanetMusicPlayer.Core.Library
                 Path = path ?? string.Empty,
                 AccessKey = accessKey,
                 AccessKind = LibraryFolderAccessKind.FutureAccessList,
-                AddedAt = DateTimeOffset.Now,
-                UpdatedAt = DateTimeOffset.Now
-            };
-        }
-
-        public static LibraryFolder CreateMusicLibraryFolder()
-        {
-            return new LibraryFolder
-            {
-                Id = LibraryFolderId.NewId(),
-                DisplayName = "Music Library",
-                Path = string.Empty,
-                AccessKey = string.Empty,
-                AccessKind = LibraryFolderAccessKind.MusicLibrary,
                 AddedAt = DateTimeOffset.Now,
                 UpdatedAt = DateTimeOffset.Now
             };

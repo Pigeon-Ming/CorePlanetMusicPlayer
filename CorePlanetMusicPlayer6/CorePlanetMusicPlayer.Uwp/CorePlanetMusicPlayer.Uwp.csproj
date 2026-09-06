@@ -120,6 +120,15 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Platform\Imaging\UwpArtworkLoader.cs" />
+    <Compile Include="Platform\Imaging\UwpThumbnailLoader.cs" />
+    <Compile Include="Platform\Playback\UwpAudioPlayer.cs" />
+    <Compile Include="Platform\Playback\UwpMediaSourceFactory.cs" />
+    <Compile Include="Platform\Playback\UwpSystemMediaControlsService.cs" />
+    <Compile Include="Platform\Storage\UwpFilePickerService.cs" />
+    <Compile Include="Platform\Storage\UwpFolderPickerService.cs" />
+    <Compile Include="Platform\Storage\UwpStorageAccessService.cs" />
+    <Compile Include="Platform\Storage\UwpStorageFileMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\CorePlanetMusicPlayer.Uwp.rd.xml" />
   </ItemGroup>
@@ -145,6 +154,10 @@
       <Project>{0c7203a6-51a0-4818-90d1-98a3bdd1c544}</Project>
       <Name>CorePlanetMusicPlayer.Services</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Platform\Metadata\" />
+    <Folder Include="Platform\System\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

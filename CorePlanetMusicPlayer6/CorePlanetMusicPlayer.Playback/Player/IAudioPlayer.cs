@@ -1,4 +1,5 @@
 ﻿using CorePlanetMusicPlayer.Core.Music;
+using CorePlanetMusicPlayer.Playback.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,10 @@ namespace CorePlanetMusicPlayer.Playback.Player
         PlaybackPosition Position { get; }
 
         VolumeLevel Volume { get; }
+
+        event EventHandler PlaybackEnded;
+
+        event EventHandler<PlaybackErrorEventArgs> PlaybackError;        
 
         Task LoadAsync(MusicId musicId);
 

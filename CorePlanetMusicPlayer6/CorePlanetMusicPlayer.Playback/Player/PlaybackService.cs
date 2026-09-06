@@ -37,6 +37,9 @@ namespace CorePlanetMusicPlayer.Playback.Player
 
             RegisterStrategies(strategies);
             RegisterMissingDefaultStrategies();
+
+            _audioPlayer.PlaybackEnded += OnAudioPlayerPlaybackEnded;
+            _audioPlayer.PlaybackError += OnAudioPlayerPlaybackError;
         }
 
         public PlaybackState State
@@ -370,6 +373,20 @@ namespace CorePlanetMusicPlayer.Playback.Player
             }
 
             return left.Value == right.Value;
+        }
+
+        private async void OnAudioPlayerPlaybackEnded(object sender, EventArgs e)
+        {
+            await NextAsync();
+        }
+
+        private void OnAudioPlayerPlaybackError(object sender, PlaybackErrorEventArgs e)
+        {
+            var musicId = e == null ? _state.CurrentMusicId : e.MusicId;
+            var message = e == null ? "播放失败。" : e.ErrorMessage;
+            var exception = e == null ? null : e.Exception;
+
+            HandlePlaybackError(musicId, string.IsNullOrWhiteSpace(message) ? "播放失败。" : message, exception);
         }
     }
 }
