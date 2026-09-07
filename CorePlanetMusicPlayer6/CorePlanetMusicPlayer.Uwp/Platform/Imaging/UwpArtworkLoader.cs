@@ -217,20 +217,12 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Imaging
                         if (folder.AccessKind ==
                             LibraryFolderAccessKind.FutureAccessList)
                         {
-                            return await _storageAccessService
-                                .GetStorageFileByFutureAccessAsync(
-                                    folder,
-                                    reference.RelativePath);
+                            return await _storageAccessService.GetStorageFileByFutureAccessAsync(folder, reference.RelativePath);
                         }
 
-                        if (folder.AccessKind ==
-                            LibraryFolderAccessKind.DirectPath)
+                        if (folder.AccessKind == LibraryFolderAccessKind.DirectPath)
                         {
-                            return await _storageAccessService
-                                .GetStorageFileByDirectPathAsync(
-                                    folder,
-                                    reference.RelativePath,
-                                    reference.SourcePath);
+                            return await _storageAccessService .GetStorageFileByDirectPathAsync(folder, reference.RelativePath, reference.SourcePath);
                         }
                     }
                 }
@@ -238,8 +230,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Imaging
 
             if (!string.IsNullOrWhiteSpace(reference.SourcePath))
             {
-                return await _storageAccessService.GetFileFromPathAsync(
-                    reference.SourcePath);
+                return await _storageAccessService.GetFileFromPathAsync(reference.SourcePath);
             }
 
             return null;
@@ -256,8 +247,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Imaging
             try
             {
                 var cacheFolder = ApplicationData.Current.LocalCacheFolder;
-                var artworkFolder = await cacheFolder.GetFolderAsync(
-                    ArtworkCacheFolderName);
+                var artworkFolder = await cacheFolder.GetFolderAsync(ArtworkCacheFolderName);
 
                 var fileName = CreateCacheFileName(cacheKey);
 
@@ -323,14 +313,10 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Imaging
                 return false;
             }
 
-            return value.EndsWith(".png", StringComparison.OrdinalIgnoreCase)
-                || value.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase)
-                || value.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase)
-                || value.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase);
+            return value.EndsWith(".png", StringComparison.OrdinalIgnoreCase) || value.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) || value.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase) || value.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase);
         }
 
-        private static string CreateCacheFileName(
-            string cacheKey)
+        private static string CreateCacheFileName(string cacheKey)
         {
             var text = cacheKey ?? string.Empty;
             var invalidChars = System.IO.Path.GetInvalidFileNameChars();
