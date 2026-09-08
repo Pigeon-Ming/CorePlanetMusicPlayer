@@ -4,6 +4,7 @@ using CorePlanetMusicPlayer.Services.Artwork;
 using CorePlanetMusicPlayer.Uwp.Platform.Storage;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -319,7 +320,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Imaging
         private static string CreateCacheFileName(string cacheKey)
         {
             var text = cacheKey ?? string.Empty;
-            var invalidChars = System.IO.Path.GetInvalidFileNameChars();
+            var invalidChars = Path.GetInvalidFileNameChars();
 
             for (int i = 0; i < invalidChars.Length; i++)
             {

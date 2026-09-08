@@ -48,7 +48,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Playback
             get { return _status; }
         }
 
-        public MusicId? CUrrentMusicId
+        public MusicId? CurrentMusicId
         {
             get { return _currentMusicId; }
         }

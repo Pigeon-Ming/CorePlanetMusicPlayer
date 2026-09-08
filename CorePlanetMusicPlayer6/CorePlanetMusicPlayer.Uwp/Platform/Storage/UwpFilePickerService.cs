@@ -14,7 +14,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Storage
         {
             var picker = CreateMusicFilePicker();
 
-
+            return await picker.PickSingleFileAsync();
         }
 
         private static FileOpenPicker CreateMusicFilePicker()

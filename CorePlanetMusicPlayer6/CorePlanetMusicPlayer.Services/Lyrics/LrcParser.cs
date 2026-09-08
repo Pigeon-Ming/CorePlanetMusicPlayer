@@ -14,7 +14,7 @@ namespace CorePlanetMusicPlayer.Services.Lyrics
             @"\[(\d{1,2}):(\d{1,2})(?:\.(\d{1,3}))?\]",
             RegexOptions.Compiled);
 
-        public bool CanPrse(string rawText)
+        public bool CanParse(string rawText)
         {
             if (string.IsNullOrWhiteSpace(rawText))
             {

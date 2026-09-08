@@ -52,6 +52,8 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Storage
             {
                 fileInfo.RelativePath = GetRelativePath(libraryFolder.Path, file.Path);
             }
+
+            return fileInfo;
         }
 
         private string GetRelativePath(string rootPath, string filePath)

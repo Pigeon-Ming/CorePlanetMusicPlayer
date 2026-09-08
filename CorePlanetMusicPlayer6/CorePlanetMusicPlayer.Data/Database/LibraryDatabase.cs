@@ -30,7 +30,7 @@ namespace CorePlanetMusicPlayer.Data.Database
         {
             EnsureDatabaseDirectory();
 
-            using (var connection = _connectionFactory.CreateConnection())
+            using (var connection = _connectionFactory.CreateOpenConnection())
             {
                 _migrator.Migrate(connection, _options.TargetVersion);
             }
@@ -38,7 +38,7 @@ namespace CorePlanetMusicPlayer.Data.Database
 
         public SqliteConnection CreateOpenConnection()
         {
-            EnsureDatabaseDictionary();
+            EnsureDatabaseDirectory();
 
             return _connectionFactory.CreateOpenConnection();
         }

@@ -222,7 +222,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
             return (uint)value.Value;
         }
 
-        private static void SetSingleValueList(System.Collections.Generic.IList<string> values, string value)
+        private static void SetSingleValueList(IList<string> values, string value)
         {
             if (values == null)
             {

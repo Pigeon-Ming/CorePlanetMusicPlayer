@@ -10,7 +10,7 @@ namespace CorePlanetMusicPlayer.Playback.Player
 {
     public interface IAudioPlayer
     {
-        PlaybackState Staus { get; }
+        PlaybackStatus Status { get; }
 
         MusicId? CurrentMusicId { get; }
 

@@ -4,15 +4,14 @@
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
-  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
-  IgnorableNamespaces="uap mp uap3">
+  IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="1feae7dd-53fc-415d-9221-2f966e80768b"
+    Name="c08cd09c-64e1-43e7-ae64-08e7a1a63784"
     Publisher="CN=zouqi"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="1feae7dd-53fc-415d-9221-2f966e80768b" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="c08cd09c-64e1-43e7-ae64-08e7a1a63784" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>CorePlanetMusicPlayer6</DisplayName>
@@ -41,30 +40,10 @@
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
-      <Extensions>
-        <uap:Extension Category="windows.fileTypeAssociation">
-          <uap:FileTypeAssociation Name="sound">
-            <uap:SupportedFileTypes>
-              <uap:FileType ContentType="audio/mpeg">.mp3</uap:FileType>
-              <uap:FileType ContentType="audio/flac">.flac</uap:FileType>
-              <uap:FileType>.wma</uap:FileType>
-              <uap:FileType ContentType="audio/aac">.aac</uap:FileType>
-              <uap:FileType ContentType="audio/ac3">.ac3</uap:FileType>
-              <uap:FileType ContentType="audio/x-m4a">.m4a</uap:FileType>
-              <uap:FileType ContentType="audio/x-wav">.wav</uap:FileType>
-            </uap:SupportedFileTypes>
-            <uap:DisplayName>音频文件</uap:DisplayName>
-            <uap:InfoTip>音频文件</uap:InfoTip>
-          </uap:FileTypeAssociation>
-        </uap:Extension>
-      </Extensions>
     </Application>
   </Applications>
 
   <Capabilities>
     <Capability Name="internetClient" />
-    <uap:Capability Name="musicLibrary"/>
-    <uap3:Capability Name="backgroundMediaPlayback"/>
-    <uap:Capability Name="removableStorage"/>
   </Capabilities>
 </Package>

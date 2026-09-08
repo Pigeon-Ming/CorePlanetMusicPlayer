@@ -14,9 +14,9 @@ namespace CorePlanetMusicPlayer.Services.Library
     public sealed class LibraryScanner : ILibraryScanner
     {
 
-        public Task<IReadOnlyCollection<Music>> ScanAsync(LibraryFolder folder)
+        public Task<IReadOnlyList<Music>> ScanAsync(LibraryFolder folder)
         {
-            IReadOnlyCollection<Music> result = new List<Music>();
+            IReadOnlyList<Music> result = new List<Music>();
 
             return Task.FromResult(result);
         }

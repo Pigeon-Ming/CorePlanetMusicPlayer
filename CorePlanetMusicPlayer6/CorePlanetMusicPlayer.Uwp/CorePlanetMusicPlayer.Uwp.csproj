@@ -132,6 +132,7 @@
     <Compile Include="Platform\Storage\UwpStorageFileMapper.cs" />
     <Compile Include="Platform\System\UwpDeviceInfoService.cs" />
     <Compile Include="Platform\System\UwpDispatcherService.cs" />
+    <Compile Include="Platform\System\UwpSettingsStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\CorePlanetMusicPlayer.Uwp.rd.xml" />
   </ItemGroup>
