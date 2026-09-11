@@ -12,13 +12,6 @@ namespace CorePlanetMusicPlayer.Playback.Modes
     /// </summary>
     public sealed class ShufflePlaybackModeStrategy : IPlaybackModeStrategy
     {
-        private readonly Random _random;
-
-        public ShufflePlaybackModeStrategy()
-        {
-            _random = new Random();
-        }
-
         public PlaybackMode Mode
         {
             get { return PlaybackMode.Shuffle; }
@@ -26,44 +19,44 @@ namespace CorePlanetMusicPlayer.Playback.Modes
 
         public int GetNextIndex(PlaybackQueue queue)
         {
-            if (queue == null || !queue.HasCurrent || queue.Count == 0)
-            {
-                return -1;
-            }
-
-            if (queue.Count == 1)
-            {
-                return queue.CurrentIndex;
-            }
-
-            return GetRandomIndexExcept(queue.Count, queue.CurrentIndex);
+            return GetAdjacentIndex(queue, 1);
         }
-
+         
         public int GetPreviousIndex(PlaybackQueue queue)
         {
-            if (queue == null || !queue.HasCurrent || queue.Count == 0)
+            return GetAdjacentIndex(queue, -1);
+        }
+
+        private static int GetAdjacentIndex(PlaybackQueue queue, int offset)
+        {
+            if (queue == null || !queue.HasCurrent)
             {
                 return -1;
             }
 
-            if (queue.Count == 1)
+            var shuffleItemIds = queue.ShuffleItemIds;
+
+            int currentShuffleIndex = queue.CurrentShuffleIndex;
+
+            if (shuffleItemIds.Count == 0 || currentShuffleIndex < 0)
             {
-                return queue.CurrentIndex;
+                return -1;
             }
 
-            return GetRandomIndexExcept(queue.Count, queue.CurrentIndex);
-        }
+            int targetShuffleIndex = currentShuffleIndex + offset;
 
-        private int GetRandomIndexExcept(int count, int excludedIndex)
-        {
-            var index = _random.Next(count);
-
-            while (index == excludedIndex)
+            if (targetShuffleIndex >= shuffleItemIds.Count)
             {
-                index = _random.Next(count);
+                targetShuffleIndex = 0;
+            }
+            else if (targetShuffleIndex < 0)
+            {
+                targetShuffleIndex = shuffleItemIds.Count - 1;
             }
 
-            return index;
+            string targetItemId = shuffleItemIds[targetShuffleIndex];
+
+            return queue.GetItemIndex(targetItemId);
         }
     }
 }

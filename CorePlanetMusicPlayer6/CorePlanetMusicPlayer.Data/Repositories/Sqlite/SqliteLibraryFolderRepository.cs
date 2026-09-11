@@ -69,7 +69,7 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
             using (var command = connection.CreateCommand())
             {
                 command.CommandText = @"
-                    insert or replace_into library_folders (
+                    insert or replace into library_folders (
                         id,
                         display_name,
                         path,

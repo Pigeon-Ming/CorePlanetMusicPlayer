@@ -159,6 +159,36 @@ namespace CorePlanetMusicPlayer.Playback.Player
             await PlayIndexAsync(previousIndex);
         }
 
+        public Task<int> EnqueueNextAsync(IEnumerable<MusicId> musicIds)
+        {
+            int currentIndex = _queue.CurrentIndex;
+
+            if (currentIndex < 0)
+            {
+                return EnqueueAsync(musicIds);
+            }
+
+            int currentShuffleIndex = _queue.CurrentShuffleIndex;
+
+            if (currentShuffleIndex < 0)
+            {
+                throw new InvalidOperationException("Current item must exist in the shuffle order.");
+            }
+
+            int insertIndex = _state.Mode == PlaybackMode.Reverse ? currentIndex : currentIndex + 1;
+
+            int addedCount = _queue.Insert(musicIds, insertIndex, currentShuffleIndex + 1);
+
+            return Task.FromResult(addedCount);
+        }
+
+        public Task<int> EnqueueAsync(IEnumerable<MusicId> musicIds)
+        {
+            int addedCount = _queue.Enqueue(musicIds);
+
+            return Task.FromResult(addedCount);
+        }
+
         public async Task SeekAsync(TimeSpan position)
         {
             Guard.NotNegative(position, nameof(position));

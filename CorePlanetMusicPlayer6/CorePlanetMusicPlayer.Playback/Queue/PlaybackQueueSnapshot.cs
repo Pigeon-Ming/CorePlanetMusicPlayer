@@ -10,7 +10,9 @@ namespace CorePlanetMusicPlayer.Playback.Queue
     {
         public List<PlaybackQueueItem> Items { get; set; } = new List<PlaybackQueueItem>();
 
-        public int CurrentIndex { get; set; }
+        public List<string> ShuffleItemIds { get; set; } = new List<string>();
+
+        public int CurrentIndex { get; set; } = -1;
 
         public bool HasItems
         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CorePlanetMusicPlayer6.Composition;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -37,7 +38,7 @@ namespace CorePlanetMusicPlayer6
         /// 将在启动应用程序以打开特定文件等情况下使用。
         /// </summary>
         /// <param name="e">有关启动请求和过程的详细信息。</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             Frame rootFrame = Window.Current.Content as Frame;
 
@@ -57,6 +58,15 @@ namespace CorePlanetMusicPlayer6
 
                 // 将框架放在当前窗口中
                 Window.Current.Content = rootFrame;
+            }
+
+
+            // 初始化CorePMP
+            if (AppRuntime.Bootstrapper == null)
+            {
+                AppRuntime.Bootstrapper = new AppBootstrapper();
+
+                await AppRuntime.Bootstrapper.InitializeAsync();
             }
 
             if (e.PrelaunchActivated == false)

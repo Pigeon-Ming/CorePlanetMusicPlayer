@@ -33,7 +33,10 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
 
                 using (var reader = command.ExecuteReader())
                 {
-                    result.Add(MusicDataMapper.ToModel(ReadEntity(reader)));
+                    while(reader.Read())
+                    {
+                        result.Add(MusicDataMapper.ToModel(ReadEntity(reader)));
+                    }
                 }
             }
 

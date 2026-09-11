@@ -9,18 +9,50 @@ namespace CorePlanetMusicPlayer.Playback.Queue
 {
     public sealed class PlaybackQueue
     {
-        private readonly List<PlaybackQueueItem> _items = new List<PlaybackQueueItem>();
+        private List<PlaybackQueueItem> _items = new List<PlaybackQueueItem>();
 
-        private int _currentIndex = -1;
+        private List<string> _shuffleItemIds = new List<string>();
+
+        private string _currentItemId;
+        
+        private readonly Random _random = new Random();
 
         public IReadOnlyList<PlaybackQueueItem> Items
         {
             get { return _items.AsReadOnly(); }
         }
 
+        public IReadOnlyList<string> ShuffleItemIds
+        {
+            get { return _shuffleItemIds.AsReadOnly(); }
+        }
+
+        public string CurrentItemId
+        {
+            get { return _currentItemId; }
+        }
+
         public int CurrentIndex
         {
-            get { return _currentIndex; }
+            get { return GetItemIndex(_currentItemId); }
+        }
+
+        public int CurrentShuffleIndex
+        {
+            get
+            {
+                if (_currentItemId == null)
+                {
+                    return -1;
+                }
+
+                return _shuffleItemIds.FindIndex(itemId =>string.Equals(itemId, _currentItemId, StringComparison.Ordinal));
+            }
+        }
+
+        public bool HasCurrent
+        {
+            get { return CurrentIndex >= 0; }
         }
 
         public int Count
@@ -33,71 +65,114 @@ namespace CorePlanetMusicPlayer.Playback.Queue
             get { return _items.Count > 0; }
         }
 
-        public bool HasCurrent
-        {
-            get { return _currentIndex >= 0 && _currentIndex < _items.Count; }
-        }
-
         public void SetItems(IEnumerable<MusicId> musicIds)
         {
-            _items.Clear();
-            _currentIndex = -1;
-
             if (musicIds == null)
             {
-                return;
+                throw new ArgumentNullException(nameof(musicIds));
             }
 
-            var order = 0;
+            var newItems = new List<PlaybackQueueItem>();
 
             foreach (var musicId in musicIds)
             {
-                if (musicId.IsEmpty)
-                {
-                    continue;
-                }
+                var item = PlaybackQueueItem.Create(musicId, newItems.Count);
 
-                _items.Add(PlaybackQueueItem.Create(musicId, order));
-                order++;
+                newItems.Add(item);
             }
 
-            if (_items.Count > 0)
-            {
-                _currentIndex = 0;
-            }
+            SetItems(newItems);
         }
 
         public void SetItems(IEnumerable<PlaybackQueueItem> items)
         {
-            _items.Clear();
-            _currentIndex = -1;
+            var copies = CloneAndValidateItems(items);
 
-            if (items == null)
+            var preparedItems = NormalizeOrder(copies);
+
+            string currentItemId = preparedItems.Count > 0 ? preparedItems[0].Id : null;
+
+            var shuffleItemIds = CreateShuffleOrder(preparedItems);
+
+            ReplaceItems(preparedItems, currentItemId, shuffleItemIds);
+        }
+
+        public int Insert(IEnumerable<MusicId> musicIds, int insertIndex, int shuffleInsertIndex)
+        {
+            if (musicIds == null)
             {
-                return;
+                throw new ArgumentNullException(nameof(musicIds));
             }
 
-            foreach (var item in items)
+            if (insertIndex < 0 || insertIndex > _items.Count)
             {
-                if (item == null || item.MusicId.IsEmpty)
-                {
-                    continue;
-                }
-
-                _items.Add(new PlaybackQueueItem
-                {
-                    Id = item.Id ?? string.Empty,
-                    MusicId = item.MusicId,
-                    Order = item.Order,
-                });
+                throw new ArgumentOutOfRangeException(nameof(insertIndex));
             }
 
-            SortAndReorder();
-
-            if (_items.Count > 0)
+            if (shuffleInsertIndex < 0 || shuffleInsertIndex > _shuffleItemIds.Count)
             {
-                _currentIndex = 0;
+                throw new ArgumentOutOfRangeException(nameof(shuffleInsertIndex));
             }
+
+            var newItems = new List<PlaybackQueueItem>();
+
+            foreach (var musicId in musicIds)
+            {
+                newItems.Add(PlaybackQueueItem.Create(musicId, newItems.Count));
+            }
+
+            if (newItems.Count == 0)
+            {
+                return 0;
+            }
+
+            var combinedItems = new List<PlaybackQueueItem>(_items);
+
+            combinedItems.InsertRange(insertIndex, newItems);
+
+            var preparedItems = CloneAndValidateItems(combinedItems);
+
+            // 列表位置已经确定，只更新编号，不再排序。
+            for (int i = 0; i < preparedItems.Count; i++)
+            {
+                preparedItems[i].Order = i;
+            }
+
+            var preparedShuffleItemIds = new List<string>(_shuffleItemIds);
+
+            var newItemIds = newItems.Select(item => item.Id).ToList();
+
+            preparedShuffleItemIds.InsertRange(shuffleInsertIndex, newItemIds);
+
+            ReplaceItems(preparedItems, _currentItemId, preparedShuffleItemIds);
+
+            return newItems.Count;
+        }
+
+        public int Enqueue(IEnumerable<MusicId> musicIds)
+        {
+            return Insert(
+                musicIds,
+                _items.Count,
+                _shuffleItemIds.Count);
+        }
+
+        public bool SetCurrentItemId(string itemId)
+        {
+            if (string.IsNullOrWhiteSpace(itemId))
+            {
+                return false;
+            }
+
+            int index = _items.FindIndex(item => string.Equals(item.Id, itemId, StringComparison.Ordinal));
+
+            if (index < 0)
+            {
+                return false;
+            }
+
+            _currentItemId = _items[index].Id;
+            return true;
         }
 
         public bool SetCurrent(MusicId musicId)
@@ -111,7 +186,7 @@ namespace CorePlanetMusicPlayer.Playback.Queue
             {
                 if (_items[i].MusicId == musicId)
                 {
-                    _currentIndex = i;
+                    _currentItemId = _items[i].Id;
                     return true;
                 }
             }
@@ -126,18 +201,20 @@ namespace CorePlanetMusicPlayer.Playback.Queue
                 return false;
             }
 
-            _currentIndex = index;
+            _currentItemId = _items[index].Id;
             return true;
         }
 
         public PlaybackQueueItem GetCurrentItem()
         {
-            if (!HasCurrent)
+            int currentIndex = CurrentIndex;
+
+            if (currentIndex < 0)
             {
                 return null;
             }
 
-            return _items[_currentIndex];
+            return _items[currentIndex];
         }
 
         public MusicId? GetCurrent()
@@ -152,14 +229,26 @@ namespace CorePlanetMusicPlayer.Playback.Queue
             return item.MusicId;
         }
 
+        public int GetItemIndex(string itemId)
+        {
+            if (string.IsNullOrWhiteSpace(itemId))
+            {
+                return -1;
+            }
+
+            return _items.FindIndex(item => string.Equals(item.Id, itemId, StringComparison.Ordinal));
+        }
+
         public PlaybackQueueItem GetNextItem()
         {
-            if (!HasCurrent)
+            int currentIndex = CurrentIndex;
+
+            if (currentIndex < 0)
             {
                 return null;
             }
 
-            var nextIndex = _currentIndex + 1;
+            int nextIndex = currentIndex + 1;
 
             if (nextIndex >= _items.Count)
             {
@@ -183,12 +272,14 @@ namespace CorePlanetMusicPlayer.Playback.Queue
 
         public PlaybackQueueItem GetPreviousItem()
         {
-            if (!HasCurrent)
+            int currentIndex = CurrentIndex;
+
+            if (currentIndex < 0)
             {
                 return null;
             }
 
-            var previousIndex = _currentIndex - 1;
+            int previousIndex = currentIndex - 1;
 
             if (previousIndex < 0)
             {
@@ -212,37 +303,27 @@ namespace CorePlanetMusicPlayer.Playback.Queue
 
         public bool MoveNext()
         {
-            if (!HasCurrent)
+            var nextItem = GetNextItem();
+
+            if (nextItem == null)
             {
                 return false;
             }
 
-            var nextIndex = _currentIndex + 1;
-
-            if (nextIndex >= _items.Count)
-            {
-                return false;
-            }
-
-            _currentIndex = nextIndex;
+            _currentItemId = nextItem.Id;
             return true;
         }
 
         public bool MovePrevious()
         {
-            if (!HasCurrent)
+            var previousItem = GetPreviousItem();
+
+            if (previousItem == null)
             {
                 return false;
             }
 
-            var previousIndex = _currentIndex - 1;
-
-            if (previousIndex < 0)
-            {
-                return false;
-            }
-
-            _currentIndex = previousIndex;
+            _currentItemId = previousItem.Id;
             return true;
         }
 
@@ -267,7 +348,59 @@ namespace CorePlanetMusicPlayer.Playback.Queue
         public void Clear()
         {
             _items.Clear();
-            _currentIndex = -1;
+            _shuffleItemIds.Clear();
+            _currentItemId = null;
+        }
+
+
+        private List<string> CreateShuffleOrder(List<PlaybackQueueItem> items)
+        {
+            var itemIds = new List<string>(items.Count);
+
+            foreach (var item in items)
+            {
+                itemIds.Add(item.Id);
+            }
+
+            for (int i = itemIds.Count - 1; i > 0; i--)
+            {
+                int randomIndex = _random.Next(i + 1);
+
+                string temporary = itemIds[i];
+                itemIds[i] = itemIds[randomIndex];
+                itemIds[randomIndex] = temporary;
+            }
+
+            return itemIds;
+        }
+
+        private static List<string> CloneAndValidateShuffleOrder(IEnumerable<string> shuffleItemIds, List<PlaybackQueueItem> items)
+        {
+            if (shuffleItemIds == null)
+            {
+                throw new ArgumentNullException(nameof(shuffleItemIds));
+            }
+
+            var remainingIds = new HashSet<string>(items.Select(item => item.Id), StringComparer.Ordinal);
+
+            var copies = new List<string>(items.Count);
+
+            foreach (string itemId in shuffleItemIds)
+            {
+                if (string.IsNullOrWhiteSpace(itemId) || !remainingIds.Remove(itemId))
+                {
+                    throw new ArgumentException("Shuffle order contains an invalid or duplicate queue item id.", nameof(shuffleItemIds));
+                }
+
+                copies.Add(itemId);
+            }
+
+            if (remainingIds.Count > 0)
+            {
+                throw new ArgumentException("Shuffle order must contain every queue item.", nameof(shuffleItemIds));
+            }
+
+            return copies;
         }
 
         public PlaybackQueueSnapshot CreateSnapshot()
@@ -275,19 +408,15 @@ namespace CorePlanetMusicPlayer.Playback.Queue
             var snapshot = new PlaybackQueueSnapshot()
             {
                 Items = new List<PlaybackQueueItem>(),
-                CurrentIndex = _currentIndex
+                ShuffleItemIds = new List<string>(_shuffleItemIds),
+                CurrentIndex = this.CurrentIndex
             };
 
             for (int i = 0; i < _items.Count; i++)
             {
                 var item = _items[i];
 
-                snapshot.Items.Add(new PlaybackQueueItem
-                {
-                    Id = item.Id ?? string.Empty,
-                    MusicId = item.MusicId,
-                    Order = item.Order
-                });
+                snapshot.Items.Add(item.Clone());
             }
 
             return snapshot;
@@ -295,79 +424,92 @@ namespace CorePlanetMusicPlayer.Playback.Queue
 
         public void Restore(PlaybackQueueSnapshot snapshot)
         {
-            Clear();
-
-            if (snapshot == null || snapshot.Items == null)
+            if (snapshot == null)
             {
-                return;
+                throw new ArgumentNullException(nameof(snapshot));
             }
 
-            foreach (var item in snapshot.Items)
+            if (snapshot.Items == null)
             {
-                if (item == null || item.MusicId.IsEmpty)
+                throw new ArgumentException("Snapshot items cannot be null.", nameof(snapshot));
+            }
+
+            var copies = CloneAndValidateItems(snapshot.Items);
+
+            int savedIndex = snapshot.CurrentIndex;
+
+            if (savedIndex < -1 || savedIndex >= copies.Count)
+            {
+                throw new ArgumentException("Snapshot current index is out of range.", nameof(snapshot));
+            }
+
+            string currentItemId = savedIndex >= 0 ? copies[savedIndex].Id : null;
+
+            var preparedItems = NormalizeOrder(copies);
+
+            ReplaceItems(preparedItems, currentItemId, snapshot.ShuffleItemIds);
+        }
+
+        private static List<PlaybackQueueItem> CloneAndValidateItems(IEnumerable<PlaybackQueueItem> items)
+        {
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
+
+            var copies = new List<PlaybackQueueItem>();
+
+            var itemIds = new HashSet<string>(StringComparer.Ordinal);
+
+            foreach (var item in items)
+            {
+                if (item == null)
                 {
-                    continue;
+                    throw new ArgumentException("Queue items cannot contain null.", nameof(items));
                 }
 
-                _items.Add(new PlaybackQueueItem
+                var copy = item.Clone();
+
+                if (!itemIds.Add(copy.Id))
                 {
-                    Id = item.Id ?? string.Empty,
-                    MusicId = item.MusicId,
-                    Order = item.Order
-                });
+                    throw new ArgumentException($"Duplicate queue item id: {copy.Id}", nameof(items));
+                }
+
+                copies.Add(copy);
             }
 
-            SortAndReorder();
-
-            if (_items.Count == 0)
-            {
-                _currentIndex = -1;
-                return;
-            }
-
-            if (snapshot.CurrentIndex < 0)
-            {
-                _currentIndex = 0;
-                return;
-            }
-
-            if (snapshot.CurrentIndex >= _items.Count)
-            {
-                _currentIndex = _items.Count - 1;
-                return;
-            }
-
-            _currentIndex = snapshot.CurrentIndex;
+            return copies;
         }
 
-        private void SortAndReorder()
+        private static List<PlaybackQueueItem> NormalizeOrder(List<PlaybackQueueItem> items)
         {
-            _items.Sort(CompareItems);
+            var orderedItems = items.OrderBy(item => item.Order).ToList();
 
-            for (int i = 0; i < _items.Count; i++)
+            for (int i = 0; i < orderedItems.Count; i++)
             {
-                _items[i].Order = i;
+                orderedItems[i].Order = i;
             }
+
+            return orderedItems;
         }
 
-        private static int CompareItems(PlaybackQueueItem left, PlaybackQueueItem right)
+        private void ReplaceItems(List<PlaybackQueueItem> preparedItems, string currentItemId, IEnumerable<string> shuffleItemIds)
         {
-            if (left == null || right == null)
+            if (currentItemId != null)
             {
-                return 0;
+                bool containsCurrentItem = preparedItems.Exists(item =>string.Equals(item.Id, currentItemId, StringComparison.Ordinal));
+
+                if (!containsCurrentItem)
+                {
+                    throw new ArgumentException("Current item must exist in the prepared queue.", nameof(currentItemId));
+                }
             }
 
-            if (left == null)
-            {
-                return -1;
-            }
+            var preparedShuffleItemIds = CloneAndValidateShuffleOrder(shuffleItemIds, preparedItems);
 
-            if (right == null)
-            {
-                return 1;
-            }
-
-            return left.Order.CompareTo(right.Order);
+            _items = preparedItems;
+            _shuffleItemIds = preparedShuffleItemIds;
+            _currentItemId = currentItemId;
         }
     }
 }

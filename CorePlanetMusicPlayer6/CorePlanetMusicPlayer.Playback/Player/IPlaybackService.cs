@@ -38,6 +38,10 @@ namespace CorePlanetMusicPlayer.Playback.Player
 
         Task PreviousAsync();
 
+        Task<int> EnqueueNextAsync(IEnumerable<MusicId> musicIds);
+
+        Task<int> EnqueueAsync(IEnumerable<MusicId> musicIds);
+
         Task SeekAsync(TimeSpan position);
 
         Task SetVolumeAsync(double volume);

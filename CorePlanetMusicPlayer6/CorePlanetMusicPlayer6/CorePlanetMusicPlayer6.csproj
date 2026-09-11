@@ -123,8 +123,45 @@
     <Compile Include="Composition\AppRuntime.cs" />
     <Compile Include="Composition\AppServices.cs" />
     <Compile Include="Composition\ServiceRegistry.cs" />
+    <Compile Include="Controls\Dev\DevToolsControl.xaml.cs">
+      <DependentUpon>DevToolsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Dev\LibraryControl.xaml.cs">
+      <DependentUpon>LibraryControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Dev\MusicControl.xaml.cs">
+      <DependentUpon>MusicControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Root\RootLibraryControl.xaml.cs">
+      <DependentUpon>RootLibraryControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SystemHelper.cs" />
+    <Compile Include="Pages\Common\AlbumsPage.xaml.cs">
+      <DependentUpon>AlbumsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Common\ArtistsPage.xaml.cs">
+      <DependentUpon>ArtistsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Common\GenresPage.xaml.cs">
+      <DependentUpon>GenresPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Common\MusicPage.xaml.cs">
+      <DependentUpon>MusicPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Common\PlaylistsPage.xaml.cs">
+      <DependentUpon>PlaylistsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Common\RootPage.xaml.cs">
+      <DependentUpon>RootPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Common\YearsPage.xaml.cs">
+      <DependentUpon>YearsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Dev\DevPage.xaml.cs">
+      <DependentUpon>DevPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -148,9 +185,57 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\Dev\DevToolsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Dev\LibraryControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Dev\MusicControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Root\RootLibraryControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\Common\AlbumsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Common\ArtistsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Common\GenresPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Common\MusicPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Common\PlaylistsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Common\RootPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Common\YearsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Dev\DevPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -181,23 +266,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Controls\Artwork\" />
-    <Folder Include="Controls\Diagnostics\" />
-    <Folder Include="Controls\Lyrics\" />
-    <Folder Include="Controls\MusicList\" />
-    <Folder Include="Controls\PlayerBar\" />
-    <Folder Include="Controls\Playlists\" />
-    <Folder Include="Controls\Sections\" />
-    <Folder Include="Controls\Settings\" />
-    <Folder Include="Controls\Statistics\" />
     <Folder Include="Converters\" />
     <Folder Include="Dialogs\AddLibraryFolder\" />
     <Folder Include="Dialogs\Confirm\" />
     <Folder Include="Dialogs\CreatePlaylist\" />
     <Folder Include="Dialogs\EditLyrics\" />
     <Folder Include="Dialogs\EditMetadata\" />
-    <Folder Include="Pages\Common\" />
-    <Folder Include="Pages\Gallery\" />
     <Folder Include="Styles\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
