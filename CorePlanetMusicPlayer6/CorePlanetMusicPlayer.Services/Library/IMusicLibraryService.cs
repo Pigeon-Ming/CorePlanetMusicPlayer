@@ -28,6 +28,6 @@ namespace CorePlanetMusicPlayer.Services.Library
 
         Task<LibraryRefreshResult> RefreshAsync();
 
-        Task<LibraryRefreshResult> RrefreshFolderAsync(LibraryFolderId folderId);
+        Task<LibraryRefreshResult> RefreshFolderAsync(LibraryFolderId folderId);
     }
 }

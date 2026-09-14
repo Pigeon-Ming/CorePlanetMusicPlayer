@@ -52,6 +52,12 @@ namespace CorePlanetMusicPlayer.Data.Repositories
         Task UpsertRangeAsync(IEnumerable<Music> musicList);
 
         /// <summary>
+        /// 在同一个事务中替换指定音乐库目录的全部歌曲。
+        /// 输入为空集合时清空该目录的歌曲；保存失败时保留原数据。
+        /// </summary>
+        Task ReplaceByLibraryFolderIdAsync(LibraryFolderId libraryFolderId, IEnumerable<Music> musicList);
+
+        /// <summary>
         /// 删除单首音乐。
         /// </summary>
         /// <param name="id">要删除的音乐Id</param>

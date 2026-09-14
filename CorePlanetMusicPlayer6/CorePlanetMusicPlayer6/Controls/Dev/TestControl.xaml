@@ -1,0 +1,48 @@
+﻿<UserControl
+    x:Class="CorePlanetMusicPlayer6.Controls.Dev.TestControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:CorePlanetMusicPlayer6.Controls.Dev"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="300"
+    d:DesignWidth="400"
+    mc:Ignorable="d">
+
+    <Grid>
+        <StackPanel>
+            <Button
+                x:Name="CheckMusicRepositoryButton"
+                Click="CheckMusicRepositoryButton_Click"
+                Content="验证歌曲数据库读写" />
+
+            <TextBlock x:Name="MusicRepositoryCheckTextBlock" TextWrapping="Wrap" />
+
+            <TextBox
+                x:Name="MusicRelativePathTextBox"
+                Header="相对于所选目录的音乐路径"
+                PlaceholderText="例如 Album\Song.mp3" />
+
+            <Button
+                x:Name="CheckMusicFileButton"
+                Click="CheckMusicFileButton_Click"
+                Content="选择目录并验证单文件读取" />
+
+            <TextBlock x:Name="MusicFileCheckTextBlock" TextWrapping="Wrap" />
+
+            <Button
+                x:Name="CheckLibraryScanButton"
+                Click="CheckLibraryScanButton_Click"
+                Content="选择目录并验证递归扫描" />
+
+            <TextBlock x:Name="LibraryScanCheckTextBlock" TextWrapping="Wrap" />
+
+            <Button
+                x:Name="CheckLibraryRefreshButton"
+                Click="CheckLibraryRefreshButton_Click"
+                Content="扫描并保存已添加的音乐来源" />
+
+            <TextBlock x:Name="LibraryRefreshCheckTextBlock" TextWrapping="Wrap" />
+        </StackPanel>
+    </Grid>
+</UserControl>

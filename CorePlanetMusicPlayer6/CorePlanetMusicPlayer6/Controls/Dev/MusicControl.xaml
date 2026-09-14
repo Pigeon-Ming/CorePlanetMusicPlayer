@@ -16,16 +16,26 @@
             <RowDefinition />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-        <CommandBar Name="MusicCommandBar">
+        <CommandBar Name="MusicCommandBar" DefaultLabelPosition="Right">
             <CommandBar.PrimaryCommands>
+                <AppBarButton
+                    Name="ReloadMusicButton"
+                    Click="ReloadMusicButton_Click"
+                    Icon="Refresh"
+                    Label="刷新列表" />
                 <AppBarButton
                     Name="PlayButton"
                     Click="PlayButton_Click"
+                    Icon="Play"
                     Label="播放选中项" />
                 <AppBarToggleButton
                     Name="MultipleSelectionButton"
                     Click="MultipleSelectionButton_Click"
-                    Label="多选" />
+                    Label="多选">
+                    <AppBarToggleButton.Icon>
+                        <FontIcon Glyph="&#xE762;" />
+                    </AppBarToggleButton.Icon>
+                </AppBarToggleButton>
             </CommandBar.PrimaryCommands>
             <CommandBar.SecondaryCommands>
                 <AppBarButton
@@ -55,7 +65,7 @@
                             <RowDefinition />
                         </Grid.RowDefinitions>
                         <TextBlock Text="{Binding Title}" />
-                        <TextBlock Grid.Row="1" Text="{Binding Artist}" />
+                        <TextBlock Grid.Row="1" Text="{Binding ArtistName}" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

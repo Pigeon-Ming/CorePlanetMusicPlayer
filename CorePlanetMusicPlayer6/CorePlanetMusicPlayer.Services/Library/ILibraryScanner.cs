@@ -14,6 +14,6 @@ namespace CorePlanetMusicPlayer.Services.Library
     /// </summary>
     public interface ILibraryScanner
     {
-        Task<IReadOnlyList<Music>> ScanAsync(LibraryFolder folder);
+        Task<LibraryScanResult> ScanAsync(LibraryFolder folder);
     }
 }

@@ -130,7 +130,7 @@
     <Compile Include="Library\IMusicLibraryService.cs" />
     <Compile Include="Library\LibraryQueryService.cs" />
     <Compile Include="Library\LibraryRefreshResult.cs" />
-    <Compile Include="Library\LibraryScanner.cs" />
+    <Compile Include="Library\LibraryScanResult.cs" />
     <Compile Include="Library\MusicIndexBuilder.cs" />
     <Compile Include="Library\MusicLibraryService.cs" />
     <Compile Include="Lyrics\ILyricParser.cs" />

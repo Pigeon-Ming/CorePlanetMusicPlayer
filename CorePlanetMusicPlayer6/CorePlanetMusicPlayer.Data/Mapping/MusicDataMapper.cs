@@ -51,7 +51,7 @@ namespace CorePlanetMusicPlayer.Data.Mapping
                 Duration = new TimeSpan(entity.DurationTicks),
                 SourceType = (MusicSourceType)entity.SourceType,
                 Metadata = metadata,
-                FileInfo = fileInfo.HasPath ? fileInfo : null,
+                FileInfo = fileInfo.HasPath || (fileInfo.HasLibraryFolder && fileInfo.HasRelativePath) ? fileInfo : null,
                 AddedAt = DataValueConverter.FromUnixTimeMilliseconds(entity.AddedAtUnixTimeMilliseconds),
                 LastPlayedAt = DataValueConverter.FromUnixTimeMilliseconds(entity.LastPlayedAtUnixTimeMilliseconds)
             };

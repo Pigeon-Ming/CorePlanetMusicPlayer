@@ -22,6 +22,11 @@
                     <dev:DevToolsControl />
                 </DataTemplate>
             </HubSection>
+            <HubSection Header="测试验证">
+                <DataTemplate>
+                    <dev:TestControl />
+                </DataTemplate>
+            </HubSection>
             <HubSection Header="库">
                 <DataTemplate>
                     <dev:LibraryControl />
@@ -44,12 +49,22 @@
             </HubSection>
             <HubSection Header="专辑">
                 <DataTemplate>
-                    <TextBlock Text="占位" />
+                    <dev:AlbumsControl />
                 </DataTemplate>
             </HubSection>
             <HubSection Header="艺术家">
                 <DataTemplate>
-                    <TextBlock Text="占位" />
+                    <dev:ArtistsControl />
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="流派">
+                <DataTemplate>
+                    <dev:GenresControl />
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="年份">
+                <DataTemplate>
+                    <dev:YearsControl />
                 </DataTemplate>
             </HubSection>
             <HubSection Header="最近">

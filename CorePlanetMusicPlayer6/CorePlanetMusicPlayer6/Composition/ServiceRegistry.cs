@@ -1,27 +1,28 @@
 ﻿using CorePlanetMusicPlayer.Data.Database;
 using CorePlanetMusicPlayer.Data.Repositories.Sqlite;
+using CorePlanetMusicPlayer.Playback.Modes;
+using CorePlanetMusicPlayer.Playback.Player;
+using CorePlanetMusicPlayer.Playback.Queue;
+using CorePlanetMusicPlayer.Services.Artwork;
+using CorePlanetMusicPlayer.Services.History;
+using CorePlanetMusicPlayer.Services.Library;
+using CorePlanetMusicPlayer.Services.Lyrics;
+using CorePlanetMusicPlayer.Services.Metadata;
+using CorePlanetMusicPlayer.Services.Playlists;
+using CorePlanetMusicPlayer.Services.Settings;
+using CorePlanetMusicPlayer.Services.Statistics;
+using CorePlanetMusicPlayer.Uwp.Platform.Imaging;
+using CorePlanetMusicPlayer.Uwp.Platform.Library;
+using CorePlanetMusicPlayer.Uwp.Platform.Metadata;
+using CorePlanetMusicPlayer.Uwp.Platform.Playback;
+using CorePlanetMusicPlayer.Uwp.Platform.Storage;
+using CorePlanetMusicPlayer.Uwp.Platform.System;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
-using CorePlanetMusicPlayer.Uwp.Platform.Storage;
-using CorePlanetMusicPlayer.Uwp.Platform.Imaging;
-using CorePlanetMusicPlayer.Uwp.Platform.System;
-using CorePlanetMusicPlayer.Uwp.Platform.Metadata;
-using CorePlanetMusicPlayer.Uwp.Platform.Playback;
-using CorePlanetMusicPlayer.Playback.Queue;
-using CorePlanetMusicPlayer.Playback.Modes;
-using CorePlanetMusicPlayer.Playback.Player;
-using CorePlanetMusicPlayer.Services.Lyrics;
-using CorePlanetMusicPlayer.Services.Library;
-using CorePlanetMusicPlayer.Services.Playlists;
-using CorePlanetMusicPlayer.Services.Artwork;
-using CorePlanetMusicPlayer.Services.Statistics;
-using CorePlanetMusicPlayer.Services.History;
-using CorePlanetMusicPlayer.Services.Metadata;
-using CorePlanetMusicPlayer.Services.Settings;
 
 namespace CorePlanetMusicPlayer6.Composition
 {
@@ -126,7 +127,11 @@ namespace CorePlanetMusicPlayer6.Composition
 
             var libraryQueryService = new LibraryQueryService(services.MusicRepository, services.AlbumRepository, services.ArtistRepository, services.LibraryFolderRepository);
 
-            services.MusicLibraryService = new MusicLibraryService(services.MusicRepository, services.AlbumRepository, services.ArtistRepository, services.LibraryFolderRepository, new LibraryScanner(), new MusicIndexBuilder(), libraryQueryService);
+            var musicFileReader = new UwpMusicFileReader(services.StorageFileMapper);
+
+            var libraryScanner = new UwpLibraryScanner(services.StorageAccessService, services.StorageFileMapper, musicFileReader);
+
+            services.MusicLibraryService = new MusicLibraryService(services.MusicRepository, services.AlbumRepository, services.ArtistRepository, services.LibraryFolderRepository, libraryScanner, new MusicIndexBuilder(), libraryQueryService);
 
             services.PlaylistService = new PlaylistService(services.PlaylistRepository);
 

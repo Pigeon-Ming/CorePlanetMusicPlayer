@@ -123,14 +123,32 @@
     <Compile Include="Composition\AppRuntime.cs" />
     <Compile Include="Composition\AppServices.cs" />
     <Compile Include="Composition\ServiceRegistry.cs" />
+    <Compile Include="Controls\Dev\AlbumsControl.xaml.cs">
+      <DependentUpon>AlbumsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Dev\ArtistsControl.xaml.cs">
+      <DependentUpon>ArtistsControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Dev\DevToolsControl.xaml.cs">
       <DependentUpon>DevToolsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Dev\GenresControl.xaml.cs">
+      <DependentUpon>GenresControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Dev\LibraryControl.xaml.cs">
       <DependentUpon>LibraryControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Dev\MusicControl.xaml.cs">
       <DependentUpon>MusicControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Dev\PlaylistsControl.xaml.cs">
+      <DependentUpon>PlaylistsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Dev\TestControl.xaml.cs">
+      <DependentUpon>TestControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Dev\YearsControl.xaml.cs">
+      <DependentUpon>YearsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Root\RootLibraryControl.xaml.cs">
       <DependentUpon>RootLibraryControl.xaml</DependentUpon>
@@ -185,7 +203,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\Dev\AlbumsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Dev\ArtistsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Dev\DevToolsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Dev\GenresControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -194,6 +224,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Dev\MusicControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Dev\PlaylistsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Dev\TestControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Dev\YearsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

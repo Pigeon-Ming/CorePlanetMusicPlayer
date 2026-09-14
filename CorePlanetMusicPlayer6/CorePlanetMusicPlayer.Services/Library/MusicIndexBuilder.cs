@@ -40,7 +40,7 @@ namespace CorePlanetMusicPlayer.Services.Library
 
                 if (string.IsNullOrWhiteSpace(artistName))
                 {
-                    artistName = "未知专辑";
+                    artistName = "未知艺术家";
                 }
 
                 var key = CreateAlbumKey(albumTitle, artistName);

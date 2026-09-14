@@ -49,7 +49,7 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
             using (var command = connection.CreateCommand())
             {
                 command.CommandText = "select * from music where id = $id limit 1;";
-                command.Parameters.AddWithValue("id", id.ToString());
+                command.Parameters.AddWithValue("$id", id.ToString());
 
                 using (var reader = command.ExecuteReader())
                 {
@@ -206,16 +206,77 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
             return Task.CompletedTask;
         }
 
-        private static void ApplyUpsertCommand(SqliteCommand command, MusicEntity entity)
+        public Task ReplaceByLibraryFolderIdAsync(LibraryFolderId libraryFolderId, IEnumerable<Music> musicList)
         {
-            command.CommandText = @"
-                insert or replace into music (
+            if (libraryFolderId.IsEmpty)
+            {
+                throw new ArgumentException("Library folder id cannot be empty.", nameof(libraryFolderId));
+            }
+
+            if (musicList == null)
+            {
+                throw new ArgumentNullException(nameof(musicList));
+            }
+
+            string folderId = libraryFolderId.ToString();
+
+            var entities = new List<MusicEntity>();
+            var musicIds = new HashSet<MusicId>();
+
+            // 先完成输入枚举、校验和实体转换。
+            foreach (var music in musicList)
+            {
+                if (music == null || music.Id.IsEmpty || !musicIds.Add(music.Id) || music.SourceType != MusicSourceType.Local || music.FileInfo == null || !string.Equals(music.FileInfo.LibraryFolderId, folderId, StringComparison.Ordinal))
+                {
+                    throw new ArgumentException("Replacement music contains invalid items, duplicate ids, or a different library folder.", nameof(musicList));
+                }
+
+                entities.Add(MusicDataMapper.ToEntity(music));
+            }
+
+            using (var connection = _database.CreateOpenConnection())
+            using (var transaction = connection.BeginTransaction())
+            {
+                using (var command = connection.CreateCommand())
+                {
+                    command.Transaction = transaction;
+
+                    command.CommandText = "delete from music where library_folder_id = $folderId;";
+
+                    command.Parameters.AddWithValue("$folderId", folderId);
+                    command.ExecuteNonQuery();
+                }
+
+                foreach (var entity in entities)
+                {
+                    using (var command = connection.CreateCommand())
+                    {
+                        command.Transaction = transaction;
+
+                        ApplyUpsertCommand(command, entity, replaceExisting: false);
+
+                        command.ExecuteNonQuery();
+                    }
+                }
+
+                transaction.Commit();
+            }
+
+            return Task.CompletedTask;
+        }
+
+        private static void ApplyUpsertCommand(SqliteCommand command, MusicEntity entity, bool replaceExisting = true)
+        {
+            string insertStatement = replaceExisting ? "insert or replace" : "insert";
+
+            command.CommandText = $@"
+                    {insertStatement} into music (
                     id,
                     title,
                     album_title,
                     artist_name,
                     album_artist_name,
-                    gener,
+                    genre,
                     year,
                     track_number,
                     disc_number,
@@ -230,6 +291,7 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
                     size,
                     last_modified_at,
                     library_folder_id,
+                    added_at,
                     last_played_at
                 ) values (
                     $id,

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
+using Windows.Storage.FileProperties;
 
 namespace CorePlanetMusicPlayer.Uwp.Platform.Storage
 {
@@ -30,30 +31,40 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Storage
             return LibraryFolder.CreateDirectPathFolder(displayName, path);
         }
 
-        public MusicFileInfo ToMusicFileInfo(StorageFile file, LibraryFolder libraryFolder)
+        public MusicFileInfo ToMusicFileInfo(StorageFile file, LibraryFolder libraryFolder, string relativePath, BasicProperties properties)
         {
             if (file == null)
             {
-                return null;
+                throw new ArgumentNullException(nameof(file));
             }
 
-            var fileInfo = new MusicFileInfo
+            if (libraryFolder == null)
+            {
+                throw new ArgumentNullException(nameof(libraryFolder));
+            }
+
+            if (libraryFolder.Id.IsEmpty)
+            {
+                throw new ArgumentException(
+                    "Library folder id cannot be empty.",
+                    nameof(libraryFolder));
+            }
+
+            if (properties == null)
+            {
+                throw new ArgumentNullException(nameof(properties));
+            }
+
+            return new MusicFileInfo
             {
                 Path = file.Path ?? string.Empty,
-                FileName = file.Name ?? string.Empty,
+                RelativePath = NormalizeRelativePath(relativePath),
+                FileName = file.Name,
                 Extension = NormalizeExtension(file.FileType),
-                Size = null,
-                LastModifiedAt = null,
-                RelativePath = string.Empty,
+                Size = checked((long)properties.Size),
+                LastModifiedAt = properties.DateModified,
                 LibraryFolderId = libraryFolder.Id.ToString()
             };
-
-            if (libraryFolder != null)
-            {
-                fileInfo.RelativePath = GetRelativePath(libraryFolder.Path, file.Path);
-            }
-
-            return fileInfo;
         }
 
         private string GetRelativePath(string rootPath, string filePath)
@@ -79,6 +90,41 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Storage
             }
 
             return relativePath;
+        }
+
+        private static string NormalizeRelativePath(string relativePath)
+        {
+            if (string.IsNullOrWhiteSpace(relativePath))
+            {
+                throw new ArgumentException(
+                    "Relative path cannot be empty.",
+                    nameof(relativePath));
+            }
+
+            string normalized = relativePath.Replace('/', '\\');
+
+            if (normalized.StartsWith("\\") || normalized.Contains(":"))
+            {
+                throw new ArgumentException(
+                    "An absolute path is not allowed.",
+                    nameof(relativePath));
+            }
+
+            var parts = normalized.Split('\\');
+
+            foreach (string part in parts)
+            {
+                if (string.IsNullOrWhiteSpace(part) ||
+                    part == "." ||
+                    part == "..")
+                {
+                    throw new ArgumentException(
+                        "Relative path contains an invalid segment.",
+                        nameof(relativePath));
+                }
+            }
+
+            return normalized;
         }
 
         public string NormalizeExtension(string extension)

@@ -29,12 +29,13 @@ namespace CorePlanetMusicPlayer.Services.Library
             Guard.NotNull(albumRepository, nameof(albumRepository));
             Guard.NotNull(artistRepository, nameof(artistRepository));
             Guard.NotNull(libraryFolderRepository, nameof(libraryFolderRepository));
+            Guard.NotNull(libraryScanner, nameof(libraryScanner));
 
             _musicRepository = musicRepository;
             _albumRepository = albumRepository;
             _artistRepository = artistRepository;
             _libraryFolderRepository = libraryFolderRepository;
-            _libraryScanner = libraryScanner ?? new LibraryScanner();
+            _libraryScanner = libraryScanner;
             _indexBuilder = indexBuilder ?? new MusicIndexBuilder();
             _queryService = queryService ?? new LibraryQueryService(musicRepository, albumRepository, artistRepository, libraryFolderRepository);
         }
@@ -84,6 +85,88 @@ namespace CorePlanetMusicPlayer.Services.Library
             await RebuildIndexAsync();
         }
 
+        private static List<Music> PrepareRefreshMusic(IReadOnlyList<Music> scannedMusic, IReadOnlyList<Music> existingMusic)
+        {
+            var existingByPath = new Dictionary<string, Music>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var music in existingMusic)
+            {
+                string key = GetRelativePathKey(music);
+
+                if (existingByPath.ContainsKey(key))
+                {
+                    throw new InvalidOperationException($"已有歌曲包含重复相对路径：{key}");
+                }
+
+                existingByPath.Add(key, music);
+            }
+
+            var scannedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            var preparedMusic = new List<Music>();
+
+            foreach (var scanned in scannedMusic)
+            {
+                string key = GetRelativePathKey(scanned);
+
+                if (!scannedPaths.Add(key))
+                {
+                    throw new InvalidOperationException($"扫描结果包含重复相对路径：{key}");
+                }
+
+                Music existing;
+                existingByPath.TryGetValue(key, out existing);
+
+                var metadata = scanned.Metadata ?? MusicMetadata.Empty;
+
+                // 新建 Music，避免直接修改扫描器返回的对象。
+                var prepared = new Music
+                {
+                    Id = existing != null ? existing.Id : scanned.Id,
+
+                    Title = scanned.Title,
+                    ArtistName = scanned.ArtistName,
+                    AlbumTitle = scanned.AlbumTitle,
+                    Duration = scanned.Duration,
+                    SourceType = scanned.SourceType,
+                    FileInfo = scanned.FileInfo,
+
+                    AddedAt = existing != null
+                        ? existing.AddedAt
+                        : scanned.AddedAt,
+
+                    LastPlayedAt = existing != null
+                        ? existing.LastPlayedAt
+                        : scanned.LastPlayedAt,
+
+                    Metadata = new MusicMetadata
+                    {
+                        Title = scanned.Title,
+                        ArtistName = scanned.ArtistName,
+                        AlbumTitle = scanned.AlbumTitle,
+                        AlbumArtistName = metadata.AlbumArtistName,
+                        Genre = metadata.Genre,
+                        Year = metadata.Year,
+                        TrackNumber = metadata.TrackNumber,
+                        Composer = metadata.Composer,
+
+                        // 当前读取器尚未读取这两个字段，先保留已有值。
+                        DiscNumber = existing?.Metadata != null
+                            ? existing.Metadata.DiscNumber
+                            : metadata.DiscNumber,
+
+                        Comment = existing?.Metadata != null
+                            ? existing.Metadata.Comment
+                            : metadata.Comment
+                    }
+                };
+
+                preparedMusic.Add(prepared);
+            }
+
+            return preparedMusic;
+        }
+
         public async Task<LibraryRefreshResult> RefreshAsync()
         {
             var result = new LibraryRefreshResult();
@@ -91,7 +174,6 @@ namespace CorePlanetMusicPlayer.Services.Library
 
             if (folders == null || folders.Count == 0)
             {
-                await RebuildIndexAsync();
                 return result;
             }
 
@@ -102,12 +184,15 @@ namespace CorePlanetMusicPlayer.Services.Library
                 MergeResult(result, folderResult);
             }
 
-            await RebuildIndexAsync();
+            if (result.UpdatedFolderCount > 0)
+            {
+                await TryRebuildIndexAsync(result);
+            }
 
             return result;
         }
 
-        public async Task<LibraryRefreshResult> RrefreshFolderAsync(LibraryFolderId folderId)
+        public async Task<LibraryRefreshResult> RefreshFolderAsync(LibraryFolderId folderId)
         {
             if (folderId.IsEmpty)
             {
@@ -125,7 +210,10 @@ namespace CorePlanetMusicPlayer.Services.Library
 
             result = await RefreshFolderCoreAsync(folder);
 
-            await RebuildIndexAsync();
+            if (result.UpdatedFolderCount > 0)
+            {
+                await TryRebuildIndexAsync(result);
+            }
 
             return result;
         }
@@ -142,34 +230,74 @@ namespace CorePlanetMusicPlayer.Services.Library
 
             result.AddFolder();
 
-            IReadOnlyList<Music> scannedMusicList;
+            LibraryScanResult scanResult;
 
             try
             {
-                scannedMusicList = await _libraryScanner.ScanAsync(folder);
+                scanResult = await _libraryScanner.ScanAsync(folder);
             }
             catch (Exception ex)
             {
-                result.AddError(ex.Message);
+                result.AddError($"扫描“{folder.DisplayName}”失败：{ex.Message}");
                 return result;
             }
 
-            if (scannedMusicList == null)
+            if (scanResult == null)
             {
-                result.AddScannedMusic(0);
+                result.AddError("扫描器没有返回有效结果，已保留原歌曲。");
                 return result;
             }
 
-            result.AddScannedMusic(scannedMusicList.Count);
+            result.AddScannedMusic(scanResult.Items.Count);
 
-            await _musicRepository.DeleteByLibraryFolderIdAsync(folder.Id);
+            if (!scanResult.IsComplete)
+            {
+                foreach (string error in scanResult.Errors)
+                {
+                    result.AddError($"扫描“{folder.DisplayName}”未完成：{error}");
+                }
 
-            var validMusicList = FilterValidMusic(scannedMusicList);
+                if (scanResult.Errors.Count == 0)
+                {
+                    result.AddError("扫描未完成，已保留原歌曲。");
+                }
+                return result;
+            }
 
-            await _musicRepository.UpsertRangeAsync(validMusicList);
+            // 即使扫描器声称完成，也先检查返回的数据。
+            var musicIds = new HashSet<MusicId>();
+            string folderId = folder.Id.ToString();
 
-            result.AddSavedMusic(validMusicList.Count);
-            result.AddSkippedMusic(scannedMusicList.Count - validMusicList.Count);
+            foreach (var music in scanResult.Items)
+            {
+                if (music == null || music.Id.IsEmpty || !musicIds.Add(music.Id) || music.SourceType != MusicSourceType.Local || music.FileInfo == null || !string.Equals( music.FileInfo.LibraryFolderId, folderId, StringComparison.Ordinal))
+                {
+                    result.AddError("扫描结果包含无效歌曲、重复 ID 或错误的来源，已保留原歌曲。");
+                    return result;
+                }
+            }
+
+            try
+            {
+                var existingMusic =
+                    await _musicRepository.GetByLibraryFolderIdAsync(folder.Id);
+
+                var preparedMusic = PrepareRefreshMusic(
+                    scanResult.Items,
+                    existingMusic);
+
+                await _musicRepository.ReplaceByLibraryFolderIdAsync(
+                    folder.Id,
+                    preparedMusic);
+
+                result.AddSavedMusic(preparedMusic.Count);
+                result.AddUpdatedFolder();
+            }
+            catch (Exception ex)
+            {
+                result.AddError(
+                    $"准备或保存“{folder.DisplayName}”的歌曲失败：{ex.Message}");
+            }
 
             return result;
         }
@@ -188,31 +316,31 @@ namespace CorePlanetMusicPlayer.Services.Library
             await _artistRepository.UpsertRangeAsync(artists);
         }
 
-        private List<Music> FilterValidMusic(IReadOnlyList<Music> musicList)
+        private static string GetRelativePathKey(Music music)
         {
-            var result = new List<Music>();
+            string path = music?.FileInfo?.RelativePath;
 
-            if (musicList == null)
+            if (string.IsNullOrWhiteSpace(path))
             {
-                return result;
+                throw new InvalidOperationException("歌曲缺少相对路径，无法匹配已有记录。");
             }
 
-            foreach (var music in musicList)
+            string normalized = path.Replace('/', '\\');
+
+            if (normalized.StartsWith("\\") || normalized.Contains(":"))
             {
-                if (music == null)
-                {
-                    continue;
-                }
-
-                if (music.Id.IsEmpty)
-                {
-                    continue;
-                }
-
-                result.Add(music);
+                throw new InvalidOperationException("歌曲相对路径无效。");
             }
 
-            return result;
+            foreach (string part in normalized.Split('\\'))
+            {
+                if (string.IsNullOrWhiteSpace(part) || part == "." || part == "..")
+                {
+                    throw new InvalidOperationException("歌曲相对路径无效。");
+                }
+            }
+
+            return normalized;
         }
 
         private void MergeResult(LibraryRefreshResult target, LibraryRefreshResult source)
@@ -234,6 +362,23 @@ namespace CorePlanetMusicPlayer.Services.Library
             for (int i = 0; i < source.Errors.Count; i++)
             {
                 target.AddError(source.Errors[i]);
+            }
+
+            for (int i = 0; i < source.UpdatedFolderCount; i++)
+            {
+                target.AddUpdatedFolder();
+            }
+        }
+
+        private async Task TryRebuildIndexAsync(LibraryRefreshResult result)
+        {
+            try
+            {
+                await RebuildIndexAsync();
+            }
+            catch (Exception ex)
+            {
+                result.AddError($"歌曲更新已保存，但专辑和艺术家索引重建失败：" + $"{ex.Message}。分类数据可能不完整，请重新刷新。");
             }
         }
     }

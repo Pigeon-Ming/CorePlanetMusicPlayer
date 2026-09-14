@@ -122,6 +122,8 @@
   <ItemGroup>
     <Compile Include="Platform\Imaging\UwpArtworkLoader.cs" />
     <Compile Include="Platform\Imaging\UwpThumbnailLoader.cs" />
+    <Compile Include="Platform\Library\UwpLibraryScanner.cs" />
+    <Compile Include="Platform\Metadata\UwpMusicFileReader.cs" />
     <Compile Include="Platform\Metadata\UwpMusicMetadataWriter.cs" />
     <Compile Include="Platform\Playback\UwpAudioPlayer.cs" />
     <Compile Include="Platform\Playback\UwpMediaSourceFactory.cs" />

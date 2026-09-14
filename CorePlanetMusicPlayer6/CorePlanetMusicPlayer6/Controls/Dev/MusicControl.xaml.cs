@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -52,6 +52,8 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
 
             UpdateSelectionState();
 
+            await ReloadAsync();
+
             return _musicItems.Count == 0 ? "音乐库中暂无歌曲。" : $"已读取 {_musicItems.Count} 首歌曲。";
         }
 
@@ -65,8 +67,7 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
             AddToPlayQueueButton.IsEnabled = canOperate;
             PlayNextButton.IsEnabled = canOperate;
 
-            SelectionTextBlock.Text =
-                $"共 {_musicItems.Count} 首，已选择 {selectedCount} 首。";
+            SelectionTextBlock.Text = $"共 {_musicItems.Count} 首，已选择 {selectedCount} 首。";
         }
 
 
@@ -101,13 +102,9 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                 return "选中歌曲包含空 ID，请检查音乐库数据。";
             }
 
-            var musicIds = selectedMusic
-                .Select(music => music.Id)
-                .ToList();
+            var musicIds = selectedMusic.Select(music => music.Id).ToList();
 
-            await services.PlaybackService.PlayQueueAsync(
-                musicIds,
-                musicIds[0]);
+            await services.PlaybackService.PlayQueueAsync(musicIds, musicIds[0]);
 
             var state = services.PlaybackService.State;
 
@@ -163,21 +160,18 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                 return "选中歌曲包含空 ID，请检查音乐库数据。";
             }
 
-            var musicIds = selectedMusic
-                .Select(music => music.Id)
-                .ToList();
+            var musicIds = selectedMusic.Select(music => music.Id).ToList();
 
-            int addedCount = await services.PlaybackService.EnqueueAsync(
-                musicIds);
+            int addedCount = await services.PlaybackService.EnqueueAsync(musicIds);
 
             var snapshot = services.PlaybackService.QueueSnapshot;
 
             return $"已加入 {addedCount} 首歌曲，播放队列共 {snapshot.Items.Count} 项。";
         }
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            ReloadAsync();
+            await ReloadAsync();
         }
 
         private async void PlayButton_Click(object sender, RoutedEventArgs e)
@@ -225,9 +219,14 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
             await RunOperationAsync(services => EnqueueSelectedAsync(services, selectedMusic));
         }
 
+        private async void ReloadMusicButton_Click(object sender, RoutedEventArgs e)
+        {
+            await ReloadAsync();
+        }
+
         private void AddToPlaylistButton_Click(object sender, RoutedEventArgs e)
         {
-
+            throw new NotImplementedException();
         }
 
         private void MusicListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
