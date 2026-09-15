@@ -21,11 +21,15 @@ namespace CorePlanetMusicPlayer.Core.Albums
         
         public string AlbumArtistName { get; set; } = string.Empty;
 
+        public string Description { get; set; } = string.Empty;
+
         public string Genre { get; set; } = string.Empty;
 
         public int? Year { get; set; }
 
         public List<MusicId> MusicIds { get; set; } = new List<MusicId>();
+
+        public int DiscCount { get; set; }
 
         public TimeSpan TotalDuration { get; set; }
 

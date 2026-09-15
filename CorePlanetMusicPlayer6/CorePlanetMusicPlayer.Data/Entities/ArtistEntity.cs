@@ -14,6 +14,8 @@ namespace CorePlanetMusicPlayer.Data.Entities
 
         public string SortName { get; set; } = string.Empty;
 
+        public string Description { get; set; } = string.Empty;
+
         public string MusicIdsText { get; set; } = string.Empty;
 
         public string AlbumIdsText { get; set; } = string.Empty;

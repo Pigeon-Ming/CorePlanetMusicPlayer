@@ -306,14 +306,68 @@ namespace CorePlanetMusicPlayer.Services.Library
         {
             var allMusic = await _musicRepository.GetAllAsync();
 
+            var existingAlbums = await _albumRepository.GetAllAsync();
+            var existingArtists = await _artistRepository.GetAllAsync();
+
+            var existingAlbumsByKey = existingAlbums.ToDictionary(album => Tuple.Create(album.Title, album.ArtistName));
+
+            var existingArtistsByName = existingArtists.ToDictionary(artist => artist.Name, StringComparer.Ordinal);
+
             var albums = _indexBuilder.BuildAlbums(allMusic);
+
+            foreach (var album in albums)
+            {
+                var key = Tuple.Create(album.Title, album.ArtistName);
+
+                Album existing;
+
+                if (existingAlbumsByKey.TryGetValue(key, out existing))
+                {
+                    album.Id = existing.Id;
+                    album.Description = existing.Description ?? string.Empty;
+                    album.AddedAt = existing.AddedAt;
+                }
+            }
+
+            // 必须先恢复专辑 ID，再构建艺术家的 AlbumIds。
             var artists = _indexBuilder.BuildArtists(allMusic, albums);
 
-            await _albumRepository.ClearAsync();
-            await _artistRepository.ClearAsync();
+            foreach (var artist in artists)
+            {
+                Artist existing;
 
+                if (existingArtistsByName.TryGetValue(artist.Name, out existing))
+                {
+                    artist.Id = existing.Id;
+                    artist.Description = existing.Description ?? string.Empty;
+                    artist.AddedAt = existing.AddedAt;
+                }
+            }
+
+            // 先保存本次构建结果。
             await _albumRepository.UpsertRangeAsync(albums);
             await _artistRepository.UpsertRangeAsync(artists);
+
+            var albumIds = new HashSet<AlbumId>(albums.Select(album => album.Id));
+
+            var artistIds = new HashSet<ArtistId>(artists.Select(artist => artist.Id));
+
+            // 保存成功后，再清理本次索引中已不存在的分类。
+            foreach (var existing in existingArtists)
+            {
+                if (!artistIds.Contains(existing.Id))
+                {
+                    await _artistRepository.DeleteAsync(existing.Id);
+                }
+            }
+
+            foreach (var existing in existingAlbums)
+            {
+                if (!albumIds.Contains(existing.Id))
+                {
+                    await _albumRepository.DeleteAsync(existing.Id);
+                }
+            }
         }
 
         private static string GetRelativePathKey(Music music)

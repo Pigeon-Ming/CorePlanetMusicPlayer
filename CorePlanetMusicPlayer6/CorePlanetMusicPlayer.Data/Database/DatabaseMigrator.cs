@@ -105,10 +105,12 @@ namespace CorePlanetMusicPlayer.Data.Database
                     title TEXT NOT NULL,
                     artist_name TEXT NOT NULL,
                     album_artist_name TEXT NOT NULL,
+                    description TEXT NOT NULL DEFAULT '',
                     genre TEXT NOT NULL,
                     year INTEGER NULL,
                     music_ids_text TEXT NOT NULL,
                     total_duration_ticks INTEGER NOT NULL,
+                    disc_count INTEGER NOT NULL DEFAULT 0,
                     added_at INTEGER NULL,
                     updated_at INTEGER NULL
                 );");
@@ -118,6 +120,7 @@ namespace CorePlanetMusicPlayer.Data.Database
                     id TEXT PRIMARY KEY,
                     name TEXT NOT NULL,
                     sort_name TEXT NOT NULL,
+                    description TEXT NOT NULL DEFAULT '',
                     music_ids_text TEXT NOT NULL,
                     album_ids_text TEXT NOT NULL,
                     total_duration_ticks INTEGER NOT NULL,

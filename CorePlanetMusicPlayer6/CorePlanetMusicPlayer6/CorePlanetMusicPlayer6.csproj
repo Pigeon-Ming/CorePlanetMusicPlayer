@@ -123,6 +123,9 @@
     <Compile Include="Composition\AppRuntime.cs" />
     <Compile Include="Composition\AppServices.cs" />
     <Compile Include="Composition\ServiceRegistry.cs" />
+    <Compile Include="Controls\Dev\AlbumControl.xaml.cs">
+      <DependentUpon>AlbumControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Dev\AlbumsControl.xaml.cs">
       <DependentUpon>AlbumsControl.xaml</DependentUpon>
     </Compile>
@@ -203,6 +206,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\Dev\AlbumControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Dev\AlbumsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -17,6 +17,7 @@ namespace CorePlanetMusicPlayer.Services.Library
         public IReadOnlyList<Album> BuildAlbums(IEnumerable<Music> musicList)
         {
             var albums = new Dictionary<string, Album>();
+            var albumMusic = new Dictionary<string, List<Music>>();
 
             if (musicList == null)
             {
@@ -64,17 +65,68 @@ namespace CorePlanetMusicPlayer.Services.Library
                     };
 
                     albums[key] = album;
+                    albumMusic[key] = new List<Music>();
                 }
 
                 if (!ContainsMusicId(album.MusicIds, music.Id))
                 {
                     album.MusicIds.Add(music.Id);
-                    album.TotalDuration = album.TotalDuration + music.Duration;
+                    albumMusic[key].Add(music);
+
+                    album.TotalDuration += music.Duration;
                     album.UpdatedAt = DateTimeOffset.Now;
                 }
             }
 
+            foreach (var pair in albums)
+            {
+                string albumKey = pair.Key;
+                Album album = pair.Value;
+
+                var music = albumMusic[albumKey];
+
+                album.MusicIds = CreateOrderedMusicIds(music);
+                album.DiscCount = CalculateDiscCount(music);
+            }
+
             return new List<Album>(albums.Values);
+        }
+
+        private static List<MusicId> CreateOrderedMusicIds(IEnumerable<Music> musicList)
+        {
+            return musicList
+                .OrderBy(music =>
+                    GetNumberSortKey(music.Metadata?.DiscNumber))
+                .ThenBy(music =>
+                    GetNumberSortKey(music.Metadata?.TrackNumber))
+                .ThenBy(
+                    music => NormalizeText(music.Title),
+                    StringComparer.OrdinalIgnoreCase)
+                .ThenBy(
+                    music => music.Id.ToString(),
+                    StringComparer.Ordinal)
+                .Select(music => music.Id)
+                .ToList();
+        }
+
+        private static long GetNumberSortKey(int? number)
+        {
+            if (!number.HasValue || number.Value <= 0)
+            {
+                return long.MaxValue;
+            }
+
+            return number.Value;
+        }
+
+        private static int CalculateDiscCount(IEnumerable<Music> musicList)
+        {
+            return musicList
+                .Select(music => music.Metadata?.DiscNumber)
+                .Where(number => number.HasValue && number.Value > 0)
+                .Select(number => number.Value)
+                .Distinct()
+                .Count();
         }
 
         public IReadOnlyList<Artist> BuildArtists(IEnumerable<Music> musicList, IEnumerable<Album> albumList)

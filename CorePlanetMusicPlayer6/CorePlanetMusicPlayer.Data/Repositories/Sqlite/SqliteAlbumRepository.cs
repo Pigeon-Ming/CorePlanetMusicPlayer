@@ -160,10 +160,12 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
                     title,
                     artist_name,
                     album_artist_name,
+                    description,
                     genre,
                     year,
                     music_ids_text,
                     total_duration_ticks,
+                    disc_count,
                     added_at,
                     updated_at
                 ) values (
@@ -171,10 +173,12 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
                     $title,
                     $artistName,
                     $albumArtistName,
+                    $description,
                     $genre,
                     $year,
                     $musicIdsText,
                     $totalDurationTicks,
+                    $discCount,
                     $addedAt,
                     $updatedAt
                 );";
@@ -183,10 +187,12 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
             command.Parameters.AddWithValue("$title", entity.Title);
             command.Parameters.AddWithValue("$artistName", entity.ArtistName);
             command.Parameters.AddWithValue("$albumArtistName", entity.AlbumArtistName);
+            command.Parameters.AddWithValue("$description", entity.Description);
             command.Parameters.AddWithValue("$genre", entity.Genre);
             command.Parameters.AddWithValue("$year", (object)entity.Year ?? System.DBNull.Value);
             command.Parameters.AddWithValue("$musicIdsText", entity.MusicIdsText);
             command.Parameters.AddWithValue("$totalDurationTicks", entity.TotalDurationTicks);
+            command.Parameters.AddWithValue("$discCount", entity.DiscCount);
             command.Parameters.AddWithValue("$addedAt", (object)entity.AddedAtUnixTimeMilliseconds ?? System.DBNull.Value);
             command.Parameters.AddWithValue("$updatedAt", (object)entity.UpdatedAtUnixTimeMilliseconds ?? System.DBNull.Value);
         }
@@ -199,10 +205,12 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
                 Title = reader.GetStringOrEmpty("title"),
                 ArtistName = reader.GetStringOrEmpty("artist_name"),
                 AlbumArtistName = reader.GetStringOrEmpty("album_artist_name"),
+                Description = reader.GetStringOrEmpty("description"),
                 Genre = reader.GetStringOrEmpty("genre"),
                 Year = reader.GetNullableInt32("year"),
                 MusicIdsText = reader.GetStringOrEmpty("music_ids_text"),
                 TotalDurationTicks = reader.GetInt64OrDefault("total_duration_ticks"),
+                DiscCount = reader.GetInt32OrDefault("disc_count"),
                 AddedAtUnixTimeMilliseconds = reader.GetNullableInt64("added_at"),
                 UpdatedAtUnixTimeMilliseconds = reader.GetNullableInt64("updated_at")
             };

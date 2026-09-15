@@ -52,8 +52,6 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
 
             UpdateSelectionState();
 
-            await ReloadAsync();
-
             return _musicItems.Count == 0 ? "音乐库中暂无歌曲。" : $"已读取 {_musicItems.Count} 首歌曲。";
         }
 

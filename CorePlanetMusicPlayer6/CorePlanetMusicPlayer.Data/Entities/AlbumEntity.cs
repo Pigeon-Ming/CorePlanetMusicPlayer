@@ -16,11 +16,15 @@ namespace CorePlanetMusicPlayer.Data.Entities
 
         public string AlbumArtistName { get; set; } = string.Empty;
 
+        public string Description { get; set; } = string.Empty;
+
         public string Genre { get; set; } = string.Empty;
 
         public int? Year { get; set; }
 
         public string MusicIdsText { get; set; } = string.Empty;
+
+        public int DiscCount { get; set; }
 
         public long TotalDurationTicks { get; set; }
 

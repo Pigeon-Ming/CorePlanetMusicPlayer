@@ -156,6 +156,7 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
                     id,
                     name,
                     sort_name,
+                    description,
                     music_ids_text,
                     album_ids_text,
                     total_duration_ticks,
@@ -165,6 +166,7 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
                     $id,
                     $name,
                     $sortName,
+                    $description,
                     $musicIdsText,
                     $albumIdsText,
                     $totalDurationTicks,
@@ -175,6 +177,7 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
             command.Parameters.AddWithValue("$id", entity.Id);
             command.Parameters.AddWithValue("$name", entity.Name);
             command.Parameters.AddWithValue("$sortName", entity.SortName);
+            command.Parameters.AddWithValue("$description", entity.Description);
             command.Parameters.AddWithValue("$musicIdsText", entity.MusicIdsText);
             command.Parameters.AddWithValue("$albumIdsText", entity.AlbumIdsText);
             command.Parameters.AddWithValue("$totalDurationTicks", entity.TotalDurationTicks);
@@ -189,6 +192,7 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
                 Id = reader.GetStringOrEmpty("id"),
                 Name = reader.GetStringOrEmpty("name"),
                 SortName = reader.GetStringOrEmpty("sort_name"),
+                Description = reader.GetStringOrEmpty("description"),
                 MusicIdsText = reader.GetStringOrEmpty("music_ids_text"),
                 AlbumIdsText = reader.GetStringOrEmpty("album_ids_text"),
                 TotalDurationTicks = reader.GetInt64OrDefault("total_duration_ticks"),

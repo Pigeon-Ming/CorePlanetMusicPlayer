@@ -14,7 +14,7 @@
             <Hub.Resources>
                 <Style TargetType="HubSection">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    <Setter Property="MinWidth" Value="400" />
+                    <Setter Property="Width" Value="400" />
                 </Style>
             </Hub.Resources>
             <HubSection Header="开发者">

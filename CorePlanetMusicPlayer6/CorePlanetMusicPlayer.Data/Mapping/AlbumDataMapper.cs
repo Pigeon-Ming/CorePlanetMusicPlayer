@@ -26,9 +26,11 @@ namespace CorePlanetMusicPlayer.Data.Mapping
                 Title = entity.Title ?? string.Empty,
                 ArtistName = entity.ArtistName ?? string.Empty,
                 AlbumArtistName = entity.AlbumArtistName ?? string.Empty,
+                Description = entity.Description ?? string.Empty,
                 Genre = entity.Genre ?? string.Empty,
                 Year = entity.Year,
                 MusicIds = ParseMusicIds(entity.MusicIdsText),
+                DiscCount = entity.DiscCount,
                 TotalDuration = new TimeSpan(entity.TotalDurationTicks),
                 AddedAt = DataValueConverter.FromUnixTimeMilliseconds(entity.AddedAtUnixTimeMilliseconds),
                 UpdatedAt = DataValueConverter.FromUnixTimeMilliseconds(entity.UpdatedAtUnixTimeMilliseconds)
@@ -48,9 +50,11 @@ namespace CorePlanetMusicPlayer.Data.Mapping
                 Title = album.Title ?? string.Empty,
                 ArtistName = album.ArtistName ?? string.Empty,
                 AlbumArtistName = album.AlbumArtistName ?? string.Empty,
+                Description = album.Description ?? string.Empty,
                 Genre = album.Genre ?? string.Empty,
                 Year = album.Year,
                 MusicIdsText = FormatMusicIds(album.MusicIds),
+                DiscCount = album.DiscCount,
                 TotalDurationTicks = album.TotalDuration.Ticks,
                 AddedAtUnixTimeMilliseconds = DataValueConverter.ToUnixTimeMilliseconds(album.AddedAt),
                 UpdatedAtUnixTimeMilliseconds = DataValueConverter.ToUnixTimeMilliseconds(album.UpdatedAt)

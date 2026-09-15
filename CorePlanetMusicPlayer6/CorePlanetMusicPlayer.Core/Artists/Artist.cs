@@ -20,6 +20,8 @@ namespace CorePlanetMusicPlayer.Core.Artists
 
         public string SortName { get; set; } = string.Empty;
 
+        public string Description { get; set; } = string.Empty;
+
         public List<MusicId> MusicIds { get; set; } = new List<MusicId>();
 
         public List<AlbumId> AlbumIds { get; set; } = new List<AlbumId>();
