@@ -127,6 +127,35 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
             return Task.CompletedTask;
         }
 
+        public Task<bool> UpdateDescriptionAsync(AlbumId albumId, string description, DateTimeOffset updatedAt)
+        {
+            if (albumId.IsEmpty)
+            {
+                throw new ArgumentException(
+                    "专辑 ID 不能为空。",
+                    nameof(albumId));
+            }
+
+            using (var connection = _database.CreateOpenConnection())
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = @"
+                    UPDATE albums
+                    SET description = $description,
+                    updated_at = $updatedAt
+                    WHERE id = $id;
+                ";
+
+                command.Parameters.AddWithValue("$description", description ?? string.Empty);
+
+                command.Parameters.AddWithValue("$updatedAt", updatedAt.ToUnixTimeMilliseconds());
+
+                command.Parameters.AddWithValue("$id", albumId.ToString());
+
+                return Task.FromResult(command.ExecuteNonQuery() > 0);
+            }
+        }
+
         public Task DeleteAsync(AlbumId id)
         {
             using (var connection = _database.CreateOpenConnection())

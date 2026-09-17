@@ -1,68 +1,37 @@
-﻿using CorePlanetMusicPlayer.Core.Albums;
-using CorePlanetMusicPlayer.Core.Artists;
-using CorePlanetMusicPlayer.Core.Common;
+﻿using CorePlanetMusicPlayer.Core.Common;
 using CorePlanetMusicPlayer.Core.Library;
 using CorePlanetMusicPlayer.Core.Music;
 using CorePlanetMusicPlayer.Data.Repositories;
+using CorePlanetMusicPlayer.Services.Library.Index;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.UI.Xaml.Controls;
 
 namespace CorePlanetMusicPlayer.Services.Library
 {
     public sealed class MusicLibraryService : IMusicLibraryService
     {
         private readonly IMusicRepository _musicRepository;
-        private readonly IAlbumRepository _albumRepository;
-        private readonly IArtistRepository _artistRepository;
         private readonly ILibraryFolderRepository _libraryFolderRepository;
         private readonly ILibraryScanner _libraryScanner;
-        private readonly MusicIndexBuilder _indexBuilder;
-        private readonly LibraryQueryService _queryService;
+        private readonly IMusicIndexService _musicIndexService;
 
-        public MusicLibraryService(IMusicRepository musicRepository, IAlbumRepository albumRepository, IArtistRepository artistRepository, ILibraryFolderRepository libraryFolderRepository, ILibraryScanner libraryScanner, MusicIndexBuilder indexBuilder, LibraryQueryService queryService)
+        public MusicLibraryService(IMusicRepository musicRepository, ILibraryFolderRepository libraryFolderRepository, ILibraryScanner libraryScanner, IMusicIndexService musicIndexService)
         {
             Guard.NotNull(musicRepository, nameof(musicRepository));
-            Guard.NotNull(albumRepository, nameof(albumRepository));
-            Guard.NotNull(artistRepository, nameof(artistRepository));
             Guard.NotNull(libraryFolderRepository, nameof(libraryFolderRepository));
             Guard.NotNull(libraryScanner, nameof(libraryScanner));
+            Guard.NotNull(musicIndexService, nameof(musicIndexService));
 
             _musicRepository = musicRepository;
-            _albumRepository = albumRepository;
-            _artistRepository = artistRepository;
             _libraryFolderRepository = libraryFolderRepository;
             _libraryScanner = libraryScanner;
-            _indexBuilder = indexBuilder ?? new MusicIndexBuilder();
-            _queryService = queryService ?? new LibraryQueryService(musicRepository, albumRepository, artistRepository, libraryFolderRepository);
-        }
-
-        public Task<IReadOnlyList<Music>> GetAllMusicAsync()
-        {
-            return _queryService.GetAllMusicAsync();
-        }
-
-        public Task<IReadOnlyList<Music>> SearchMusicAsync(string keyword)
-        {
-            return _queryService.SearchMusicAsync(keyword);
-        }
-
-        public Task<IReadOnlyList<Album>> GetAllAlbumsAsync()
-        {
-            return _queryService.GetAllAlbumsAsync();
-        }
-
-        public Task<IReadOnlyList<Artist>> GetAllArtistsAsync()
-        {
-            return _queryService.GetAllArtistsAsync();
+            _musicIndexService = musicIndexService;
         }
 
         public Task<IReadOnlyList<LibraryFolder>> GetAllFoldersAsync()
         {
-            return _queryService.GetAllFoldersAsync();
+            return _libraryFolderRepository.GetAllAsync();
         }
 
         public async Task AddFolderAsync(LibraryFolder folder)
@@ -82,7 +51,7 @@ namespace CorePlanetMusicPlayer.Services.Library
             await _musicRepository.DeleteByLibraryFolderIdAsync(folderId);
             await _libraryFolderRepository.DeleteAsync(folderId);
 
-            await RebuildIndexAsync();
+            await _musicIndexService.RebuildAsync();
         }
 
         private static List<Music> PrepareRefreshMusic(IReadOnlyList<Music> scannedMusic, IReadOnlyList<Music> existingMusic)
@@ -302,74 +271,6 @@ namespace CorePlanetMusicPlayer.Services.Library
             return result;
         }
 
-        private async Task RebuildIndexAsync()
-        {
-            var allMusic = await _musicRepository.GetAllAsync();
-
-            var existingAlbums = await _albumRepository.GetAllAsync();
-            var existingArtists = await _artistRepository.GetAllAsync();
-
-            var existingAlbumsByKey = existingAlbums.ToDictionary(album => Tuple.Create(album.Title, album.ArtistName));
-
-            var existingArtistsByName = existingArtists.ToDictionary(artist => artist.Name, StringComparer.Ordinal);
-
-            var albums = _indexBuilder.BuildAlbums(allMusic);
-
-            foreach (var album in albums)
-            {
-                var key = Tuple.Create(album.Title, album.ArtistName);
-
-                Album existing;
-
-                if (existingAlbumsByKey.TryGetValue(key, out existing))
-                {
-                    album.Id = existing.Id;
-                    album.Description = existing.Description ?? string.Empty;
-                    album.AddedAt = existing.AddedAt;
-                }
-            }
-
-            // 必须先恢复专辑 ID，再构建艺术家的 AlbumIds。
-            var artists = _indexBuilder.BuildArtists(allMusic, albums);
-
-            foreach (var artist in artists)
-            {
-                Artist existing;
-
-                if (existingArtistsByName.TryGetValue(artist.Name, out existing))
-                {
-                    artist.Id = existing.Id;
-                    artist.Description = existing.Description ?? string.Empty;
-                    artist.AddedAt = existing.AddedAt;
-                }
-            }
-
-            // 先保存本次构建结果。
-            await _albumRepository.UpsertRangeAsync(albums);
-            await _artistRepository.UpsertRangeAsync(artists);
-
-            var albumIds = new HashSet<AlbumId>(albums.Select(album => album.Id));
-
-            var artistIds = new HashSet<ArtistId>(artists.Select(artist => artist.Id));
-
-            // 保存成功后，再清理本次索引中已不存在的分类。
-            foreach (var existing in existingArtists)
-            {
-                if (!artistIds.Contains(existing.Id))
-                {
-                    await _artistRepository.DeleteAsync(existing.Id);
-                }
-            }
-
-            foreach (var existing in existingAlbums)
-            {
-                if (!albumIds.Contains(existing.Id))
-                {
-                    await _albumRepository.DeleteAsync(existing.Id);
-                }
-            }
-        }
-
         private static string GetRelativePathKey(Music music)
         {
             string path = music?.FileInfo?.RelativePath;
@@ -428,7 +329,7 @@ namespace CorePlanetMusicPlayer.Services.Library
         {
             try
             {
-                await RebuildIndexAsync();
+                await _musicIndexService.RebuildAsync();
             }
             catch (Exception ex)
             {

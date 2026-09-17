@@ -19,6 +19,8 @@ namespace CorePlanetMusicPlayer.Data.Repositories
 
         Task UpsertRangeAsync(IEnumerable<Artist> artists);
 
+        Task<bool> UpdateDescriptionAsync(ArtistId artistId, string description, DateTimeOffset updatedAt);
+
         Task DeleteAsync(ArtistId id);
 
         Task ClearAsync();

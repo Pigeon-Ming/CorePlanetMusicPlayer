@@ -6,6 +6,10 @@ using CorePlanetMusicPlayer.Playback.Queue;
 using CorePlanetMusicPlayer.Services.Artwork;
 using CorePlanetMusicPlayer.Services.History;
 using CorePlanetMusicPlayer.Services.Library;
+using CorePlanetMusicPlayer.Services.Library.Albums;
+using CorePlanetMusicPlayer.Services.Library.Artists;
+using CorePlanetMusicPlayer.Services.Library.Index;
+using CorePlanetMusicPlayer.Services.Library.MusicQueries;
 using CorePlanetMusicPlayer.Services.Lyrics;
 using CorePlanetMusicPlayer.Services.Metadata;
 using CorePlanetMusicPlayer.Services.Playlists;
@@ -17,11 +21,6 @@ using CorePlanetMusicPlayer.Uwp.Platform.Metadata;
 using CorePlanetMusicPlayer.Uwp.Platform.Playback;
 using CorePlanetMusicPlayer.Uwp.Platform.Storage;
 using CorePlanetMusicPlayer.Uwp.Platform.System;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Storage;
 
 namespace CorePlanetMusicPlayer6.Composition
@@ -125,13 +124,21 @@ namespace CorePlanetMusicPlayer6.Composition
         {
             var lyricParserCollection = new LyricParserCollection(new ILyricParser[] {new LrcParser()});
 
-            var libraryQueryService = new LibraryQueryService(services.MusicRepository, services.AlbumRepository, services.ArtistRepository, services.LibraryFolderRepository);
-
             var musicFileReader = new UwpMusicFileReader(services.StorageFileMapper);
 
             var libraryScanner = new UwpLibraryScanner(services.StorageAccessService, services.StorageFileMapper, musicFileReader);
 
-            services.MusicLibraryService = new MusicLibraryService(services.MusicRepository, services.AlbumRepository, services.ArtistRepository, services.LibraryFolderRepository, libraryScanner, new MusicIndexBuilder(), libraryQueryService);
+            var libraryWriteCoordinator = new LibraryWriteCoordinator();
+
+            var musicIndexService = new MusicIndexService(services.MusicRepository, services.AlbumRepository, services.ArtistRepository, new MusicIndexBuilder(), libraryWriteCoordinator);
+
+            services.MusicQueryService = new MusicQueryService(services.MusicRepository);
+
+            services.AlbumService = new AlbumService(services.AlbumRepository, services.MusicQueryService, libraryWriteCoordinator);
+
+            services.ArtistService = new ArtistService(services.ArtistRepository, services.AlbumRepository, services.MusicQueryService, libraryWriteCoordinator);
+
+            services.MusicLibraryService = new MusicLibraryService(services.MusicRepository, services.LibraryFolderRepository, libraryScanner, musicIndexService);
 
             services.PlaylistService = new PlaylistService(services.PlaylistRepository);
 

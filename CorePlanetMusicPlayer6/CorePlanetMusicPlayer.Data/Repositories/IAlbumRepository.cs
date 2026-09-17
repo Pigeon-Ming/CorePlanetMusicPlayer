@@ -19,6 +19,12 @@ namespace CorePlanetMusicPlayer.Data.Repositories
 
         Task UpsertRangeAsync(IEnumerable<Album> albums);
 
+        /// <summary>
+        /// 更新简介和更新时间。
+        /// 返回 false 表示目标专辑不存在。
+        /// </summary>
+        Task<bool> UpdateDescriptionAsync(AlbumId albumId, string description, DateTimeOffset updatedAt);
+
         Task DeleteAsync(AlbumId id);
 
         Task ClearAsync();

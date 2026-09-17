@@ -39,12 +39,12 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
 
         private async Task<string> ReloadMusicAsync(AppServices services)
         {
-            if (services.MusicLibraryService == null)
+            if (services.MusicQueryService == null)
             {
                 throw new InvalidOperationException("音乐库服务尚未就绪。");
             }
 
-            var musicList = await services.MusicLibraryService.GetAllMusicAsync();
+            var musicList = await services.MusicQueryService.GetAllAsync();
 
             _musicItems = musicList.ToList();
 

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CorePlanetMusicPlayer.Services.Library
+namespace CorePlanetMusicPlayer.Services.Library.Index
 {
     /// <summary>
     /// 负责整理音乐分类
@@ -16,8 +16,9 @@ namespace CorePlanetMusicPlayer.Services.Library
     {
         public IReadOnlyList<Album> BuildAlbums(IEnumerable<Music> musicList)
         {
-            var albums = new Dictionary<string, Album>();
-            var albumMusic = new Dictionary<string, List<Music>>();
+            var albums = new Dictionary<Tuple<string, string>, Album>();
+
+            var albumMusic = new Dictionary<Tuple<string, string>, List<Music>>();
 
             if (musicList == null)
             {
@@ -31,8 +32,8 @@ namespace CorePlanetMusicPlayer.Services.Library
                     continue;
                 }
 
-                var albumTitle = NormalizeText(music.AlbumTitle);
-                var artistName = NormalizeText(music.ArtistName);
+                var albumTitle = NormalizeAlbumTitle(music.AlbumTitle);
+                var artistName = NormalizeArtistName(music.ArtistName);
 
                 if (string.IsNullOrWhiteSpace(albumTitle))
                 {
@@ -80,7 +81,7 @@ namespace CorePlanetMusicPlayer.Services.Library
 
             foreach (var pair in albums)
             {
-                string albumKey = pair.Key;
+                var albumKey = pair.Key;
                 Album album = pair.Value;
 
                 var music = albumMusic[albumKey];
@@ -142,12 +143,7 @@ namespace CorePlanetMusicPlayer.Services.Library
                         continue;
                     }
 
-                    var artistName = NormalizeText(music.ArtistName);
-
-                    if (string.IsNullOrWhiteSpace(artistName))
-                    {
-                        artistName = "未知艺术家";
-                    }
+                    var artistName = NormalizeArtistName(music.ArtistName);
 
                     Artist artist;
 
@@ -186,12 +182,7 @@ namespace CorePlanetMusicPlayer.Services.Library
                         continue;
                     }
 
-                    var artistName = NormalizeText(album.ArtistName);
-
-                    if (string.IsNullOrWhiteSpace(artistName))
-                    {
-                        artistName = "未知艺术家";
-                    }
+                    var artistName = NormalizeArtistName(album.ArtistName);
 
                     Artist artist;
 
@@ -229,9 +220,27 @@ namespace CorePlanetMusicPlayer.Services.Library
             return value == null ? string.Empty : value.Trim();
         }
 
-        private string CreateAlbumKey(string albumTitle, string artistName)
+        internal static Tuple<string, string> CreateAlbumKey(string albumTitle, string artistName)
         {
-            return albumTitle + "|" + artistName;
+            return Tuple.Create(NormalizeAlbumTitle(albumTitle), NormalizeArtistName(artistName));
+        }
+
+        private static string NormalizeAlbumTitle(string value)
+        {
+            string title = NormalizeText(value);
+
+            return string.IsNullOrWhiteSpace(title)
+                ? "未知专辑"
+                : title;
+        }
+
+        internal static string NormalizeArtistName(string value)
+        {
+            string name = NormalizeText(value);
+
+            return string.IsNullOrWhiteSpace(name)
+                ? "未知艺术家"
+                : name;
         }
 
         private string GetAlbumArtistName(Music music)

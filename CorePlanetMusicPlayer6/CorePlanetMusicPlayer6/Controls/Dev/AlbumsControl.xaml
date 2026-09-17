@@ -66,7 +66,7 @@
         </ListView>
         <TextBlock Name="StatusTextBlock" Grid.Row="2" />
         <Grid Grid.Row="3">
-            <local:AlbumControl x:Name="AlbumControl" />
+            <local:AlbumControl x:Name="AlbumDetailsControl" />
         </Grid>
     </Grid>
 </UserControl>

@@ -9,26 +9,49 @@
     d:DesignWidth="400"
     mc:Ignorable="d">
 
+    <UserControl.Resources>
+        <CollectionViewSource x:Name="AlbumMusicSource" IsSourceGrouped="True" />
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <ScrollViewer>
-            <StackPanel>
-                <TextBlock Name="AlbumTitleTextBlock" />
-                <TextBlock Name="AlbumArtistNameTextBlock" />
-                <TextBlock Name="AlbumTextBlock" />
-                <TextBox Name="AlbumDescriptionTextBox" />
-                <Button Name="SaveAlbumButton" Content="保存" />
+        <ScrollViewer
+            Grid.Row="0"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="8">
+                <TextBlock Name="AlbumTitleTextBlock" TextWrapping="Wrap" />
+                <TextBlock Name="AlbumArtistNameTextBlock" TextWrapping="Wrap" />
+                <TextBlock Name="AlbumTextBlock" TextWrapping="Wrap" />
+                <TextBox
+                    Name="AlbumDescriptionTextBox"
+                    AcceptsReturn="True"
+                    Header="专辑简介"
+                    IsEnabled="False"
+                    TextWrapping="Wrap" />
+                <Button
+                    Name="SaveAlbumButton"
+                    Click="SaveAlbumButton_Click"
+                    Content="保存" />
             </StackPanel>
         </ScrollViewer>
-        <ListView Grid.Row="1">
+        <ListView
+            x:Name="AlbumMusicListView"
+            Grid.Row="1"
+            ItemsSource="{Binding Source={StaticResource AlbumMusicSource}}"
+            SelectionMode="Single">
             <ListView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="Disc" />
+                            <TextBlock
+                                Margin="0,8,0,4"
+                                FontSize="18"
+                                Text="{Binding Key}" />
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
                 </GroupStyle>
@@ -36,15 +59,24 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <TextBlock Text="{Binding Title}" />
-                        <TextBlock Text="{Binding ArtistName}" />
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="24" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock VerticalAlignment="Center" Text="{Binding Metadata.TrackNumber}" />
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="{Binding Title}" />
+                            <TextBlock Text="{Binding ArtistName}" />
+                        </StackPanel>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+
+        <TextBlock
+            x:Name="StatusTextBlock"
+            Grid.Row="2"
+            Margin="0,8,0,0"
+            TextWrapping="Wrap" />
     </Grid>
 </UserControl>

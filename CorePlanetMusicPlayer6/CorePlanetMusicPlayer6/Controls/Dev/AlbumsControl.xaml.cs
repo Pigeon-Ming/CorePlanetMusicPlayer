@@ -40,14 +40,17 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
 
         private async Task<string> ReloadAlbumAsync(AppServices services)
         {
-            if (services.MusicLibraryService == null)
+            if (services.AlbumService == null)
             {
-                throw new InvalidOperationException("音乐库服务尚未就绪。");
+                throw new InvalidOperationException("专辑服务尚未就绪。");
             }
 
-            var albums = await services.MusicLibraryService.GetAllAlbumsAsync();
+            var albums = await services.AlbumService.GetAllAsync();
 
             _albumItems = albums.ToList();
+
+            AlbumsListView.SelectedItem = null;
+            AlbumDetailsControl.Clear();
 
             AlbumsListView.ItemsSource = _albumItems;
 
@@ -158,9 +161,25 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
             await ReloadAsync();
         }
 
-        private void AlbumsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void AlbumsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             UpdateSelectionState();
+
+            // 防止 XAML 初始化期间详情控件尚未创建。
+            if (AlbumDetailsControl == null)
+            {
+                return;
+            }
+
+            var selectedAlbum = AlbumsListView.SelectedItem as Album;
+
+            if (selectedAlbum == null)
+            {
+                AlbumDetailsControl.Clear();
+                return;
+            }
+
+            await AlbumDetailsControl.ShowAlbumAsync(selectedAlbum.Id);
         }
 
         private async void ReloadAlbumsButton_Click(object sender, RoutedEventArgs e)

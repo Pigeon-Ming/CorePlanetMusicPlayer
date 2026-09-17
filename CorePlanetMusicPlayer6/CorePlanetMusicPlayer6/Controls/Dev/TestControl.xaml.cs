@@ -485,11 +485,16 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
 
         private async Task CheckLibararyRefresh()
         {
-            var service = AppRuntime.Services?.MusicLibraryService;
+            var services = AppRuntime.Services;
 
-            if (service == null)
+            var service = services?.MusicLibraryService;
+            var musicQueryService = services?.MusicQueryService;
+            var albumService = services?.AlbumService;
+            var artistService = services?.ArtistService;
+
+            if (service == null || musicQueryService == null || albumService == null || artistService == null)
             {
-                LibraryRefreshCheckTextBlock.Text = "音乐库服务尚未就绪。";
+                LibraryRefreshCheckTextBlock.Text = "所需服务尚未就绪。";
                 return;
             }
 
@@ -530,9 +535,9 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                 // 先显示刷新结果，避免后续查询失败时丢失这些信息。
                 LibraryRefreshCheckTextBlock.Text = output.ToString();
 
-                var music = await service.GetAllMusicAsync();
-                var albums = await service.GetAllAlbumsAsync();
-                var artists = await service.GetAllArtistsAsync();
+                var music = await musicQueryService.GetAllAsync();
+                var albums = await albumService.GetAllAsync();
+                var artists = await artistService.GetAllAsync();
 
                 output.AppendLine();
                 output.AppendLine(
