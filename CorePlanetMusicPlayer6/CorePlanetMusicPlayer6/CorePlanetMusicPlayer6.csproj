@@ -129,6 +129,9 @@
     <Compile Include="Controls\Dev\AlbumsControl.xaml.cs">
       <DependentUpon>AlbumsControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Dev\ArtistControl.xaml.cs">
+      <DependentUpon>ArtistControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Dev\ArtistsControl.xaml.cs">
       <DependentUpon>ArtistsControl.xaml</DependentUpon>
     </Compile>
@@ -211,6 +214,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Dev\AlbumsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Dev\ArtistControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

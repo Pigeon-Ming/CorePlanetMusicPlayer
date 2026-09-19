@@ -7,7 +7,66 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="300"
     d:DesignWidth="400"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Loaded="UserControl_Loaded">
 
-    <Grid />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition />
+            <RowDefinition Height="auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <CommandBar Name="ArtistsCommandBar" DefaultLabelPosition="Right">
+            <CommandBar.PrimaryCommands>
+                <AppBarButton
+                    Name="ReloadArtistsButton"
+                    Click="ReloadArtistsButton_Click"
+                    Icon="Refresh"
+                    Label="刷新列表" />
+                <AppBarButton
+                    Name="PlayButton"
+                    Click="PlayButton_Click"
+                    Icon="Play"
+                    IsEnabled="False"
+                    Label="播放选中项" />
+            </CommandBar.PrimaryCommands>
+            <CommandBar.SecondaryCommands>
+                <AppBarButton
+                    Name="PlayNextButton"
+                    Click="PlayNextButton_Click"
+                    IsEnabled="False"
+                    Label="下一首播放" />
+                <AppBarButton
+                    Name="AddToPlayQueueButton"
+                    Click="AddToPlayQueueButton_Click"
+                    IsEnabled="False"
+                    Label="添加到播放队列" />
+            </CommandBar.SecondaryCommands>
+        </CommandBar>
+        <ListView
+            Name="ArtistsListView"
+            Grid.Row="1"
+            SelectionChanged="ArtistsListView_SelectionChanged">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{Binding Name}" />
+                        <TextBlock Grid.Row="1">
+                            <Run Text="{Binding MusicCount}" />
+                            <Run Text="首歌曲" />
+                        </TextBlock>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <TextBlock Name="StatusTextBlock" Grid.Row="2" />
+        <Grid Grid.Row="3">
+            <local:ArtistControl x:Name="ArtistDetailsControl" />
+        </Grid>
+    </Grid>
 </UserControl>

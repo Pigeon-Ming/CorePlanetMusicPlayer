@@ -1,0 +1,111 @@
+﻿<UserControl
+    x:Class="CorePlanetMusicPlayer6.Controls.Dev.ArtistControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:CorePlanetMusicPlayer6.Controls.Dev"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="300"
+    d:DesignWidth="400"
+    Unloaded="UserControl_Unloaded"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <DataTemplate x:Name="MusicListDataTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="24" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="{Binding Title}" />
+                    <TextBlock Text="{Binding ArtistTitle}" />
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ScrollViewer
+            Grid.Row="0"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="8">
+                <TextBlock Name="ArtistTitleTextBlock" TextWrapping="Wrap" />
+                <TextBlock Name="ArtistTextBlock" TextWrapping="Wrap" />
+                <TextBox
+                    Name="ArtistDescriptionTextBox"
+                    AcceptsReturn="True"
+                    Header="艺术家简介"
+                    IsEnabled="False"
+                    TextWrapping="Wrap" />
+                <Button
+                    Name="SaveArtistButton"
+                    Click="SaveArtistButton_Click"
+                    Content="保存" />
+            </StackPanel>
+        </ScrollViewer>
+        <Pivot Grid.Row="1">
+            <PivotItem Header="音乐">
+                <ListView x:Name="ArtistMusicListView" SelectionMode="Single">
+                    <!--<ListView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock
+                                        Margin="0,8,0,4"
+                                        FontSize="18"
+                                        Text="{Binding Key}" />
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </ListView.GroupStyle>-->
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="24" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="{Binding Title}" />
+                                    <TextBlock Text="{Binding ArtistName}" />
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </PivotItem>
+            <PivotItem Header="专辑">
+                <ListView x:Name="ArtistAlbumsListView" SelectionMode="Single">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="{Binding Title}" />
+                                <TextBlock Grid.Row="1">
+                                    <Run Text="{Binding MusicCount}" />
+                                    <Run Text="首歌曲" />
+                                </TextBlock>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </PivotItem>
+        </Pivot>
+
+        <TextBlock
+            x:Name="StatusTextBlock"
+            Grid.Row="2"
+            Margin="0,8,0,0"
+            TextWrapping="Wrap" />
+    </Grid>
+</UserControl>
