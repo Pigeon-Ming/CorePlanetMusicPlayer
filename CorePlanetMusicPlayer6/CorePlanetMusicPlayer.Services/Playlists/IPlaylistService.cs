@@ -18,6 +18,8 @@ namespace CorePlanetMusicPlayer.Services.Playlists
 
         Task RenameAsync(PlaylistId playlistId, string name);
 
+        Task UpdateInfoAsync(PlaylistId playlistId, string name, string description);
+
         Task UpdateDescriptionAsync(PlaylistId playlistId, string description);
 
         Task DeleteAsync(PlaylistId playlistId);

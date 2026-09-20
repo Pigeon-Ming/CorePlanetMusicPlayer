@@ -67,6 +67,11 @@
                     <dev:YearsControl />
                 </DataTemplate>
             </HubSection>
+            <HubSection Header="播放列表">
+                <DataTemplate>
+                    <dev:PlaylistsControl />
+                </DataTemplate>
+            </HubSection>
             <HubSection Header="最近">
                 <DataTemplate>
                     <TextBlock Text="占位" />

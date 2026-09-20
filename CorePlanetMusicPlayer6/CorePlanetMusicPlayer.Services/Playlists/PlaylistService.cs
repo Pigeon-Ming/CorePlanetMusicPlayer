@@ -56,6 +56,24 @@ namespace CorePlanetMusicPlayer.Services.Playlists
             return playlist;
         }
 
+        public async Task UpdateInfoAsync(PlaylistId playlistId, string name, string description)
+        {
+            if (playlistId.IsEmpty)
+            {
+                throw new ArgumentException("播放列表 ID 不能为空。", nameof(playlistId));
+            }
+
+            Guard.NotNullOrWhiteSpace(name, nameof(name));
+
+            var playlist = await GetExistingPlaylistAsync(playlistId);
+
+            playlist.Name = name.Trim();
+            playlist.Description = description ?? string.Empty;
+            playlist.UpdatedAt = DateTimeOffset.Now;
+
+            await _playlistRepository.UpsertAsync(playlist);
+        }
+
         public async Task UpdateDescriptionAsync(PlaylistId playlistId, string description)
         {
             if (playlistId.IsEmpty)
