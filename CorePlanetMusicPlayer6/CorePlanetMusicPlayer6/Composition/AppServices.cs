@@ -6,8 +6,10 @@ using CorePlanetMusicPlayer.Services.History;
 using CorePlanetMusicPlayer.Services.Library;
 using CorePlanetMusicPlayer.Services.Library.Albums;
 using CorePlanetMusicPlayer.Services.Library.Artists;
+using CorePlanetMusicPlayer.Services.Library.Genres;
 using CorePlanetMusicPlayer.Services.Library.Index;
 using CorePlanetMusicPlayer.Services.Library.MusicQueries;
+using CorePlanetMusicPlayer.Services.Library.Years;
 using CorePlanetMusicPlayer.Services.Lyrics;
 using CorePlanetMusicPlayer.Services.Metadata;
 using CorePlanetMusicPlayer.Services.Playlists;
@@ -18,11 +20,6 @@ using CorePlanetMusicPlayer.Uwp.Platform.Metadata;
 using CorePlanetMusicPlayer.Uwp.Platform.Playback;
 using CorePlanetMusicPlayer.Uwp.Platform.Storage;
 using CorePlanetMusicPlayer.Uwp.Platform.System;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CorePlanetMusicPlayer6.Composition
 {
@@ -47,6 +44,10 @@ namespace CorePlanetMusicPlayer6.Composition
         public IMusicIndexService MusicIndexService { get; set; }
 
         public IMusicQueryService MusicQueryService { get; set; }
+
+        public IGenreQueryService GenreQueryService { get; set; }
+
+        public IYearQueryService YearQueryService { get; set; }
 
         public IMusicLibraryService MusicLibraryService { get; set; }
 

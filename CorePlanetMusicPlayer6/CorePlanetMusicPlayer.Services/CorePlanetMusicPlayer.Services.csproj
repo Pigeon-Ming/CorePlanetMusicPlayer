@@ -132,6 +132,9 @@
     <Compile Include="Library\Artists\ArtistDetails.cs" />
     <Compile Include="Library\Artists\ArtistService.cs" />
     <Compile Include="Library\Artists\IArtistService.cs" />
+    <Compile Include="Library\Genres\GenreGroup.cs" />
+    <Compile Include="Library\Genres\GenreQueryService.cs" />
+    <Compile Include="Library\Genres\IGenreQueryService.cs" />
     <Compile Include="Library\ILibraryScanner.cs" />
     <Compile Include="Library\IMusicLibraryService.cs" />
     <Compile Include="Library\Index\IMusicIndexService.cs" />
@@ -143,6 +146,9 @@
     <Compile Include="Library\MusicLibraryService.cs" />
     <Compile Include="Library\MusicQueries\IMusicQueryService.cs" />
     <Compile Include="Library\MusicQueries\MusicQueryService.cs" />
+    <Compile Include="Library\Years\IYearQueryService.cs" />
+    <Compile Include="Library\Years\YearGroup.cs" />
+    <Compile Include="Library\Years\YearQueryService.cs" />
     <Compile Include="Lyrics\ILyricParser.cs" />
     <Compile Include="Lyrics\ILyricService.cs" />
     <Compile Include="Lyrics\LrcParser.cs" />

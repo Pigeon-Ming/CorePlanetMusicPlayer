@@ -8,8 +8,10 @@ using CorePlanetMusicPlayer.Services.History;
 using CorePlanetMusicPlayer.Services.Library;
 using CorePlanetMusicPlayer.Services.Library.Albums;
 using CorePlanetMusicPlayer.Services.Library.Artists;
+using CorePlanetMusicPlayer.Services.Library.Genres;
 using CorePlanetMusicPlayer.Services.Library.Index;
 using CorePlanetMusicPlayer.Services.Library.MusicQueries;
+using CorePlanetMusicPlayer.Services.Library.Years;
 using CorePlanetMusicPlayer.Services.Lyrics;
 using CorePlanetMusicPlayer.Services.Metadata;
 using CorePlanetMusicPlayer.Services.Playlists;
@@ -137,6 +139,10 @@ namespace CorePlanetMusicPlayer6.Composition
             services.MusicIndexService = musicIndexService;
 
             services.MusicQueryService = new MusicQueryService(services.MusicRepository);
+
+            services.GenreQueryService = new GenreQueryService(services.MusicRepository);
+
+            services.YearQueryService = new YearQueryService(services.MusicRepository);
 
             services.AlbumService = new AlbumService(services.AlbumRepository, services.MusicQueryService, libraryWriteCoordinator);
 

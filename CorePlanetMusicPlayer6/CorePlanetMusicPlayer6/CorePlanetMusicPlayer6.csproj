@@ -138,6 +138,9 @@
     <Compile Include="Controls\Dev\DevToolsControl.xaml.cs">
       <DependentUpon>DevToolsControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Dev\GenreControl.xaml.cs">
+      <DependentUpon>GenreControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Dev\GenresControl.xaml.cs">
       <DependentUpon>GenresControl.xaml</DependentUpon>
     </Compile>
@@ -152,6 +155,9 @@
     </Compile>
     <Compile Include="Controls\Dev\TestControl.xaml.cs">
       <DependentUpon>TestControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Dev\YearControl.xaml.cs">
+      <DependentUpon>YearControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Dev\YearsControl.xaml.cs">
       <DependentUpon>YearsControl.xaml</DependentUpon>
@@ -229,6 +235,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Dev\GenreControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Dev\GenresControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -246,6 +256,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Dev\TestControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Dev\YearControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
