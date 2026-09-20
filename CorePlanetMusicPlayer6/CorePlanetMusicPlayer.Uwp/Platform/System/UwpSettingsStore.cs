@@ -1,4 +1,5 @@
-﻿using CorePlanetMusicPlayer.Playback.Modes;
+﻿using CorePlanetMusicPlayer.Core.Artists;
+using CorePlanetMusicPlayer.Playback.Modes;
 using CorePlanetMusicPlayer.Services.Settings;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.System
         private const string LibraryIncludeSubfoldersKey = "Settings.Library.IncludeSubfolders";
         private const string LibrarySupportedExtensionsKey = "Settings.Library.SupportedExtensions";
         private const string LibraryLastRefreshAtKey = "Settings.Library.LastRefreshAt";
+        private const string LibraryArtistGroupingKey = "Settings.Library.ArtistGrouping";
 
         private const string AppearanceThemeKey = "Settings.Appearance.Theme";
         private const string AppearanceUseAcrylicEffectKey = "Settings.Appearance.UseAcrylicEffect";
@@ -90,6 +92,11 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.System
                 values,
                 LibraryLastRefreshAtKey);
 
+            settings.Library.ArtistGrouping = (ArtistGroupingMode)GetInt32(
+                values,
+                LibraryArtistGroupingKey,
+                (int)ArtistGroupingMode.Separate);
+
             settings.Appearance.Theme = (AppThemeKind)GetInt32(
                 values,
                 AppearanceThemeKey,
@@ -133,7 +140,8 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.System
 
             values[LibraryAutoRefreshOnStartupKey] = settings.Library.AutoRefreshOnStartup;
             values[LibraryIncludeSubfoldersKey] = settings.Library.IncludeSubfolders;
-            values[LibrarySupportedExtensionsKey] = JoinStringList(settings.Library.SupportedExtensions);
+            values[LibrarySupportedExtensionsKey] = JoinStringList(settings.Library.SupportedExtensions); 
+            values[LibraryArtistGroupingKey] = (int)settings.Library.ArtistGrouping;
 
             if (settings.Library.LastRefreshAt.HasValue)
             {
@@ -169,6 +177,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.System
             Remove(values, LibraryIncludeSubfoldersKey);
             Remove(values, LibrarySupportedExtensionsKey);
             Remove(values, LibraryLastRefreshAtKey);
+            Remove(values, LibraryArtistGroupingKey);
 
             Remove(values, AppearanceThemeKey);
             Remove(values, AppearanceUseAcrylicEffectKey);

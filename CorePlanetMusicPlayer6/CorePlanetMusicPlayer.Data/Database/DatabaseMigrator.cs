@@ -79,6 +79,7 @@ namespace CorePlanetMusicPlayer.Data.Database
                     title TEXT NOT NULL,
                     album_title TEXT NOT NULL,
                     artist_name TEXT NOT NULL,
+                    artist_names_json TEXT NOT NULL DEFAULT '[]',
                     album_artist_name TEXT NOT NULL,
                     genre TEXT NOT NULL,
                     year INTEGER NULL,
@@ -98,7 +99,7 @@ namespace CorePlanetMusicPlayer.Data.Database
                     added_at INTEGER NULL,
                     last_played_at INTEGER NULL
                 );");
-            
+
             ExecuteNonQuery(connection, @"
                 CREATE TABLE IF NOT EXISTS albums (
                     id TEXT PRIMARY KEY,
@@ -114,7 +115,7 @@ namespace CorePlanetMusicPlayer.Data.Database
                     added_at INTEGER NULL,
                     updated_at INTEGER NULL
                 );");
-            
+
             ExecuteNonQuery(connection, @"
                 CREATE TABLE IF NOT EXISTS artists (
                     id TEXT PRIMARY KEY,

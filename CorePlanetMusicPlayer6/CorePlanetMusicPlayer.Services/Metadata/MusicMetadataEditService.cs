@@ -1,6 +1,8 @@
-﻿using CorePlanetMusicPlayer.Core.Common;
+﻿using CorePlanetMusicPlayer.Core.Artists;
+using CorePlanetMusicPlayer.Core.Common;
 using CorePlanetMusicPlayer.Core.Music;
 using CorePlanetMusicPlayer.Data.Repositories;
+using CorePlanetMusicPlayer.Services.Library.Index;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,13 +15,16 @@ namespace CorePlanetMusicPlayer.Services.Metadata
     {
         private readonly IMusicRepository _musicRepository;
         private readonly IMusicMetadataWriter _metadataWriter;
+        private readonly IMusicIndexService _musicIndexService;
 
-        public MusicMetadataEditService( IMusicRepository musicRepository, IMusicMetadataWriter metadataWriter)
+        public MusicMetadataEditService( IMusicRepository musicRepository, IMusicMetadataWriter metadataWriter, IMusicIndexService musicIndexService)
         {
             Guard.NotNull(musicRepository, nameof(musicRepository));
+            Guard.NotNull(musicIndexService, nameof(musicIndexService));
 
             _musicRepository = musicRepository;
             _metadataWriter = metadataWriter;
+            _musicIndexService = musicIndexService;
         }
 
         public async Task<Result<Music>> UpdateAsync(MusicMetadataUpdateRequest request)
@@ -30,6 +35,8 @@ namespace CorePlanetMusicPlayer.Services.Metadata
             {
                 return Result<Music>.Failure(validationResult.ErrorMessage);
             }
+
+            request = request.CreateSnapshot();
 
             var music = await _musicRepository.GetByIdAsync(request.MusicId);
 
@@ -63,6 +70,16 @@ namespace CorePlanetMusicPlayer.Services.Metadata
             ApplyUpdate(music, request);
 
             await _musicRepository.UpsertAsync(music);
+
+            try
+            {
+                await _musicIndexService.RebuildAsync();
+            }
+            catch (Exception exception)
+            {
+                return Result<Music>.Failure(
+                    "歌曲元数据已保存，但专辑和艺术家索引更新失败。请重新构建索引。原因：" + exception.Message);
+            }
 
             return Result<Music>.Success(music);
         }
@@ -131,12 +148,15 @@ namespace CorePlanetMusicPlayer.Services.Metadata
                 music.Metadata.Title = title;
             }
 
-            if (request.HasArtistName)
+            if (request.HasArtistNames)
             {
-                var artistName = NormalizeText(request.ArtistName);
+                var artistNames = ArtistNameNormalizer.Normalize(request.ArtistNames);
 
-                music.ArtistName = artistName;
-                music.Metadata.ArtistName = artistName;
+                string displayName = string.Join("; ", artistNames);
+
+                music.Metadata.ArtistNames = artistNames;
+                music.Metadata.ArtistName = displayName;
+                music.ArtistName = displayName;
             }
 
             if (request.HasAlbumTitle)

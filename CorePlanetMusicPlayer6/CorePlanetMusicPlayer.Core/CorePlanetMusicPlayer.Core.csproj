@@ -123,7 +123,9 @@
     <Compile Include="Albums\Album.cs" />
     <Compile Include="Albums\AlbumId.cs" />
     <Compile Include="Artists\Artist.cs" />
+    <Compile Include="Artists\ArtistGroupingMode.cs" />
     <Compile Include="Artists\ArtistId.cs" />
+    <Compile Include="Artists\ArtistNameNormalizer.cs" />
     <Compile Include="Common\EntityId.cs" />
     <Compile Include="Common\Guard.cs" />
     <Compile Include="Common\Result.cs" />

@@ -1,4 +1,5 @@
-﻿using CorePlanetMusicPlayer.Playback.Modes;
+﻿using CorePlanetMusicPlayer.Core.Artists;
+using CorePlanetMusicPlayer.Playback.Modes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -125,12 +126,15 @@ namespace CorePlanetMusicPlayer.Services.Settings
 
         public DateTimeOffset? LastRefreshAt { get; set; }
 
+        public ArtistGroupingMode ArtistGrouping { get; set; } = ArtistGroupingMode.Separate;
+
         public static LibrarySettings CreateDefault()
         {
             return new LibrarySettings
             {
                 AutoRefreshOnStartup = false,
                 IncludeSubfolders = true,
+                ArtistGrouping = ArtistGroupingMode.Separate,
                 SupportedExtensions = CreateDefaultExtensions(),
                 LastRefreshAt = null
             };
@@ -146,6 +150,11 @@ namespace CorePlanetMusicPlayer.Services.Settings
             if (SupportedExtensions.Count == 0)
             {
                 SupportedExtensions = CreateDefaultExtensions();
+            }
+
+            if (!Enum.IsDefined(typeof(ArtistGroupingMode), ArtistGrouping))
+            {
+                ArtistGrouping = ArtistGroupingMode.Separate;
             }
 
             for (int i = 0; i < SupportedExtensions.Count; i++)

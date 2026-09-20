@@ -6,6 +6,7 @@ using CorePlanetMusicPlayer.Services.History;
 using CorePlanetMusicPlayer.Services.Library;
 using CorePlanetMusicPlayer.Services.Library.Albums;
 using CorePlanetMusicPlayer.Services.Library.Artists;
+using CorePlanetMusicPlayer.Services.Library.Index;
 using CorePlanetMusicPlayer.Services.Library.MusicQueries;
 using CorePlanetMusicPlayer.Services.Lyrics;
 using CorePlanetMusicPlayer.Services.Metadata;
@@ -42,6 +43,8 @@ namespace CorePlanetMusicPlayer6.Composition
         public ILibraryFolderRepository LibraryFolderRepository { get; set; }
 
         public ILyricRepository LyricRepository { get; set; }
+
+        public IMusicIndexService MusicIndexService { get; set; }
 
         public IMusicQueryService MusicQueryService { get; set; }
 

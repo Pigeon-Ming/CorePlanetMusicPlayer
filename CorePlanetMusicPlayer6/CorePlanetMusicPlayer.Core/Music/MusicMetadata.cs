@@ -22,9 +22,15 @@ namespace CorePlanetMusicPlayer.Core.Music
         public string Title { get; set; } = string.Empty;
 
         /// <summary>
-        /// 艺术家名称
+        /// 艺术家显示文本
         /// </summary>
         public string ArtistName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// 歌曲的参与艺术家名称集合。
+        /// 每一项表示一个完整名称，不根据标点符号自动拆分。
+        /// </summary>
+        public List<string> ArtistNames { get; set; } = new List<string>();
 
         /// <summary>
         /// 专辑标题

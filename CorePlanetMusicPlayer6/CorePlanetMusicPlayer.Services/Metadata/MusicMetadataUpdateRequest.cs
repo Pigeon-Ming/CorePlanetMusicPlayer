@@ -1,4 +1,5 @@
-﻿using CorePlanetMusicPlayer.Core.Music;
+﻿using CorePlanetMusicPlayer.Core.Artists;
+using CorePlanetMusicPlayer.Core.Music;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +15,9 @@ namespace CorePlanetMusicPlayer.Services.Metadata
         public bool HasTitle { get; private set; }
         public string Title { get; private set; }
 
-        public bool HasArtistName { get; private set; }
-        public string ArtistName { get; private set; }
+        public bool HasArtistNames { get; private set; }
+
+        public IReadOnlyList<string> ArtistNames { get; private set; } = new List<string>().AsReadOnly();
 
         public bool HasAlbumTitle { get; private set; }
         public string AlbumTitle { get; private set; }
@@ -45,12 +47,16 @@ namespace CorePlanetMusicPlayer.Services.Metadata
         {
             MusicId = musicId;
             Title = string.Empty;
-            ArtistName = string.Empty;
             AlbumTitle = string.Empty;
             AlbumArtistName = string.Empty;
             Genre = string.Empty;
             Composer = string.Empty;
             Comment = string.Empty;
+        }
+
+        internal MusicMetadataUpdateRequest CreateSnapshot()
+        {
+            return (MusicMetadataUpdateRequest)MemberwiseClone();
         }
 
         public static MusicMetadataUpdateRequest ForMusic(MusicId musicId)
@@ -67,8 +73,22 @@ namespace CorePlanetMusicPlayer.Services.Metadata
 
         public MusicMetadataUpdateRequest WithArtistName(string artistName)
         {
-            HasArtistName = true;
-            ArtistName = artistName ?? string.Empty;
+            return WithArtistNames(new[] { artistName });
+        }
+
+        public MusicMetadataUpdateRequest WithArtistNames(IEnumerable<string> artistNames)
+        {
+            if (artistNames == null)
+            {
+                throw new ArgumentNullException(nameof(artistNames));
+            }
+
+            // 创建独立副本，避免调用方之后修改原集合影响请求。
+            var names = ArtistNameNormalizer.Normalize(artistNames);
+
+            ArtistNames = names.AsReadOnly();
+            HasArtistNames = true;
+
             return this;
         }
 
@@ -132,7 +152,7 @@ namespace CorePlanetMusicPlayer.Services.Metadata
         {
             get
             {
-                return HasTitle || HasArtistName || HasAlbumTitle || HasAlbumArtistName || HasGenre || HasYear || HasTrackNumber || HasDiscNumber || HasComposer || HasComment;
+                return HasTitle || HasArtistNames || HasAlbumTitle || HasAlbumArtistName || HasGenre || HasYear || HasTrackNumber || HasDiscNumber || HasComposer || HasComment;
             }
         }
     }

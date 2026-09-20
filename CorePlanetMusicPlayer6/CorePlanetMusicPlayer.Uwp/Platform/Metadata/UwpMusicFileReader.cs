@@ -1,4 +1,5 @@
-﻿using CorePlanetMusicPlayer.Core.Library;
+﻿using CorePlanetMusicPlayer.Core.Artists;
+using CorePlanetMusicPlayer.Core.Library;
 using CorePlanetMusicPlayer.Core.Music;
 using CorePlanetMusicPlayer.Uwp.Platform.Storage;
 using System;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
+using Windows.Storage.FileProperties;
 
 namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
 {
@@ -61,7 +63,9 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
                 title = file.Name;
             }
 
-            string artistName = NormalizeText(properties.Artist);
+            var artistNames = await ReadArtistNamesAsync(properties);
+
+            string artistName = string.Join("; ", artistNames);
             string albumTitle = NormalizeText(properties.Album);
 
             var music = Music.CreateLocal(title, artistName, albumTitle, properties.Duration, fileInfo);
@@ -70,6 +74,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
             {
                 Title = music.Title,
                 ArtistName = music.ArtistName,
+                ArtistNames = artistNames,
                 AlbumTitle = music.AlbumTitle,
                 AlbumArtistName = NormalizeText(properties.AlbumArtist),
                 Genre = GetFirstValue(properties.Genre),
@@ -79,6 +84,37 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
             };
 
             return music;
+        }
+
+        private static async Task<List<string>> ReadArtistNamesAsync(MusicProperties properties)
+        {
+            const string propertyName = "System.Music.Artist";
+
+            var values = await properties.RetrievePropertiesAsync(new[] { propertyName });
+
+            object rawValue;
+
+            if (!values.TryGetValue(propertyName, out rawValue) || rawValue == null)
+            {
+                return new List<string>();
+            }
+
+            var names = rawValue as IEnumerable<string>;
+
+            if (names != null)
+            {
+                return ArtistNameNormalizer.Normalize(names);
+            }
+
+            // 如果返回单个字符串，将其作为一个完整名称。
+            var singleName = rawValue as string;
+
+            if (singleName != null)
+            {
+                return ArtistNameNormalizer.Normalize(new[] { singleName });
+            }
+
+            throw new InvalidOperationException("艺术家属性的数据类型不受支持。");
         }
 
         private static string NormalizeText(string value)

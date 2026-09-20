@@ -16,6 +16,8 @@ namespace CorePlanetMusicPlayer.Data.Entities
 
         public string ArtistName { get; set; } = string.Empty;
 
+        public string ArtistNamesJson { get; set; } = "[]";
+
         public string AlbumArtistName { get; set; } = string.Empty;
 
         public string Genre { get; set; } = string.Empty;

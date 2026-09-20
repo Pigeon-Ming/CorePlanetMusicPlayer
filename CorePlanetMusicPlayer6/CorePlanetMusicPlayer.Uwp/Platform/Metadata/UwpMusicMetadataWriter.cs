@@ -1,4 +1,5 @@
-﻿using CorePlanetMusicPlayer.Core.Common;
+﻿using CorePlanetMusicPlayer.Core.Artists;
+using CorePlanetMusicPlayer.Core.Common;
 using CorePlanetMusicPlayer.Core.Library;
 using CorePlanetMusicPlayer.Core.Music;
 using CorePlanetMusicPlayer.Data.Repositories;
@@ -28,9 +29,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
             _storageAccessService = storageAccessService;
         }
 
-        public async Task<Result> WriteAsync(
-            Music music,
-            MusicMetadataUpdateRequest request)
+        public async Task<Result> WriteAsync(Music music, MusicMetadataUpdateRequest request)
         {
             var validationResult = Validate(music, request);
 
@@ -39,25 +38,31 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
                 return validationResult;
             }
 
-            var file = await ResolveStorageFileAsync(music);
-
-            if (file == null)
-            {
-                return Result.Failure("无法访问音乐文件，可能是文件已移动、目录授权失效，或应用没有文件访问权限。");
-            }
-
             try
             {
-                var musicProperties = await file.Properties.GetMusicPropertiesAsync();
+                var file = await ResolveStorageFileAsync(music);
 
-                if (musicProperties == null)
+                if (file == null)
                 {
-                    return Result.Failure("无法读取音乐文件属性。");
+                    return Result.Failure("无法访问音乐文件，可能是文件已移动、目录授权失效，或应用没有文件访问权限。");
                 }
 
-                ApplyProperties(musicProperties, request);
+                var propertiesToSave = CreatePropertiesToSave(request);
 
-                await musicProperties.SavePropertiesAsync();
+                if (propertiesToSave.Count > 0)
+                {
+                    await file.Properties.SavePropertiesAsync(propertiesToSave);
+                }
+
+                if (request.HasArtistNames)
+                {
+                    bool matches = await VerifyArtistNamesAsync(file, request.ArtistNames);
+
+                    if (!matches)
+                    {
+                        return Result.Failure("文件写入后读取到的艺术家列表与请求不一致，数据库未更新。文件可能已经发生修改，请检查文件标签后重新扫描。");
+                    }
+                }
 
                 return Result.Success();
             }
@@ -67,7 +72,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
             }
             catch (Exception ex)
             {
-                return Result.Failure("写入音乐文件元数据失败：" + ex.Message);
+                return Result.Failure("写入或核对音乐文件元数据失败：" + ex.Message);
             }
         }
 
@@ -100,55 +105,93 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
             return await _storageAccessService.GetStorageFileAsync(music, folder);
         }
 
-        private static void ApplyProperties(MusicProperties properties, MusicMetadataUpdateRequest request)
+        private static Dictionary<string, object> CreatePropertiesToSave(MusicMetadataUpdateRequest request)
         {
+            var values = new Dictionary<string, object>();
+
             if (request.HasTitle)
             {
-                properties.Title = NormalizeText(request.Title);
+                values["System.Title"] = NormalizeText(request.Title);
             }
 
-            if (request.HasArtistName)
+            if (request.HasArtistNames)
             {
-                properties.Artist = NormalizeText(request.ArtistName);
+                values["System.Music.Artist"] = request.ArtistNames.ToArray();
             }
 
             if (request.HasAlbumTitle)
             {
-                properties.Album = NormalizeText(request.AlbumTitle);
+                values["System.Music.AlbumTitle"] = NormalizeText(request.AlbumTitle);
             }
 
             if (request.HasAlbumArtistName)
             {
-                properties.AlbumArtist = NormalizeText(request.AlbumArtistName);
+                values["System.Music.AlbumArtist"] = NormalizeText(request.AlbumArtistName);
             }
 
             if (request.HasYear)
             {
-                properties.Year = NormalizeUInt(request.Year);
+                values["System.Media.Year"] = NormalizeUInt(request.Year);
             }
 
             if (request.HasTrackNumber)
             {
-                properties.TrackNumber = NormalizeUInt(request.TrackNumber);
+                values["System.Music.TrackNumber"] = NormalizeUInt(request.TrackNumber);
             }
 
             if (request.HasGenre)
             {
-                SetSingleValueList(
-                    properties.Genre,
-                    request.Genre);
+                values["System.Music.Genre"] = CreateSingleValueArray(request.Genre);
             }
 
             if (request.HasComposer)
             {
-                SetSingleValueList(
-                    properties.Composers,
-                    request.Composer);
+                values["System.Music.Composer"] = CreateSingleValueArray(request.Composer);
             }
 
-            // UWP MusicProperties 没有通用 Comment 字段。
-            // request.HasComment 在这里先不写入文件。
-            // MusicMetadataEditService 仍然会在写入成功后把 Comment 保存到数据库。
+            // 沿用当前行为：DiscNumber、Comment 暂时只更新数据库。
+            return values;
+        }
+
+        private static string[] CreateSingleValueArray(string value)
+        {
+            string normalized = NormalizeText(value);
+
+            return normalized.Length == 0
+                ? new string[0]
+                : new[] { normalized };
+        }
+
+        private static async Task<bool> VerifyArtistNamesAsync(StorageFile file, IReadOnlyList<string> expectedNames)
+        {
+            const string propertyName = "System.Music.Artist";
+
+            var values = await file.Properties.RetrievePropertiesAsync(new[] { propertyName });
+
+            object rawValue;
+            IEnumerable<string> names;
+
+            if (!values.TryGetValue(propertyName, out rawValue) || rawValue == null)
+            {
+                names = new string[0];
+            }
+            else if (rawValue is string)
+            {
+                names = new[] { (string)rawValue };
+            }
+            else
+            {
+                names = rawValue as IEnumerable<string>;
+
+                if (names == null)
+                {
+                    return false;
+                }
+            }
+
+            var actualNames = ArtistNameNormalizer.Normalize(names);
+
+            return actualNames.SequenceEqual(expectedNames, StringComparer.Ordinal);
         }
 
         private static Result Validate(Music music, MusicMetadataUpdateRequest request)

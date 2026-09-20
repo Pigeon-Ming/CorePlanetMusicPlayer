@@ -128,9 +128,13 @@ namespace CorePlanetMusicPlayer6.Composition
 
             var libraryScanner = new UwpLibraryScanner(services.StorageAccessService, services.StorageFileMapper, musicFileReader);
 
+            services.SettingsService = new SettingsService(services.SettingsStore);
+
             var libraryWriteCoordinator = new LibraryWriteCoordinator();
 
-            var musicIndexService = new MusicIndexService(services.MusicRepository, services.AlbumRepository, services.ArtistRepository, new MusicIndexBuilder(), libraryWriteCoordinator);
+            var musicIndexService = new MusicIndexService(services.MusicRepository, services.AlbumRepository, services.ArtistRepository, new MusicIndexBuilder(), libraryWriteCoordinator, services.SettingsService);
+
+            services.MusicIndexService = musicIndexService;
 
             services.MusicQueryService = new MusicQueryService(services.MusicRepository);
 
@@ -152,9 +156,7 @@ namespace CorePlanetMusicPlayer6.Composition
 
             services.PlaybackStatisticsService = new PlaybackStatisticsService(services.PlaybackHistoryRepository, services.MusicRepository);
 
-            services.MusicMetadataEditService = new MusicMetadataEditService(services.MusicRepository, services.MusicMetadataWriter);
-
-            services.SettingsService = new SettingsService(services.SettingsStore);
+            services.MusicMetadataEditService = new MusicMetadataEditService(services.MusicRepository, services.MusicMetadataWriter, musicIndexService);
         }
 
         private static void ConnectSystemMediaControls(AppServices services)

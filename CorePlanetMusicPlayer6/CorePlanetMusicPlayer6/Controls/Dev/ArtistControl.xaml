@@ -67,16 +67,10 @@
                     </ListView.GroupStyle>-->
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="24" />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Grid.Column="1">
-                                    <TextBlock Text="{Binding Title}" />
-                                    <TextBlock Text="{Binding ArtistName}" />
-                                </StackPanel>
-                            </Grid>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Title}" />
+                                <TextBlock Text="{Binding ArtistName}" />
+                            </StackPanel>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>

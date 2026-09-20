@@ -7,8 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="300"
     d:DesignWidth="400"
-    mc:Ignorable="d"
-    Loaded="UserControl_Loaded">
+    Loaded="UserControl_Loaded"
+    mc:Ignorable="d">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -42,6 +42,34 @@
                     Click="AddToPlayQueueButton_Click"
                     IsEnabled="False"
                     Label="添加到播放队列" />
+                <AppBarSeparator />
+                <AppBarButton Label="合作歌曲分类方式">
+                    <AppBarButton.Flyout>
+                        <MenuFlyout>
+                            <ToggleMenuFlyoutItem
+                                x:Name="SeparateArtistsMenuItem"
+                                Click="SeparateArtistsMenuItem_Click"
+                                Text="拆分多位艺术家" />
+                            <ToggleMenuFlyoutItem
+                                x:Name="CombinedArtistsMenuItem"
+                                Click="CombinedArtistsMenuItem_Click"
+                                Text="合并多位艺术家" />
+                        </MenuFlyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+                <AppBarSeparator />
+
+                <AppBarToggleButton
+                    x:Name="ShowEmptyArtistsButton"
+                    Click="ShowEmptyArtistsButton_Click"
+                    IsChecked="False"
+                    Label="显示无歌曲艺术家" />
+
+                <AppBarButton
+                    x:Name="DeleteArtistButton"
+                    Click="DeleteArtistButton_Click"
+                    IsEnabled="False"
+                    Label="删除选中的空艺术家" />
             </CommandBar.SecondaryCommands>
         </CommandBar>
         <ListView

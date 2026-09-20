@@ -1,4 +1,5 @@
-﻿using CorePlanetMusicPlayer.Core.Common;
+﻿using CorePlanetMusicPlayer.Core.Artists;
+using CorePlanetMusicPlayer.Core.Common;
 using CorePlanetMusicPlayer.Core.Library;
 using CorePlanetMusicPlayer.Core.Music;
 using CorePlanetMusicPlayer.Data.Repositories;
@@ -112,6 +113,7 @@ namespace CorePlanetMusicPlayer.Services.Library
                     {
                         Title = scanned.Title,
                         ArtistName = scanned.ArtistName,
+                        ArtistNames = ArtistNameNormalizer.Normalize(metadata.ArtistNames),
                         AlbumTitle = scanned.AlbumTitle,
                         AlbumArtistName = metadata.AlbumArtistName,
                         Genre = metadata.Genre,

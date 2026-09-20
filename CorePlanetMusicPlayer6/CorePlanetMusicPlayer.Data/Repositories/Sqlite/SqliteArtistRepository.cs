@@ -151,14 +151,65 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
             }
         }
 
-        public Task DeleteAsync(ArtistId id)
+        public Task DeleteIfEmptyAsync(ArtistId artistId)
         {
-            using (var connection = _database.CreateOpenConnection())
-            using (var command = connection.CreateCommand())
+            if (artistId.IsEmpty)
             {
-                command.CommandText = "delete from artists where id = $id;";
-                command.Parameters.AddWithValue("$id", id.ToString());
-                command.ExecuteNonQuery();
+                throw new ArgumentException("艺术家 ID 不能为空。", nameof(artistId));
+            }
+
+            using (var connection = _database.CreateOpenConnection())
+            using (var transaction = connection.BeginTransaction())
+            {
+                Artist artist;
+
+                using (var command = connection.CreateCommand())
+                {
+                    command.Transaction = transaction;
+
+                    command.CommandText = @"
+                        SELECT *
+                        FROM artists
+                        WHERE id = $id
+                        LIMIT 1;
+                    ";
+
+                    command.Parameters.AddWithValue("$id", artistId.ToString());
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (!reader.Read())
+                        {
+                            throw new InvalidOperationException("该艺术家已不存在，请刷新艺术家列表。");
+                        }
+
+                        artist = ArtistDataMapper.ToModel(ReadEntity(reader));
+                    }
+                }
+
+                if (artist.MusicCount > 0)
+                {
+                    throw new InvalidOperationException("该艺术家仍有关联歌曲，不能删除。");
+                }
+
+                using (var command = connection.CreateCommand())
+                {
+                    command.Transaction = transaction;
+
+                    command.CommandText = @"
+                        DELETE FROM artists
+                        WHERE id = $id;
+                    ";
+
+                    command.Parameters.AddWithValue("$id", artistId.ToString());
+
+                    if (command.ExecuteNonQuery() != 1)
+                    {
+                        throw new InvalidOperationException("艺术家删除失败，请刷新列表后重试。");
+                    }
+                }
+
+                transaction.Commit();
             }
 
             return Task.CompletedTask;

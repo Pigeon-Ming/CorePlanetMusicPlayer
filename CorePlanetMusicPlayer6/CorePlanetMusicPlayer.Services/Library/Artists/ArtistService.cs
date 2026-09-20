@@ -117,6 +117,16 @@ namespace CorePlanetMusicPlayer.Services.Library.Artists
                 missingAlbumIds);
         }
 
+        public Task DeleteAsync(ArtistId artistId)
+        {
+            if (artistId.IsEmpty)
+            {
+                throw new ArgumentException("艺术家 ID 不能为空。", nameof(artistId));
+            }
+
+            return _writeCoordinator.ExecuteAsync(() => _artistRepository.DeleteIfEmptyAsync(artistId));
+        }
+
         public Task UpdateDescriptionAsync(ArtistId artistId, string description)
         {
             if (artistId.IsEmpty)

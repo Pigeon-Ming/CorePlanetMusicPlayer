@@ -130,9 +130,19 @@ namespace CorePlanetMusicPlayer.Services.Library.Index
                 .Count();
         }
 
-        public IReadOnlyList<Artist> BuildArtists(IEnumerable<Music> musicList, IEnumerable<Album> albumList)
+        public IReadOnlyList<Artist> BuildArtists(IEnumerable<Music> musicList, IEnumerable<Album> albumList, ArtistGroupingMode groupingMode)
         {
-            var artists = new Dictionary<string, Artist>();
+            if (!Enum.IsDefined(typeof(ArtistGroupingMode), groupingMode))
+            {
+                throw new ArgumentOutOfRangeException(nameof(groupingMode));
+            }
+
+            var artists = new Dictionary<string, Artist>(StringComparer.Ordinal);
+
+            // 记录每首音乐实际属于哪些艺术家，用于建立专辑关联。
+            var artistsByMusicId = new Dictionary<MusicId, List<Artist>>();
+
+            var now = DateTimeOffset.Now;
 
             if (musicList != null)
             {
@@ -143,33 +153,45 @@ namespace CorePlanetMusicPlayer.Services.Library.Index
                         continue;
                     }
 
-                    var artistName = NormalizeArtistName(music.ArtistName);
-
-                    Artist artist;
-
-                    if (!artists.TryGetValue(artistName, out artist))
+                    // 同一个 MusicId 只处理一次，防止重复累计数量和时长。
+                    if (artistsByMusicId.ContainsKey(music.Id))
                     {
-                        artist = new Artist
-                        {
-                            Id = ArtistId.NewId(),
-                            Name = artistName,
-                            SortName = artistName,
-                            MusicIds = new List<MusicId>(),
-                            AlbumIds = new List<AlbumId>(),
-                            TotalDuration = TimeSpan.Zero,
-                            AddedAt = DateTimeOffset.Now,
-                            UpdatedAt = DateTimeOffset.Now
-                        };
-
-                        artists[artistName] = artist;
+                        continue;
                     }
 
-                    if (!ContainsMusicId(artist.MusicIds, music.Id))
+                    var musicArtists = new List<Artist>();
+                    var names = GetArtistGroupingNames(music, groupingMode);
+
+                    foreach (string name in names)
                     {
+                        Artist artist;
+
+                        if (!artists.TryGetValue(name, out artist))
+                        {
+                            artist = new Artist
+                            {
+                                Id = ArtistId.NewId(),
+                                Name = name,
+                                SortName = name,
+
+                                MusicIds = new List<MusicId>(),
+                                AlbumIds = new List<AlbumId>(),
+                                TotalDuration = TimeSpan.Zero,
+
+                                AddedAt = now,
+                                UpdatedAt = now
+                            };
+
+                            artists.Add(name, artist);
+                        }
+
                         artist.MusicIds.Add(music.Id);
                         artist.TotalDuration += music.Duration;
-                        artist.UpdatedAt = DateTimeOffset.Now;
+
+                        musicArtists.Add(artist);
                     }
+
+                    artistsByMusicId.Add(music.Id, musicArtists);
                 }
             }
 
@@ -177,36 +199,27 @@ namespace CorePlanetMusicPlayer.Services.Library.Index
             {
                 foreach (var album in albumList)
                 {
-                    if (album == null || album.Id.IsEmpty)
+                    if (album == null || album.Id.IsEmpty || album.MusicIds == null)
                     {
                         continue;
                     }
 
-                    var artistName = NormalizeArtistName(album.ArtistName);
-
-                    Artist artist;
-
-                    if (!artists.TryGetValue(artistName, out artist))
+                    foreach (var musicId in album.MusicIds)
                     {
-                        artist = new Artist
+                        List<Artist> musicArtists;
+
+                        if (!artistsByMusicId.TryGetValue(musicId, out musicArtists))
                         {
-                            Id = ArtistId.NewId(),
-                            Name = artistName,
-                            SortName = artistName,
-                            MusicIds = new List<MusicId>(),
-                            AlbumIds = new List<AlbumId>(),
-                            TotalDuration = TimeSpan.Zero,
-                            AddedAt = DateTimeOffset.Now,
-                            UpdatedAt = DateTimeOffset.Now
-                        };
+                            continue;
+                        }
 
-                        artists[artistName] = artist;
-                    }
-
-                    if (!ContainsAlbumId(artist.AlbumIds, album.Id))
-                    {
-                        artist.AlbumIds.Add(album.Id);
-                        artist.UpdatedAt = DateTimeOffset.Now;
+                        foreach (var artist in musicArtists)
+                        {
+                            if (!ContainsAlbumId(artist.AlbumIds, album.Id))
+                            {
+                                artist.AlbumIds.Add(album.Id);
+                            }
+                        }
                     }
                 }
             }
@@ -241,6 +254,25 @@ namespace CorePlanetMusicPlayer.Services.Library.Index
             return string.IsNullOrWhiteSpace(name)
                 ? "未知艺术家"
                 : name;
+        }
+
+        private static List<string> GetArtistGroupingNames(Music music, ArtistGroupingMode groupingMode)
+        {
+            var names = ArtistNameNormalizer.Normalize(
+                music.Metadata?.ArtistNames);
+
+            if (names.Count == 0)
+            {
+                // 兼容只有显示名称的数据，不按照分隔符猜测拆分。
+                names.Add(NormalizeArtistName(music.ArtistName));
+            }
+
+            if (groupingMode == ArtistGroupingMode.Combined)
+            {
+                return new List<string> { string.Join("; ", names)};
+            }
+
+            return names;
         }
 
         private string GetAlbumArtistName(Music music)

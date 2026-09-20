@@ -15,6 +15,11 @@ namespace CorePlanetMusicPlayer.Services.Library.Artists
 
         Task<ArtistDetails> GetDetailsAsync(ArtistId artistId);
 
+        /// <summary>
+        /// 删除没有关联歌曲的艺术家及其资料。
+        /// </summary>
+        Task DeleteAsync(ArtistId artistId);
+
         Task UpdateDescriptionAsync(ArtistId artistId, string description);
     }
 }

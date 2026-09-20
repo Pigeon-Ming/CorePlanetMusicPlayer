@@ -275,6 +275,7 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
                     title,
                     album_title,
                     artist_name,
+                    artist_names_json,
                     album_artist_name,
                     genre,
                     year,
@@ -298,6 +299,7 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
                     $title,
                     $albumTitle,
                     $artistName,
+                    $artistNamesJson,
                     $albumArtistName,
                     $genre,
                     $year,
@@ -322,6 +324,7 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
             command.Parameters.AddWithValue("$title", entity.Title);
             command.Parameters.AddWithValue("$albumTitle", entity.AlbumTitle);
             command.Parameters.AddWithValue("$artistName", entity.ArtistName);
+            command.Parameters.AddWithValue("$artistNamesJson", entity.ArtistNamesJson ?? "[]");
             command.Parameters.AddWithValue("$albumArtistName", entity.AlbumArtistName);
             command.Parameters.AddWithValue("$genre", entity.Genre);
             command.Parameters.AddWithValue("$year", (object)entity.Year ?? System.DBNull.Value);
@@ -350,6 +353,7 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
                 Title = reader.GetStringOrEmpty("title"),
                 AlbumTitle = reader.GetStringOrEmpty("album_title"),
                 ArtistName = reader.GetStringOrEmpty("artist_name"),
+                ArtistNamesJson = reader.GetStringOrEmpty("artist_names_json"),
                 AlbumArtistName = reader.GetStringOrEmpty("album_artist_name"),
                 Genre = reader.GetStringOrEmpty("genre"),
                 Year = reader.GetNullableInt32("year"),

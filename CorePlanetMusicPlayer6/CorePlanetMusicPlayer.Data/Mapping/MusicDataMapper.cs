@@ -1,8 +1,11 @@
-﻿using CorePlanetMusicPlayer.Core.Music;
+﻿using CorePlanetMusicPlayer.Core.Artists;
+using CorePlanetMusicPlayer.Core.Music;
 using CorePlanetMusicPlayer.Data.Entities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,6 +25,7 @@ namespace CorePlanetMusicPlayer.Data.Mapping
                 Title = entity.Title ?? string.Empty,
                 ArtistName = entity.ArtistName ?? string.Empty,
                 AlbumTitle = entity.AlbumTitle ?? string.Empty,
+                ArtistNames = DeserializeArtistNames(entity.ArtistNamesJson),
                 AlbumArtistName = entity.AlbumArtistName ?? string.Empty,
                 Genre = entity.Genre ?? string.Empty,
                 Year = entity.Year,
@@ -73,7 +77,7 @@ namespace CorePlanetMusicPlayer.Data.Mapping
                 Title = music.Title ?? string.Empty,
                 AlbumTitle = music.AlbumTitle ?? string.Empty,
                 ArtistName = music.ArtistName ?? string.Empty,
-
+                ArtistNamesJson = SerializeArtistNames(metadata.ArtistNames),
                 AlbumArtistName = metadata.AlbumArtistName ?? string.Empty,
                 Genre = metadata.Genre ?? string.Empty,
                 Year = metadata.Year,
@@ -98,6 +102,39 @@ namespace CorePlanetMusicPlayer.Data.Mapping
                 AddedAtUnixTimeMilliseconds = DataValueConverter.ToUnixTimeMilliseconds(music.AddedAt),
                 LastPlayedAtUnixTimeMilliseconds = DataValueConverter.ToUnixTimeMilliseconds(music.LastPlayedAt)
             };
+        }
+
+        private static string SerializeArtistNames(IEnumerable<string> artistNames)
+        {
+            var names = ArtistNameNormalizer.Normalize(artistNames).ToArray();
+
+            var serializer = new DataContractJsonSerializer(typeof(string[]));
+
+            using (var stream = new MemoryStream())
+            {
+                serializer.WriteObject(stream, names);
+
+                return Encoding.UTF8.GetString(stream.ToArray());
+            }
+        }
+
+        private static List<string> DeserializeArtistNames(string json)
+        {
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return new List<string>();
+            }
+
+            var serializer = new DataContractJsonSerializer(typeof(string[]));
+
+            byte[] bytes = Encoding.UTF8.GetBytes(json);
+
+            using (var stream = new MemoryStream(bytes))
+            {
+                var names = (string[])serializer.ReadObject(stream);
+
+                return ArtistNameNormalizer.Normalize(names);
+            }
         }
     }
 }

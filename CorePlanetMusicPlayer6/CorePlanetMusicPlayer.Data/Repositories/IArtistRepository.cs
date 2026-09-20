@@ -21,7 +21,7 @@ namespace CorePlanetMusicPlayer.Data.Repositories
 
         Task<bool> UpdateDescriptionAsync(ArtistId artistId, string description, DateTimeOffset updatedAt);
 
-        Task DeleteAsync(ArtistId id);
+        Task DeleteIfEmptyAsync(ArtistId artistId);
 
         Task ClearAsync();
     }

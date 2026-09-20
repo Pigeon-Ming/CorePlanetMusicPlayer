@@ -28,6 +28,8 @@ namespace CorePlanetMusicPlayer6.Composition
             await LoadSettingsAsync();
             await ApplySettingsAsync();
 
+            await Services.MusicIndexService.RebuildAsync();
+
             return Services;
         }
 
