@@ -14,6 +14,7 @@ using CorePlanetMusicPlayer.Services.Library.MusicQueries;
 using CorePlanetMusicPlayer.Services.Library.Years;
 using CorePlanetMusicPlayer.Services.Lyrics;
 using CorePlanetMusicPlayer.Services.Metadata;
+using CorePlanetMusicPlayer.Services.Playback;
 using CorePlanetMusicPlayer.Services.Playlists;
 using CorePlanetMusicPlayer.Services.Settings;
 using CorePlanetMusicPlayer.Services.Statistics;
@@ -163,6 +164,8 @@ namespace CorePlanetMusicPlayer6.Composition
             services.PlaybackStatisticsService = new PlaybackStatisticsService(services.PlaybackHistoryRepository, services.MusicRepository);
 
             services.MusicMetadataEditService = new MusicMetadataEditService(services.MusicRepository, services.MusicMetadataWriter, musicIndexService);
+
+            services.PlaybackSessionService = new PlaybackSessionService(services.PlaybackService, services.SettingsService, new UwpPlaybackSessionStore());
         }
 
         private static void ConnectSystemMediaControls(AppServices services)
@@ -171,7 +174,7 @@ namespace CorePlanetMusicPlayer6.Composition
 
             services.SystemMediaControlsService.PlayRequested += async (sender, args) =>
             {
-                await services.PlaybackService.ResumeAsync();
+                await services.PlaybackService.StartOrResumeAsync();
             };
 
             services.SystemMediaControlsService.PauseRequested += async (sender, args) =>

@@ -127,6 +127,7 @@
     <Compile Include="Platform\Metadata\UwpMusicMetadataWriter.cs" />
     <Compile Include="Platform\Playback\UwpAudioPlayer.cs" />
     <Compile Include="Platform\Playback\UwpMediaSourceFactory.cs" />
+    <Compile Include="Platform\Playback\UwpPlaybackSessionStore.cs" />
     <Compile Include="Platform\Playback\UwpSystemMediaControlsService.cs" />
     <Compile Include="Platform\Storage\UwpFilePickerService.cs" />
     <Compile Include="Platform\Storage\UwpFolderPickerService.cs" />

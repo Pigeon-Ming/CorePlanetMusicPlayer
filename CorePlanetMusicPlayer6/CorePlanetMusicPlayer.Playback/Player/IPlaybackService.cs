@@ -82,5 +82,10 @@ namespace CorePlanetMusicPlayer.Playback.Player
         Task SetVolumeAsync(double volume);
 
         Task SetPlaybackModeAsync(PlaybackMode mode);
+
+        /// <summary>
+        /// 恢复队列和播放模式，不自动播放。
+        /// </summary>
+        Task RestoreQueueAsync(PlaybackQueueSnapshot snapshot, PlaybackMode mode);
     }
 }

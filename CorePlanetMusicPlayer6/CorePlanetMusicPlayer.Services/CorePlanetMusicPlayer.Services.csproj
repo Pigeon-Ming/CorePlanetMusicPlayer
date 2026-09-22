@@ -159,6 +159,9 @@
     <Compile Include="Metadata\IMusicMetadataWriter.cs" />
     <Compile Include="Metadata\MusicMetadataEditService.cs" />
     <Compile Include="Metadata\MusicMetadataUpdateRequest.cs" />
+    <Compile Include="Playback\IPlaybackSessionStore.cs" />
+    <Compile Include="Playback\PlaybackSessionData.cs" />
+    <Compile Include="Playback\PlaybackSessionService.cs" />
     <Compile Include="Playlists\IPlaylistService.cs" />
     <Compile Include="Playlists\PlaylistService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

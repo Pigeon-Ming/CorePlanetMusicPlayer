@@ -65,6 +65,7 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
             _playbackService.PlaybackModeChanged += PlaybackService_QueueChanged;
 
             StatusTextBlock.Text = string.Empty;
+            RestorePlaybackButton.IsChecked = _services.PlaybackSessionService.RestoreOnStartup;
 
             await ReloadAsync();
         }
@@ -439,6 +440,59 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
             await RunOperationAsync(
                 service => service.ClearQueueAsync(),
                 "已停止播放并清空队列。");
+        }
+
+        private async void RestorePlaybackButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!_isAttached)
+            {
+                return;
+            }
+
+            var sessionService = _services.PlaybackSessionService;
+
+            if (_isBusy || _isLoading)
+            {
+                RestorePlaybackButton.IsChecked = sessionService.RestoreOnStartup;
+                return;
+            }
+
+            bool enabled = RestorePlaybackButton.IsChecked == true;
+            int lifetime = _lifetimeVersion;
+
+            _isBusy = true;
+            UpdateSelectionState();
+
+            try
+            {
+                await sessionService.SetRestoreOnStartupAsync(enabled);
+
+                if (_isAttached && lifetime == _lifetimeVersion)
+                {
+                    StatusTextBlock.Text = enabled
+                        ? "已启用，下次启动将恢复播放队列。"
+                        : "已关闭，下次启动不恢复播放队列。";
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+
+                if (_isAttached && lifetime == _lifetimeVersion)
+                {
+                    StatusTextBlock.Text = $"设置保存失败：{ex.Message}";
+                }
+            }
+            finally
+            {
+                if (_isAttached && lifetime == _lifetimeVersion)
+                {
+                    RestorePlaybackButton.IsChecked = sessionService.RestoreOnStartup;
+
+                    _isBusy = false;
+                    UpdateSelectionState();
+                }
+            }
         }
     }
 

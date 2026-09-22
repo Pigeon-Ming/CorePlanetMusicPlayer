@@ -122,6 +122,15 @@ namespace CorePlanetMusicPlayer.Playback.Player
             Touch();
         }
 
+        /// <summary>
+        /// 恢复当前歌曲的选择，保持停止状态。
+        /// </summary>
+        public void RestoreStopped(MusicId? musicId)
+        {
+            SetStopped();
+            CurrentMusicId = musicId;
+        }
+
         private void Touch()
         {
             UpdatedAt = DateTime.Now;

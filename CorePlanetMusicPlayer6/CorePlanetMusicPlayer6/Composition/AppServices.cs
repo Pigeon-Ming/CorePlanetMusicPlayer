@@ -12,6 +12,7 @@ using CorePlanetMusicPlayer.Services.Library.MusicQueries;
 using CorePlanetMusicPlayer.Services.Library.Years;
 using CorePlanetMusicPlayer.Services.Lyrics;
 using CorePlanetMusicPlayer.Services.Metadata;
+using CorePlanetMusicPlayer.Services.Playback;
 using CorePlanetMusicPlayer.Services.Playlists;
 using CorePlanetMusicPlayer.Services.Settings;
 using CorePlanetMusicPlayer.Services.Statistics;
@@ -96,6 +97,8 @@ namespace CorePlanetMusicPlayer6.Composition
         public UwpDeviceInfoService DeviceInfoService { get; set; }
 
         public UwpSettingsStore SettingsStore { get; set; }
+
+        public PlaybackSessionService PlaybackSessionService { get; set; }
 
         public LyricSearchService LyricSearchService { get; set; }
     }

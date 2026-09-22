@@ -416,6 +416,38 @@ namespace CorePlanetMusicPlayer.Playback.Player
             return newPosition;
         }
 
+        public Task RestoreQueueAsync(PlaybackQueueSnapshot snapshot, PlaybackMode mode)
+        {
+            if (!Enum.IsDefined(typeof(PlaybackMode), mode))
+            {
+                throw new ArgumentOutOfRangeException(nameof(mode));
+            }
+
+            // 先验证并复制输入，失败时不影响当前播放。
+            var preparedQueue = new PlaybackQueue();
+            preparedQueue.Restore(snapshot);
+
+            var preparedSnapshot = preparedQueue.CreateSnapshot();
+
+            return ExecuteCommandAsync(async () =>
+            {
+                var oldStatus = _state.Status;
+                var oldMusicId = _state.CurrentMusicId;
+                var oldPosition = _state.Position;
+
+                await _audioPlayer.StopAsync();
+
+                _queue.Restore(preparedSnapshot);
+
+                _state.RestoreStopped(_queue.GetCurrent());
+                _state.UpdateMode(mode);
+
+                RaiseCurrentMusicChanged(oldMusicId, _state.CurrentMusicId);
+                RaisePositionChanged(oldPosition, _state.Position);
+                RaiseStateChanged(oldStatus, _state.Status);
+            });
+        }
+
         private async Task StartOrResumeCoreAsync()
         {
             if (_state.IsPlaying || _state.Status == PlaybackStatus.Loading)
