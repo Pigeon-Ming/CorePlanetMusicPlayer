@@ -39,15 +39,7 @@ namespace CorePlanetMusicPlayer.Playback.Queue
 
         public int CurrentShuffleIndex
         {
-            get
-            {
-                if (_currentItemId == null)
-                {
-                    return -1;
-                }
-
-                return _shuffleItemIds.FindIndex(itemId =>string.Equals(itemId, _currentItemId, StringComparison.Ordinal));
-            }
+            get { return GetShuffleItemIndex(_currentItemId); }
         }
 
         public bool HasCurrent
@@ -239,6 +231,17 @@ namespace CorePlanetMusicPlayer.Playback.Queue
             return _items.FindIndex(item => string.Equals(item.Id, itemId, StringComparison.Ordinal));
         }
 
+        public int GetShuffleItemIndex(string itemId)
+        {
+            if (string.IsNullOrWhiteSpace(itemId))
+            {
+                return -1;
+            }
+
+            return _shuffleItemIds.FindIndex(
+                id => string.Equals(id, itemId, StringComparison.Ordinal));
+        }
+
         public PlaybackQueueItem GetNextItem()
         {
             int currentIndex = CurrentIndex;
@@ -345,13 +348,113 @@ namespace CorePlanetMusicPlayer.Playback.Queue
             return false;
         }
 
+        public bool MoveItem(string itemId, int newIndex)
+        {
+            int oldIndex = GetItemIndex(itemId);
+
+            if (oldIndex < 0)
+            {
+                return false;
+            }
+
+            if (newIndex < 0 || newIndex >= _items.Count)
+            {
+                throw new ArgumentOutOfRangeException(nameof(newIndex));
+            }
+
+            if (oldIndex == newIndex)
+            {
+                return false;
+            }
+
+            var preparedItems = _items.Select(item => item.Clone()).ToList();
+
+            var itemToMove = preparedItems[oldIndex];
+
+            preparedItems.RemoveAt(oldIndex);
+            preparedItems.Insert(newIndex, itemToMove);
+
+            for (int i = 0; i < preparedItems.Count; i++)
+            {
+                preparedItems[i].Order = i;
+            }
+
+            // 当前项仍由 ID 定位，随机顺序保持原样。
+            ReplaceItems(preparedItems, _currentItemId, _shuffleItemIds);
+
+            return true;
+        }
+
+        public bool MoveShuffleItem(string itemId, int newIndex)
+        {
+            int oldIndex = GetShuffleItemIndex(itemId);
+
+            if (oldIndex < 0)
+            {
+                return false;
+            }
+
+            if (newIndex < 0 || newIndex >= _shuffleItemIds.Count)
+            {
+                throw new ArgumentOutOfRangeException(nameof(newIndex));
+            }
+
+            if (oldIndex == newIndex)
+            {
+                return false;
+            }
+
+            var preparedShuffleItemIds = new List<string>(_shuffleItemIds);
+
+            string itemToMove = preparedShuffleItemIds[oldIndex];
+
+            preparedShuffleItemIds.RemoveAt(oldIndex);
+            preparedShuffleItemIds.Insert(newIndex, itemToMove);
+
+            var preparedItems = _items
+                .Select(item => item.Clone())
+                .ToList();
+
+            // 普通顺序和当前项保持原样，只替换随机顺序。
+            ReplaceItems(
+                preparedItems,
+                _currentItemId,
+                preparedShuffleItemIds);
+
+            return true;
+        }
+
+        public bool RemoveItem(string itemId)
+        {
+            int index = GetItemIndex(itemId);
+
+            if (index < 0)
+            {
+                return false;
+            }
+
+            var preparedItems = _items.Where(item => item.Id != itemId).Select(item => item.Clone()).ToList();
+
+            for (int i = 0; i < preparedItems.Count; i++)
+            {
+                preparedItems[i].Order = i;
+            }
+
+            var preparedShuffleIds = _shuffleItemIds.Where(id => id != itemId).ToList();
+
+            string currentItemId = _currentItemId == itemId ? null : _currentItemId;
+
+            ReplaceItems(preparedItems, currentItemId, preparedShuffleIds);
+
+            return true;
+        }
+
         public void Clear()
         {
             _items.Clear();
             _shuffleItemIds.Clear();
             _currentItemId = null;
         }
-
 
         private List<string> CreateShuffleOrder(List<PlaybackQueueItem> items)
         {

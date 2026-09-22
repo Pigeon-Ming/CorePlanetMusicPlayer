@@ -34,12 +34,12 @@
             </HubSection>
             <HubSection Header="正在播放">
                 <DataTemplate>
-                    <TextBlock Text="占位" />
+                    <dev:PlayingControl />
                 </DataTemplate>
             </HubSection>
             <HubSection Header="播放队列">
                 <DataTemplate>
-                    <TextBlock Text="占位" />
+                    <dev:PlayQueueControl />
                 </DataTemplate>
             </HubSection>
             <HubSection Header="音乐">

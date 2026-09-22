@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CorePlanetMusicPlayer.Playback.Player
@@ -17,6 +18,14 @@ namespace CorePlanetMusicPlayer.Playback.Player
         private readonly PlaybackQueue _queue;
         private readonly Dictionary<PlaybackMode, IPlaybackModeStrategy> _strategies;
         private readonly PlaybackState _state;
+        private readonly SemaphoreSlim _commandGate = new SemaphoreSlim(1, 1);
+
+        private volatile PlaybackQueueSnapshot _publishedQueueSnapshot;
+
+
+        public event EventHandler QueueChanged;
+
+        public event EventHandler PlaybackModeChanged;
 
         public event EventHandler<PlaybackStateChangedEventArgs> StateChanged;
 
@@ -32,6 +41,7 @@ namespace CorePlanetMusicPlayer.Playback.Player
 
             _audioPlayer = audioPlayer;
             _queue = queue ?? new PlaybackQueue();
+            _publishedQueueSnapshot = _queue.CreateSnapshot();
             _strategies = new Dictionary<PlaybackMode, IPlaybackModeStrategy>();
             _state = PlaybackState.CreateDefault();
 
@@ -49,10 +59,184 @@ namespace CorePlanetMusicPlayer.Playback.Player
 
         public PlaybackQueueSnapshot QueueSnapshot
         {
-            get { return _queue.CreateSnapshot(); }
+            get
+            {
+                var snapshot = _publishedQueueSnapshot;
+
+                return new PlaybackQueueSnapshot
+                {
+                    Items = snapshot.Items
+                        .Select(item => item.Clone())
+                        .ToList(),
+
+                    ShuffleItemIds =
+                        new List<string>(snapshot.ShuffleItemIds),
+
+                    CurrentIndex = snapshot.CurrentIndex
+                };
+            }
         }
 
-        public async Task PlayAsync(MusicId musicId)
+        public Task PlayAsync(MusicId musicId)
+        {
+            return ExecuteCommandAsync(() => PlayCoreAsync(musicId));
+        }
+
+        public Task PlayQueueAsync(
+            IEnumerable<MusicId> musicIds,
+            MusicId startMusicId)
+        {
+            var items = CopyMusicIds(musicIds);
+
+            return ExecuteCommandAsync(
+                () => PlayQueueCoreAsync(items, startMusicId));
+        }
+
+        public Task PauseAsync()
+        {
+            return ExecuteCommandAsync(PauseCoreAsync);
+        }
+
+        public Task ResumeAsync()
+        {
+            return ExecuteCommandAsync(ResumeCoreAsync);
+        }
+
+        public Task StopAsync()
+        {
+            return ExecuteCommandAsync(StopCoreAsync);
+        }
+
+        public Task NextAsync()
+        {
+            return ExecuteCommandAsync(NextCoreAsync);
+        }
+
+        public Task PreviousAsync()
+        {
+            return ExecuteCommandAsync(PreviousCoreAsync);
+        }
+
+        public Task<int> EnqueueAsync(IEnumerable<MusicId> musicIds)
+        {
+            var items = CopyMusicIds(musicIds);
+
+            return ExecuteCommandAsync(() => EnqueueCoreAsync(items));
+        }
+
+        public Task<int> EnqueueNextAsync(IEnumerable<MusicId> musicIds)
+        {
+            var items = CopyMusicIds(musicIds);
+
+            return ExecuteCommandAsync(() => EnqueueNextCoreAsync(items));
+        }
+
+        public Task SeekAsync(TimeSpan position)
+        {
+            return ExecuteCommandAsync(() => SeekCoreAsync(position));
+        }
+
+        public Task StartOrResumeAsync()
+        {
+            return ExecuteCommandAsync(StartOrResumeCoreAsync);
+        }
+
+        public Task SetVolumeAsync(double volume)
+        {
+            return ExecuteCommandAsync(() => SetVolumeCoreAsync(volume));
+        }
+
+        public Task PlayQueueItemAsync(string itemId)
+        {
+            return ExecuteCommandAsync(async () =>
+            {
+                if (!_queue.SetCurrentItemId(itemId))
+                {
+                    throw new InvalidOperationException("该队列项已不存在，请刷新队列。");
+                }
+
+                await PlayCurrentAsync();
+            });
+        }
+
+        public Task RemoveQueueItemAsync(string itemId)
+        {
+            return ExecuteCommandAsync(async () =>
+            {
+                if (_queue.GetItemIndex(itemId) < 0)
+                {
+                    throw new InvalidOperationException("该队列项已不存在，请刷新队列。");
+                }
+
+                if (_queue.CurrentItemId == itemId)
+                {
+                    await StopCoreAsync();
+                }
+
+                _queue.RemoveItem(itemId);
+            });
+        }
+
+        public Task MoveQueueItemAsync(string itemId, int offset, PlaybackQueueOrder order)
+        {
+            if (offset != -1 && offset != 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset));
+            }
+
+            if (order != PlaybackQueueOrder.Normal && order != PlaybackQueueOrder.Shuffle)
+            {
+                throw new ArgumentOutOfRangeException(nameof(order));
+            }
+
+            return ExecuteCommandAsync(() =>
+            {
+                bool useShuffleOrder = order == PlaybackQueueOrder.Shuffle;
+
+                int oldIndex = useShuffleOrder
+                    ? _queue.GetShuffleItemIndex(itemId)
+                    : _queue.GetItemIndex(itemId);
+
+                if (oldIndex < 0)
+                {
+                    throw new InvalidOperationException("该队列项已不存在，请刷新队列。");
+                }
+
+                int newIndex = oldIndex + offset;
+
+                if (newIndex < 0 || newIndex >= _queue.Count)
+                {
+                    return Task.CompletedTask;
+                }
+
+                if (useShuffleOrder)
+                {
+                    _queue.MoveShuffleItem(itemId, newIndex);
+                }
+                else
+                {
+                    _queue.MoveItem(itemId, newIndex);
+                }
+
+                return Task.CompletedTask;
+            });
+        }
+
+        public Task ClearQueueAsync()
+        {
+            return ExecuteCommandAsync(async () =>
+            {
+                await StopCoreAsync();
+                _queue.Clear();
+            });
+        }
+
+        public Task SetPlaybackModeAsync(PlaybackMode mode)
+        {
+            return ExecuteCommandAsync(() => SetPlaybackModeCoreAsync(mode));
+        }
+
+        private async Task PlayCoreAsync(MusicId musicId)
         {
             if (musicId.IsEmpty)
             {
@@ -68,13 +252,13 @@ namespace CorePlanetMusicPlayer.Playback.Player
             await PlayCurrentAsync();
         }
 
-        public async Task PlayQueueAsync(IEnumerable<MusicId> musicIds, MusicId startMusicId)
+        private async Task PlayQueueCoreAsync(IEnumerable<MusicId> musicIds, MusicId startMusicId)
         {
             _queue.SetItems(musicIds);
 
             if (!_queue.HasItems)
             {
-                await StopAsync();
+                await StopCoreAsync();
                 return;
             }
 
@@ -86,7 +270,7 @@ namespace CorePlanetMusicPlayer.Playback.Player
             await PlayCurrentAsync();
         }
 
-        public async Task PauseAsync()
+        private async Task PauseCoreAsync()
         {
             if (!_state.IsPlaying)
             {
@@ -102,7 +286,7 @@ namespace CorePlanetMusicPlayer.Playback.Player
             RaiseStateChanged(oldStatus, _state.Status);
         }
 
-        public async Task ResumeAsync()
+        private async Task ResumeCoreAsync()
         {
             if (!_state.IsPaused)
             {
@@ -121,18 +305,20 @@ namespace CorePlanetMusicPlayer.Playback.Player
             RaiseStateChanged(oldStatus, _state.Status);
         }    
 
-        public async Task StopAsync()
+        private async Task StopCoreAsync()
         {
             var oldStatus = _state.Status;
             var oldMusicId = _state.CurrentMusicId;
 
             await _audioPlayer.StopAsync();
 
+            _state.SetStopped();
+
             RaiseCurrentMusicChanged(oldMusicId, _state.CurrentMusicId);
             RaiseStateChanged(oldStatus, _state.Status);
         }
 
-        public async Task NextAsync()
+        private async Task NextCoreAsync()
         {
             var strategy = GetCurrentStrategy();
             var nextIndex = strategy.GetNextIndex(_queue);
@@ -146,7 +332,7 @@ namespace CorePlanetMusicPlayer.Playback.Player
             await PlayIndexAsync(nextIndex);
         }
 
-        public async Task PreviousAsync()
+        private async Task PreviousCoreAsync()
         {
             var strategy = GetCurrentStrategy();
             var previousIndex = strategy.GetPreviousIndex(_queue);
@@ -159,13 +345,13 @@ namespace CorePlanetMusicPlayer.Playback.Player
             await PlayIndexAsync(previousIndex);
         }
 
-        public Task<int> EnqueueNextAsync(IEnumerable<MusicId> musicIds)
+        private Task<int> EnqueueNextCoreAsync(IEnumerable<MusicId> musicIds)
         {
             int currentIndex = _queue.CurrentIndex;
 
             if (currentIndex < 0)
             {
-                return EnqueueAsync(musicIds);
+                return EnqueueCoreAsync(musicIds);
             }
 
             int currentShuffleIndex = _queue.CurrentShuffleIndex;
@@ -182,14 +368,14 @@ namespace CorePlanetMusicPlayer.Playback.Player
             return Task.FromResult(addedCount);
         }
 
-        public Task<int> EnqueueAsync(IEnumerable<MusicId> musicIds)
+        private Task<int> EnqueueCoreAsync(IEnumerable<MusicId> musicIds)
         {
             int addedCount = _queue.Enqueue(musicIds);
 
             return Task.FromResult(addedCount);
         }
 
-        public async Task SeekAsync(TimeSpan position)
+        private async Task SeekCoreAsync(TimeSpan position)
         {
             Guard.NotNegative(position, nameof(position));
 
@@ -206,14 +392,64 @@ namespace CorePlanetMusicPlayer.Playback.Player
             RaisePositionChanged(oldPosition, newPosition);
         }
 
-        public async Task SetVolumeAsync(double volume)
+        public PlaybackPosition RefreshPosition()
+        {
+            if (_commandGate.CurrentCount == 0)
+            {
+                return _state.Position ?? PlaybackPosition.Empty();
+            }
+
+            if (!_state.IsPlaying && !_state.IsPaused)
+            {
+                return _state.Position ?? PlaybackPosition.Empty();
+            }
+
+            var oldPosition = _state.Position ?? PlaybackPosition.Empty();
+            var newPosition = _audioPlayer.Position ?? PlaybackPosition.Empty();
+
+            if (oldPosition.Position != newPosition.Position || oldPosition.Duration != newPosition.Duration)
+            {
+                _state.UpdatePosition(newPosition);
+                RaisePositionChanged(oldPosition, newPosition);
+            }
+
+            return newPosition;
+        }
+
+        private async Task StartOrResumeCoreAsync()
+        {
+            if (_state.IsPlaying || _state.Status == PlaybackStatus.Loading)
+            {
+                return;
+            }
+
+            if (_state.IsPaused)
+            {
+                await ResumeCoreAsync();
+                return;
+            }
+
+            if (!_queue.HasItems)
+            {
+                throw new InvalidOperationException("播放队列为空，请先从音乐库选择歌曲。");
+            }
+
+            if (!_queue.HasCurrent)
+            {
+                _queue.SetCurrentIndex(0);
+            }
+
+            await PlayCurrentAsync();
+        }
+
+        private async Task SetVolumeCoreAsync(double volume)
         {
             await _audioPlayer.SetVolumeAsync(volume);
 
             _state.UpdateVolume(VolumeLevel.Create(volume));
         }
 
-        public Task SetPlaybackModeAsync(PlaybackMode mode)
+        private Task SetPlaybackModeCoreAsync(PlaybackMode mode)
         {
             _state.UpdateMode(mode);
 
@@ -226,7 +462,7 @@ namespace CorePlanetMusicPlayer.Playback.Player
 
             if(!currentMusicId.HasValue || currentMusicId.Value.IsEmpty)
             {
-                await StopAsync();
+                await StopCoreAsync();
                 return;
             }
 
@@ -235,6 +471,8 @@ namespace CorePlanetMusicPlayer.Playback.Player
 
             try
             {
+                _state.UpdatePosition(PlaybackPosition.Empty());
+
                 _state.SetLoading(currentMusicId.Value);
                 RaiseCurrentMusicChanged(oldMusicId, _state.CurrentMusicId);
                 RaiseStateChanged(oldStatus, _state.Status);
@@ -269,9 +507,11 @@ namespace CorePlanetMusicPlayer.Playback.Player
         private async Task EndCurrentPlaybackAsync()
         {
             var oldStatus = _state.Status;
+            var finalPosition = _audioPlayer.Position ?? PlaybackPosition.Empty();
 
             await _audioPlayer.StopAsync();
 
+            _state.UpdatePosition(finalPosition);
             _state.SetEnded();
 
             RaiseStateChanged(oldStatus, _state.Status);
@@ -407,7 +647,14 @@ namespace CorePlanetMusicPlayer.Playback.Player
 
         private async void OnAudioPlayerPlaybackEnded(object sender, EventArgs e)
         {
-            await NextAsync();
+            try
+            {
+                await NextAsync();
+            }
+            catch (Exception ex)
+            {
+                HandlePlaybackError(_state.CurrentMusicId, "自动切歌失败。", ex);
+            }
         }
 
         private void OnAudioPlayerPlaybackError(object sender, PlaybackErrorEventArgs e)
@@ -417,6 +664,78 @@ namespace CorePlanetMusicPlayer.Playback.Player
             var exception = e == null ? null : e.Exception;
 
             HandlePlaybackError(musicId, string.IsNullOrWhiteSpace(message) ? "播放失败。" : message, exception);
+        }
+
+        private async Task ExecuteCommandAsync(Func<Task> operation)
+        {
+            await _commandGate.WaitAsync();
+
+            var previousMode = _state.Mode;
+
+            bool queueChanged = false;
+            bool modeChanged = false;
+
+            try
+            {
+                await operation();
+            }
+            finally
+            {
+                try
+                {
+                    var previous = _publishedQueueSnapshot;
+                    var current = _queue.CreateSnapshot();
+
+                    queueChanged =
+                        previous.CurrentIndex != current.CurrentIndex ||
+                        !previous.Items.Select(item => item.Id)
+                            .SequenceEqual(current.Items.Select(item => item.Id)) ||
+                        !previous.ShuffleItemIds
+                            .SequenceEqual(current.ShuffleItemIds);
+
+                    modeChanged = previousMode != _state.Mode;
+
+                    _publishedQueueSnapshot = current;
+                }
+                finally
+                {
+                    _commandGate.Release();
+                }
+
+                if (queueChanged)
+                {
+                    QueueChanged?.Invoke(this, EventArgs.Empty);
+                }
+
+                if (modeChanged)
+                {
+                    PlaybackModeChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+
+        private async Task<T> ExecuteCommandAsync<T>(
+            Func<Task<T>> operation)
+        {
+            T result = default(T);
+
+            await ExecuteCommandAsync(async () =>
+            {
+                result = await operation();
+            });
+
+            return result;
+        }
+
+        private static List<MusicId> CopyMusicIds(
+            IEnumerable<MusicId> musicIds)
+        {
+            if (musicIds == null)
+            {
+                throw new ArgumentNullException(nameof(musicIds));
+            }
+
+            return musicIds.ToList();
         }
     }
 }

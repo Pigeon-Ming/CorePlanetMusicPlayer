@@ -142,6 +142,7 @@
     <Compile Include="Queue\PlaybackQueue.cs" />
     <Compile Include="Queue\PlaybackQueueBuilder.cs" />
     <Compile Include="Queue\PlaybackQueueItem.cs" />
+    <Compile Include="Queue\PlaybackQueueOrder.cs" />
     <Compile Include="Queue\PlaybackQueueSnapshot.cs" />
     <EmbeddedResource Include="Properties\CorePlanetMusicPlayer.Playback.rd.xml" />
   </ItemGroup>
