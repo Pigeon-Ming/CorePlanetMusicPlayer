@@ -1,0 +1,49 @@
+﻿<Page
+    x:Class="CorePlanetMusicPlayer6.Pages.Common.RootPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:CorePlanetMusicPlayer6.Pages.Common"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:root="using:CorePlanetMusicPlayer6.Controls.Root"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    mc:Ignorable="d">
+    <Page.BottomAppBar>
+        <CommandBar>
+            <CommandBar.PrimaryCommands>
+                <AppBarButton Label="设置" />
+                <AppBarButton Label="搜索" />
+            </CommandBar.PrimaryCommands>
+        </CommandBar>
+    </Page.BottomAppBar>
+    <Grid>
+        <Hub Header="CorePlanetMusicPlayer 6">
+            <Hub.Resources>
+                <Style TargetType="HubSection">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="MinWidth" Value="400" />
+                </Style>
+            </Hub.Resources>
+            <HubSection Header="正在播放">
+                <DataTemplate>
+                    <TextBlock Text="占位" />
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="库">
+                <DataTemplate>
+                    <root:RootLibraryControl />
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="最近">
+                <DataTemplate>
+                    <TextBlock Text="占位" />
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="统计">
+                <DataTemplate>
+                    <TextBlock Text="占位" />
+                </DataTemplate>
+            </HubSection>
+        </Hub>
+    </Grid>
+</Page>
