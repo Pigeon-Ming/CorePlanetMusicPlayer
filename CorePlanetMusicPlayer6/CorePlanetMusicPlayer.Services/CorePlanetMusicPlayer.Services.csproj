@@ -125,6 +125,7 @@
     <Compile Include="Artwork\ArtworkSourceKind.cs" />
     <Compile Include="Artwork\IArtworkService.cs" />
     <Compile Include="History\IPlaybackHistoryService.cs" />
+    <Compile Include="History\PlaybackHistoryRecorder.cs" />
     <Compile Include="History\PlaybackHistoryService.cs" />
     <Compile Include="Library\Albums\AlbumDetails.cs" />
     <Compile Include="Library\Albums\AlbumService.cs" />
@@ -160,6 +161,7 @@
     <Compile Include="Metadata\MusicMetadataEditService.cs" />
     <Compile Include="Metadata\MusicMetadataUpdateRequest.cs" />
     <Compile Include="Playback\IPlaybackSessionStore.cs" />
+    <Compile Include="Playback\PlaybackMusicResolver.cs" />
     <Compile Include="Playback\PlaybackSessionData.cs" />
     <Compile Include="Playback\PlaybackSessionService.cs" />
     <Compile Include="Playlists\IPlaylistService.cs" />

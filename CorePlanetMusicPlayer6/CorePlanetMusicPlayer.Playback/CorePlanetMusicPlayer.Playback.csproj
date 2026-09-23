@@ -124,6 +124,8 @@
     <Compile Include="Events\PlaybackErrorEventArgs.cs" />
     <Compile Include="Events\PlaybackPositionChangedEventArgs.cs" />
     <Compile Include="Events\PlaybackStateChangedEventArgs.cs" />
+    <Compile Include="Hisrory\PlaybackHistorySnapshot.cs" />
+    <Compile Include="Hisrory\PlaybackHistoryTracker.cs" />
     <Compile Include="Modes\IPlaybackModeStrategy.cs" />
     <Compile Include="Modes\PlaybackMode.cs" />
     <Compile Include="Modes\RepeatAllPlaybackModeStrategy.cs" />
@@ -132,6 +134,7 @@
     <Compile Include="Modes\SequentialPlaybackModeStrategy.cs" />
     <Compile Include="Modes\ShufflePlaybackModeStrategy.cs" />
     <Compile Include="Player\IAudioPlayer.cs" />
+    <Compile Include="Player\IPlaybackMusicResolver.cs" />
     <Compile Include="Player\IPlaybackService.cs" />
     <Compile Include="Player\PlaybackPosition.cs" />
     <Compile Include="Player\PlaybackService.cs" />

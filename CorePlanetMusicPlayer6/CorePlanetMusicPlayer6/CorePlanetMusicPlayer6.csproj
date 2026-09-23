@@ -150,6 +150,9 @@
     <Compile Include="Controls\Dev\MusicControl.xaml.cs">
       <DependentUpon>MusicControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Dev\PlayHistoryControl.xaml.cs">
+      <DependentUpon>PlayHistoryControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Dev\PlayingControl.xaml.cs">
       <DependentUpon>PlayingControl.xaml</DependentUpon>
     </Compile>
@@ -257,6 +260,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Dev\MusicControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Dev\PlayHistoryControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

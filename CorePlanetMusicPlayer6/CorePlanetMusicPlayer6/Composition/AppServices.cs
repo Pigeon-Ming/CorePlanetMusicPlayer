@@ -100,6 +100,8 @@ namespace CorePlanetMusicPlayer6.Composition
 
         public PlaybackSessionService PlaybackSessionService { get; set; }
 
+        public PlaybackHistoryRecorder PlaybackHistoryRecorder { get; set; }
+
         public LyricSearchService LyricSearchService { get; set; }
     }
 }

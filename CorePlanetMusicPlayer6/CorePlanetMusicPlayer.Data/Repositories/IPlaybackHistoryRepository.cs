@@ -14,11 +14,13 @@ namespace CorePlanetMusicPlayer.Data.Repositories
 
         Task<IReadOnlyList<PlaybackHistoryItem>> GetByMusicIdAsync(MusicId musicId);
 
-        Task<IReadOnlyList<PlaybackHistoryItem>> GetByDateRangeAsync(DateTimeOffset startTime, DateTimeOffset endTime);
+        Task<IReadOnlyList<PlaybackHistoryItem>> GetByDateRangeAsync(DateTimeOffset? startTime = null, DateTimeOffset? endTime = null);
 
         Task<IReadOnlyList<PlaybackHistoryItem>> GetByMusicIdAndDateRangeAsync(MusicId musicId, DateTimeOffset startTime, DateTimeOffset endTime);
 
         Task AddAsync(PlaybackHistoryItem item);
+
+        Task UpsertAsync(PlaybackHistoryItem item);
 
         Task DeleteAsync(PlaybackHistoryId id);
 

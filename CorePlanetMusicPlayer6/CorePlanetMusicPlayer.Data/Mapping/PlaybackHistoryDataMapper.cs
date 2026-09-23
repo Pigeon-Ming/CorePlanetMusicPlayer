@@ -22,6 +22,9 @@ namespace CorePlanetMusicPlayer.Data.Mapping
             {
                 Id = new PlaybackHistoryId(entity.Id),
                 MusicId = new MusicId(entity.MusicId),
+                TitleSnapshot = entity.TitleSnapshot,
+                ArtistNameSnapshot = entity.ArtistNameSnapshot,
+                AlbumTitleSnapshot = entity.AlbumTitleSnapshot,
                 PlayedAt = DataValueConverter.FromUnixTimeMilliseconds(entity.PlayedAtUnixTimeMilliseconds),
                 MusicDuration = new TimeSpan(entity.MusicDurationTicks),
                 PlayedDuration = new TimeSpan(entity.PlayedDurationTicks),
@@ -41,6 +44,9 @@ namespace CorePlanetMusicPlayer.Data.Mapping
             {
                 Id = item.Id.ToString(),
                 MusicId = item.MusicId.ToString(),
+                TitleSnapshot = item.TitleSnapshot ?? string.Empty,
+                ArtistNameSnapshot = item.ArtistNameSnapshot ?? string.Empty,
+                AlbumTitleSnapshot = item.AlbumTitleSnapshot ?? string.Empty,
                 PlayedAtUnixTimeMilliseconds = item.PlayedAt.ToUnixTimeMilliseconds(),
                 MusicDurationTicks = item.MusicDuration.Ticks,
                 PlayedDurationTicks = item.PlayedDuration.Ticks,

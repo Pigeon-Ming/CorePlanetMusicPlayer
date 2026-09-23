@@ -25,6 +25,9 @@ namespace CorePlanetMusicPlayer6.Composition
             Services = _serviceRegistry.CreateServices();
 
             InitializeDatabase();
+
+            Services.PlaybackHistoryRecorder.Start();
+
             await LoadSettingsAsync();
             await ApplySettingsAsync();
 
@@ -71,9 +74,12 @@ namespace CorePlanetMusicPlayer6.Composition
 
             if (Services.PlaybackService != null && Settings.Playback != null)
             {
+                Services.PlaybackService.SetHistoryRecordingEnabled(Settings.Playback.EnablePlaybackHistory);
+
                 await Services.PlaybackService.SetVolumeAsync(Settings.Playback.Volume);
 
                 await Services.PlaybackService.SetPlaybackModeAsync(Settings.Playback.PlaybackMode);
+
             }
         }
 

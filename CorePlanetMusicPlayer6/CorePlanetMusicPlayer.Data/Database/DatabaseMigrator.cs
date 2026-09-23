@@ -151,6 +151,9 @@ namespace CorePlanetMusicPlayer.Data.Database
                 CREATE TABLE IF NOT EXISTS playback_history (
                     id TEXT PRIMARY KEY,
                     music_id TEXT NOT NULL,
+                    title_snapshot TEXT NOT NULL DEFAULT '',
+                    artist_name_snapshot TEXT NOT NULL DEFAULT '',
+                    album_title_snapshot TEXT NOT NULL DEFAULT '',
                     played_at INTEGER NOT NULL,
                     music_duration_ticks INTEGER NOT NULL,
                     played_duration_ticks INTEGER NOT NULL,

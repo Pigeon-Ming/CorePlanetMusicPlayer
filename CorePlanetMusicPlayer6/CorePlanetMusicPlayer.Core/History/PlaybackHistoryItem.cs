@@ -14,6 +14,12 @@ namespace CorePlanetMusicPlayer.Core.History
 
         public MusicId MusicId { get; set; }
 
+        public string TitleSnapshot { get; set; } = string.Empty;
+
+        public string ArtistNameSnapshot { get; set; } = string.Empty;
+
+        public string AlbumTitleSnapshot { get; set; } = string.Empty;
+
         public DateTimeOffset PlayedAt { get; set; }
 
         public TimeSpan MusicDuration { get; set; }

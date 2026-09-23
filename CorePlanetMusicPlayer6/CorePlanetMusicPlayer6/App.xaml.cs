@@ -1,9 +1,11 @@
 ﻿using CorePlanetMusicPlayer6.Composition;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
@@ -30,7 +32,10 @@ namespace CorePlanetMusicPlayer6
         public App()
         {
             this.InitializeComponent();
+
+            this.EnteredBackground += OnEnteredBackground;
             this.Suspending += OnSuspending;
+            this.Resuming += OnResuming;
         }
 
         /// <summary>
@@ -106,7 +111,116 @@ namespace CorePlanetMusicPlayer6
 
             try
             {
-                var sessionService = AppRuntime.Services?.PlaybackSessionService;
+                // 真正挂起前暂停计时，并保存当前阶段数据。
+                await SavePlaybackStateAsync(suspendHistory: true);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+            finally
+            {
+                deferral.Complete();
+            }
+        }
+
+
+        private async void OnEnteredBackground(object sender, EnteredBackgroundEventArgs e)
+        {
+            var deferral = e.GetDeferral();
+
+            try
+            {
+                // 后台音乐可能继续播放，因此只保存，不暂停计时。
+                await SavePlaybackStateAsync(suspendHistory: false);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+            finally
+            {
+                deferral.Complete();
+            }
+        }
+
+        private void OnResuming(object sender, object e)
+        {
+            try
+            {
+                AppRuntime.Services?
+                    .PlaybackService?
+                    .ResumeHistoryTracking();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"恢复播放历史跟踪失败：{ex}");
+            }
+        }
+
+
+        /// <summary>
+        /// 采集当前历史快照，并保存历史及播放队列。
+        /// </summary>
+        private async Task SavePlaybackStateAsync(bool suspendHistory)
+        {
+            var services = AppRuntime.Services;
+
+            if (services == null)
+            {
+                return;
+            }
+
+            try
+            {
+                var playbackService = services.PlaybackService;
+
+                if (playbackService != null)
+                {
+                    if (suspendHistory)
+                    {
+                        playbackService.SuspendHistoryTracking();
+                    }
+                    else
+                    {
+                        playbackService.CaptureHistorySnapshot();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"采集播放历史快照失败：{ex}");
+            }
+
+            // 两项保存分别处理异常，避免其中一项失败阻断另一项。
+            await Task.WhenAll(
+                SavePlaybackHistoryAsync(services),
+                SavePlaybackQueueAsync(services));
+        }
+
+        private async Task SavePlaybackHistoryAsync(AppServices services)
+        {
+            try
+            {
+                var recorder = services.PlaybackHistoryRecorder;
+
+                if (recorder != null)
+                {
+                    await recorder.FlushAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                // 未成功写入的快照仍保留在内存队列中。
+                Debug.WriteLine($"保存播放历史失败：{ex}");
+            }
+        }
+
+        private async Task SavePlaybackQueueAsync(AppServices services)
+        {
+            try
+            {
+                var sessionService = services.PlaybackSessionService;
 
                 if (sessionService != null)
                 {
@@ -115,11 +229,7 @@ namespace CorePlanetMusicPlayer6
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex);
-            }
-            finally
-            {
-                deferral.Complete();
+                Debug.WriteLine($"保存播放队列失败：{ex}");
             }
         }
     }

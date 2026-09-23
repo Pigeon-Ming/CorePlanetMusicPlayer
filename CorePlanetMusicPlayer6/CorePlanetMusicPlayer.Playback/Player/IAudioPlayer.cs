@@ -10,6 +10,12 @@ namespace CorePlanetMusicPlayer.Playback.Player
 {
     public interface IAudioPlayer
     {
+        /// <summary>
+        /// 底层媒体当前是否真正处于播放状态。
+        /// 加载、缓冲、暂停、结束时为 false。
+        /// </summary>
+        bool IsActuallyPlaying { get; }
+
         PlaybackStatus Status { get; }
 
         MusicId? CurrentMusicId { get; }
@@ -17,6 +23,11 @@ namespace CorePlanetMusicPlayer.Playback.Player
         PlaybackPosition Position { get; }
 
         VolumeLevel Volume { get; }
+
+        /// <summary>
+        /// 实际播放活动发生变化，接收方应重新读取最新状态。
+        /// </summary>
+        event EventHandler PlaybackActivityChanged;
 
         event EventHandler PlaybackEnded;
 

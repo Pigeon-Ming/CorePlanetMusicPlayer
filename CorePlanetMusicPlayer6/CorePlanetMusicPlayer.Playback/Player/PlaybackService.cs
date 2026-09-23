@@ -1,10 +1,12 @@
 ﻿using CorePlanetMusicPlayer.Core.Common;
 using CorePlanetMusicPlayer.Core.Music;
 using CorePlanetMusicPlayer.Playback.Events;
+using CorePlanetMusicPlayer.Playback.Hisrory;
 using CorePlanetMusicPlayer.Playback.Modes;
 using CorePlanetMusicPlayer.Playback.Queue;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -15,12 +17,48 @@ namespace CorePlanetMusicPlayer.Playback.Player
     public class PlaybackService : IPlaybackService
     {
         private readonly IAudioPlayer _audioPlayer;
+        private readonly IPlaybackMusicResolver _musicResolver;
         private readonly PlaybackQueue _queue;
         private readonly Dictionary<PlaybackMode, IPlaybackModeStrategy> _strategies;
         private readonly PlaybackState _state;
         private readonly SemaphoreSlim _commandGate = new SemaphoreSlim(1, 1);
 
         private volatile PlaybackQueueSnapshot _publishedQueueSnapshot;
+
+
+        private readonly PlaybackHistoryTracker _historyTracker = new PlaybackHistoryTracker();
+
+        private readonly object _historySync = new object();
+
+        private readonly Queue<PlaybackHistorySnapshot> _pendingHistorySnapshots = new Queue<PlaybackHistorySnapshot>();
+
+        private MusicId _historyMusicId;
+
+        private bool _historyRecordingEnabled = true;
+
+        public bool IsHistoryRecordingEnabled
+        {
+            get
+            {
+                lock (_historySync)
+                {
+                    return _historyRecordingEnabled;
+                }
+            }
+        }
+
+        private bool _historyEnabled;
+        private bool _historyWasPlaying;
+
+        // 应用是否已暂停历史计时。
+        // 防止挂起过程中到达的播放器通知重新启动计时。
+        private bool _historySuspended;
+
+        private int _historyGeneration;
+
+        private string _historyTitleSnapshot = string.Empty;
+        private string _historyArtistNameSnapshot = string.Empty;
+        private string _historyAlbumTitleSnapshot = string.Empty;
 
 
         public event EventHandler QueueChanged;
@@ -35,7 +73,9 @@ namespace CorePlanetMusicPlayer.Playback.Player
 
         public event EventHandler<PlaybackErrorEventArgs> PlaybackError;
 
-        public PlaybackService(IAudioPlayer audioPlayer, PlaybackQueue queue, IEnumerable<IPlaybackModeStrategy> strategies)
+        public event EventHandler HistorySnapshotAvailable;
+
+        public PlaybackService(IAudioPlayer audioPlayer, PlaybackQueue queue, IEnumerable<IPlaybackModeStrategy> strategies, IPlaybackMusicResolver musicResolver)
         {
             Guard.NotNull(audioPlayer, nameof(audioPlayer));
 
@@ -44,12 +84,14 @@ namespace CorePlanetMusicPlayer.Playback.Player
             _publishedQueueSnapshot = _queue.CreateSnapshot();
             _strategies = new Dictionary<PlaybackMode, IPlaybackModeStrategy>();
             _state = PlaybackState.CreateDefault();
+            _musicResolver = musicResolver ?? throw new ArgumentNullException(nameof(musicResolver));
 
             RegisterStrategies(strategies);
             RegisterMissingDefaultStrategies();
 
             _audioPlayer.PlaybackEnded += OnAudioPlayerPlaybackEnded;
             _audioPlayer.PlaybackError += OnAudioPlayerPlaybackError;
+            _audioPlayer.PlaybackActivityChanged += OnAudioPlayerPlaybackActivityChanged;
         }
 
         public PlaybackState State
@@ -69,8 +111,7 @@ namespace CorePlanetMusicPlayer.Playback.Player
                         .Select(item => item.Clone())
                         .ToList(),
 
-                    ShuffleItemIds =
-                        new List<string>(snapshot.ShuffleItemIds),
+                    ShuffleItemIds = new List<string>(snapshot.ShuffleItemIds),
 
                     CurrentIndex = snapshot.CurrentIndex
                 };
@@ -82,14 +123,11 @@ namespace CorePlanetMusicPlayer.Playback.Player
             return ExecuteCommandAsync(() => PlayCoreAsync(musicId));
         }
 
-        public Task PlayQueueAsync(
-            IEnumerable<MusicId> musicIds,
-            MusicId startMusicId)
+        public Task PlayQueueAsync(IEnumerable<MusicId> musicIds, MusicId startMusicId)
         {
             var items = CopyMusicIds(musicIds);
 
-            return ExecuteCommandAsync(
-                () => PlayQueueCoreAsync(items, startMusicId));
+            return ExecuteCommandAsync(() => PlayQueueCoreAsync(items, startMusicId));
         }
 
         public Task PauseAsync()
@@ -281,6 +319,8 @@ namespace CorePlanetMusicPlayer.Playback.Player
 
             await _audioPlayer.PauseAsync();
 
+            SynchronizePlaybackHistory();
+
             _state.SetPaused();
 
             RaiseStateChanged(oldStatus, _state.Status);
@@ -297,6 +337,8 @@ namespace CorePlanetMusicPlayer.Playback.Player
 
             await _audioPlayer.ResumeAsync();
 
+            SynchronizePlaybackHistory();
+
             if (_state.CurrentMusicId.HasValue)
             {
                 _state.SetPlaying(_state.CurrentMusicId.Value);
@@ -309,6 +351,8 @@ namespace CorePlanetMusicPlayer.Playback.Player
         {
             var oldStatus = _state.Status;
             var oldMusicId = _state.CurrentMusicId;
+
+            FinishPlaybackHistory();
 
             await _audioPlayer.StopAsync();
 
@@ -383,11 +427,12 @@ namespace CorePlanetMusicPlayer.Playback.Player
 
             await _audioPlayer.SeekAsync(position);
 
-            var duration = oldPosition == null ? TimeSpan.Zero : oldPosition.Duration;
-
-            var newPosition = PlaybackPosition.Create(position, duration);
+            // 使用底层读取到的位置，包含底层对越界位置的修正。
+            var newPosition = _audioPlayer.Position ?? PlaybackPosition.Empty();
 
             _state.UpdatePosition(newPosition);
+
+            SynchronizePlaybackHistory();
 
             RaisePositionChanged(oldPosition, newPosition);
         }
@@ -434,6 +479,8 @@ namespace CorePlanetMusicPlayer.Playback.Player
                 var oldStatus = _state.Status;
                 var oldMusicId = _state.CurrentMusicId;
                 var oldPosition = _state.Position;
+
+                FinishPlaybackHistory();
 
                 await _audioPlayer.StopAsync();
 
@@ -492,7 +539,7 @@ namespace CorePlanetMusicPlayer.Playback.Player
         {
             var currentMusicId = _queue.GetCurrent();
 
-            if(!currentMusicId.HasValue || currentMusicId.Value.IsEmpty)
+            if (!currentMusicId.HasValue || currentMusicId.Value.IsEmpty)
             {
                 await StopCoreAsync();
                 return;
@@ -503,20 +550,51 @@ namespace CorePlanetMusicPlayer.Playback.Player
 
             try
             {
-                _state.UpdatePosition(PlaybackPosition.Empty());
+                // 队列可能已经指向新歌曲，
+                // 但底层媒体此刻仍然是旧歌曲。
+                FinishPlaybackHistory();
 
+                // 明确停止旧媒体，避免加载新媒体时旧歌曲继续发声。
+                await _audioPlayer.StopAsync();
+
+                var music = await _musicResolver.GetByIdAsync(
+                    currentMusicId.Value);
+
+                if (music == null)
+                {
+                    throw new InvalidOperationException("歌曲已不在音乐库中，无法播放。");
+                }
+
+                PreparePlaybackHistory(music);
+
+                _state.UpdatePosition(PlaybackPosition.Empty());
                 _state.SetLoading(currentMusicId.Value);
-                RaiseCurrentMusicChanged(oldMusicId, _state.CurrentMusicId);
+
+                RaiseCurrentMusicChanged(
+                    oldMusicId,
+                    _state.CurrentMusicId);
+
                 RaiseStateChanged(oldStatus, _state.Status);
 
                 oldStatus = _state.Status;
 
                 await _audioPlayer.LoadAsync(currentMusicId.Value);
+
+                EnablePlaybackHistory();
+
                 await _audioPlayer.PlayAsync();
 
+                // 如果底层尚未实际播放，这里不会启动计时；
+                // 后续实际状态通知会再次同步。
+                SynchronizePlaybackHistory();
+
                 _state.SetPlaying(currentMusicId.Value);
-                _state.UpdatePosition(_audioPlayer.Position ?? PlaybackPosition.Empty());
-                _state.UpdateVolume(_audioPlayer.Volume ?? VolumeLevel.Default());
+
+                _state.UpdatePosition(
+                    _audioPlayer.Position ?? PlaybackPosition.Empty());
+
+                _state.UpdateVolume(
+                    _audioPlayer.Volume ?? VolumeLevel.Default());
 
                 RaiseStateChanged(oldStatus, _state.Status);
             }
@@ -540,6 +618,8 @@ namespace CorePlanetMusicPlayer.Playback.Player
         {
             var oldStatus = _state.Status;
             var finalPosition = _audioPlayer.Position ?? PlaybackPosition.Empty();
+
+            FinishPlaybackHistory(finalPosition);
 
             await _audioPlayer.StopAsync();
 
@@ -611,6 +691,8 @@ namespace CorePlanetMusicPlayer.Playback.Player
         {
             var oldStatus = _state.Status;
 
+            FinishPlaybackHistory();
+
             _state.SetError(message);
 
             RaisePlaybackError(musicId, message, exception);
@@ -679,23 +761,56 @@ namespace CorePlanetMusicPlayer.Playback.Player
 
         private async void OnAudioPlayerPlaybackEnded(object sender, EventArgs e)
         {
+            // 不等命令锁，先停止本次计时。
+            int generation = FreezePlaybackHistory();
+
             try
             {
-                await NextAsync();
+                await ExecuteCommandAsync(async () =>
+                {
+                    // 等待期间可能已经发生了手动切歌或停止。
+                    if (!IsCurrentHistoryGeneration(generation))
+                    {
+                        return;
+                    }
+
+                    await NextCoreAsync();
+                });
             }
             catch (Exception ex)
             {
-                HandlePlaybackError(_state.CurrentMusicId, "自动切歌失败。", ex);
+                Debug.WriteLine(ex);
             }
         }
 
-        private void OnAudioPlayerPlaybackError(object sender, PlaybackErrorEventArgs e)
+        private async void OnAudioPlayerPlaybackError(object sender, PlaybackErrorEventArgs e)
         {
-            var musicId = e == null ? _state.CurrentMusicId : e.MusicId;
-            var message = e == null ? "播放失败。" : e.ErrorMessage;
-            var exception = e == null ? null : e.Exception;
+            int generation = FreezePlaybackHistory();
 
-            HandlePlaybackError(musicId, string.IsNullOrWhiteSpace(message) ? "播放失败。" : message, exception);
+            var musicId = e == null ? _state.CurrentMusicId : e.MusicId;
+
+            var message = e == null ? "播放失败。" : e.ErrorMessage;
+
+            var exception = e?.Exception;
+
+            try
+            {
+                await ExecuteCommandAsync(() =>
+                {
+                    if (!IsCurrentHistoryGeneration(generation))
+                    {
+                        return Task.CompletedTask;
+                    }
+
+                    HandlePlaybackError(musicId, string.IsNullOrWhiteSpace(message) ? "播放失败。" : message, exception);
+
+                    return Task.CompletedTask;
+                });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
         }
 
         private async Task ExecuteCommandAsync(Func<Task> operation)
@@ -746,8 +861,7 @@ namespace CorePlanetMusicPlayer.Playback.Player
             }
         }
 
-        private async Task<T> ExecuteCommandAsync<T>(
-            Func<Task<T>> operation)
+        private async Task<T> ExecuteCommandAsync<T>(Func<Task<T>> operation)
         {
             T result = default(T);
 
@@ -759,8 +873,7 @@ namespace CorePlanetMusicPlayer.Playback.Player
             return result;
         }
 
-        private static List<MusicId> CopyMusicIds(
-            IEnumerable<MusicId> musicIds)
+        private static List<MusicId> CopyMusicIds(IEnumerable<MusicId> musicIds)
         {
             if (musicIds == null)
             {
@@ -768,6 +881,318 @@ namespace CorePlanetMusicPlayer.Playback.Player
             }
 
             return musicIds.ToList();
+        }
+
+        public void SetHistoryRecordingEnabled(bool enabled)
+        {
+            lock (_historySync)
+            {
+                if (_historyRecordingEnabled == enabled)
+                {
+                    return;
+                }
+
+                _historyRecordingEnabled = enabled;
+
+                if (!enabled)
+                {
+                    // 先停止计时，关闭期间不再累计。
+                    _historyTracker.SetPlaying(false);
+                    _historyWasPlaying = false;
+
+                    if (_historyTracker.HasSession)
+                    {
+                        PlaybackPosition position = null;
+
+                        try
+                        {
+                            position = _audioPlayer.Position;
+                        }
+                        catch (Exception ex)
+                        {
+                            // 无法取得当前位置时，保留跟踪器中最后的位置。
+                            Debug.WriteLine(
+                                $"关闭历史记录时读取播放位置失败：{ex}");
+                        }
+
+                        EnqueueHistorySnapshotCore(
+                            _historyTracker.Finish(position));
+                    }
+
+                    return;
+                }
+
+                // 当前确实正在播放时，从现在开始一条新记录。
+                // 暂停、加载或挂起状态下，由后续状态变化启动记录。
+                SynchronizePlaybackHistory();
+            }
+        }
+
+        /// <summary>
+        /// 为即将加载的新歌曲建立跟踪上下文。
+        /// 此时尚未开始计时。
+        /// </summary>
+        private void PreparePlaybackHistory(Music music)
+        {
+            if (music == null)
+            {
+                throw new ArgumentNullException(nameof(music));
+            }
+
+            if (music.Id.IsEmpty)
+            {
+                throw new ArgumentException("歌曲 ID 不能为空。", nameof(music));
+            }
+
+            lock (_historySync)
+            {
+                _historyGeneration++;
+
+                _historyMusicId = music.Id;
+                _historyEnabled = false;
+                _historyWasPlaying = false;
+
+                // 复制文字，不长期持有可变的 Music 对象。
+                _historyTitleSnapshot = music.Title ?? string.Empty;
+                _historyArtistNameSnapshot = music.ArtistName ?? string.Empty;
+                _historyAlbumTitleSnapshot = music.AlbumTitle ?? string.Empty;
+            }
+        }
+
+        private void EnablePlaybackHistory()
+        {
+            lock (_historySync)
+            {
+                _historyEnabled = true;
+            }
+        }
+
+        /// <summary>
+        /// 按底层当前状态同步计时。
+        /// 不依赖界面的进度刷新定时器。
+        /// </summary>
+        private void SynchronizePlaybackHistory()
+        {
+            lock (_historySync)
+            {
+                if (!_historyRecordingEnabled || !_historyEnabled || _historySuspended)
+                {
+                    return;
+                }
+
+                var currentMusicId = _audioPlayer.CurrentMusicId;
+
+                if (!currentMusicId.HasValue || currentMusicId.Value != _historyMusicId)
+                {
+                    return;
+                }
+
+                bool isPlaying = _audioPlayer.IsActuallyPlaying;
+                var position = _audioPlayer.Position;
+
+                if (isPlaying)
+                {
+                    if (!_historyTracker.HasSession)
+                    {
+                        // 只有实际开始播放，才创建历史 ID 和开始时间。
+                        _historyTracker.Start(
+                            _historyMusicId,
+                            position,
+                            _historyTitleSnapshot,
+                            _historyArtistNameSnapshot,
+                            _historyAlbumTitleSnapshot);
+                    }
+                    else
+                    {
+                        _historyTracker.UpdatePosition(position);
+                        _historyTracker.SetPlaying(true);
+                    }
+                }
+                else
+                {
+                    _historyTracker.SetPlaying(false);
+                    _historyTracker.UpdatePosition(position);
+
+                    // 从实际播放进入暂停或缓冲时，产生一个阶段快照。
+                    if (_historyWasPlaying)
+                    {
+                        EnqueueHistorySnapshotCore(_historyTracker.CaptureSnapshot());
+                    }
+                }
+
+                _historyWasPlaying = isPlaying;
+            }
+        }
+
+        /// <summary>
+        /// 暂停计时并取得当前播放代次，不结束历史记录。
+        /// 用于处理已经到达的结束或错误通知。
+        /// </summary>
+        private int FreezePlaybackHistory()
+        {
+            lock (_historySync)
+            {
+                _historyTracker.SetPlaying(false);
+                _historyWasPlaying = false;
+
+                return _historyGeneration;
+            }
+        }
+
+        private bool IsCurrentHistoryGeneration(int generation)
+        {
+            lock (_historySync)
+            {
+                return generation == _historyGeneration;
+            }
+        }
+
+        /// <summary>
+        /// 在旧媒体被替换或清空之前完成结算。
+        /// </summary>
+        private void FinishPlaybackHistory(PlaybackPosition position = null)
+        {
+            lock (_historySync)
+            {
+                _historyEnabled = false;
+                _historyWasPlaying = false;
+
+                // 使仍在等待执行的旧通知失效。
+                _historyGeneration++;
+
+                if (!_historyTracker.HasSession)
+                {
+                    return;
+                }
+
+                var finalPosition = position ?? _audioPlayer.Position;
+
+                EnqueueHistorySnapshotCore(_historyTracker.Finish(finalPosition));
+            }
+        }
+
+        // 调用此方法时必须已经持有 _historySync。
+        private void EnqueueHistorySnapshotCore(PlaybackHistorySnapshot snapshot)
+        {
+            if (snapshot == null || snapshot.PlayedDuration <= TimeSpan.Zero)
+            {
+                return;
+            }
+
+            _pendingHistorySnapshots.Enqueue(snapshot);
+
+            Debug.WriteLine(
+                $"历史快照：{snapshot.HistoryId}，" +
+                $"歌曲：{snapshot.MusicId}，" +
+                $"累计时长：{snapshot.PlayedDuration}，" +
+                $"最后位置：{snapshot.LastPosition}");
+
+            HistorySnapshotAvailable?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void OnAudioPlayerPlaybackActivityChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                // 通知可能来自媒体线程，不在这里操作界面。
+                SynchronizePlaybackHistory();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+        }
+
+
+        public bool TryPeekHistorySnapshot(out PlaybackHistorySnapshot snapshot)
+        {
+            lock (_historySync)
+            {
+                if (_pendingHistorySnapshots.Count == 0)
+                {
+                    snapshot = null;
+                    return false;
+                }
+
+                snapshot = _pendingHistorySnapshots.Peek();
+                return true;
+            }
+        }
+
+        public void AcknowledgeHistorySnapshot(PlaybackHistorySnapshot snapshot)
+        {
+            if (snapshot == null)
+            {
+                throw new ArgumentNullException(nameof(snapshot));
+            }
+
+            lock (_historySync)
+            {
+                if (_pendingHistorySnapshots.Count == 0 || !ReferenceEquals(_pendingHistorySnapshots.Peek(), snapshot))
+                {
+                    throw new InvalidOperationException("待确认的历史快照不是当前队首，请检查是否存在多个历史保存服务。");
+                }
+
+                _pendingHistorySnapshots.Dequeue();
+            }
+        }
+
+
+        /// <summary>
+        /// 采集阶段快照，不结束当前播放过程。
+        /// </summary>
+        public void CaptureHistorySnapshot()
+        {
+            lock (_historySync)
+            {
+                if (!_historyRecordingEnabled || !_historyTracker.HasSession)
+                {
+                    return;
+                }
+
+                EnqueueHistorySnapshotCore(
+                    _historyTracker.CaptureSnapshot(
+                        _audioPlayer.Position));
+            }
+        }
+
+        /// <summary>
+        /// 挂起前暂停计时，并保留当前历史记录。
+        /// </summary>
+        public void SuspendHistoryTracking()
+        {
+            lock (_historySync)
+            {
+                if (_historySuspended)
+                {
+                    return;
+                }
+
+                _historySuspended = true;
+
+                _historyTracker.SetPlaying(false);
+                _historyWasPlaying = false;
+
+                CaptureHistorySnapshot();
+            }
+        }
+
+        /// <summary>
+        /// 恢复后重新同步实际播放状态。
+        /// </summary>
+        public void ResumeHistoryTracking()
+        {
+            lock (_historySync)
+            {
+                if (!_historySuspended)
+                {
+                    return;
+                }
+
+                _historySuspended = false;
+
+                SynchronizePlaybackHistory();
+            }
         }
     }
 }

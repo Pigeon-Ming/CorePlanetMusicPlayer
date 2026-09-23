@@ -85,6 +85,8 @@ namespace CorePlanetMusicPlayer.Services.Settings
 
         public bool ResumePositionOnStartup { get; set; }
 
+        public bool EnablePlaybackHistory { get; set; } = true;
+
         public static PlaybackSettings CreateDefault()
         {
             return new PlaybackSettings
@@ -93,7 +95,8 @@ namespace CorePlanetMusicPlayer.Services.Settings
                 IsMuted = false,
                 PlaybackMode = PlaybackMode.Sequential,
                 RestoreQueueOnStartup = true,
-                ResumePositionOnStartup = false
+                ResumePositionOnStartup = false,
+                EnablePlaybackHistory = true,
             };
         }
 

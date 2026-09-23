@@ -21,9 +21,21 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Playback
         private PlaybackPosition _position;
         private VolumeLevel _volume;
 
+        public event EventHandler PlaybackActivityChanged;
+
         public event EventHandler PlaybackEnded;
 
         public event EventHandler<PlaybackErrorEventArgs> PlaybackError;
+
+        public bool IsActuallyPlaying
+        {
+            get
+            {
+                return _status == PlaybackStatus.Playing && 
+                    _mediaPlayer.Source != null &&
+                    _mediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing;
+            }
+        }
 
         public UwpAudioPlayer(UwpMediaSourceFactory mediaSourceFactory)
         {
@@ -41,6 +53,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Playback
 
             _mediaPlayer.MediaEnded += OnMediaEnded;
             _mediaPlayer.MediaFailed += OnMediaFailed;
+            _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackSessionStateChanged;
         }
 
         public PlaybackStatus Status
@@ -100,6 +113,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Playback
             _mediaPlayer.Play();
             _status = PlaybackStatus.Playing;
             _position = GetCurrentPosition();
+            RaisePlaybackActivityChanged();
 
             return Task.FromResult<object>(null);
         }
@@ -114,6 +128,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Playback
             _mediaPlayer.Pause();
             _status = PlaybackStatus.Paused;
             _position = GetCurrentPosition();
+            RaisePlaybackActivityChanged();
 
             return Task.FromResult<object>(null);
         }
@@ -128,6 +143,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Playback
             _mediaPlayer.Play();
             _status = PlaybackStatus.Playing;
             _position = GetCurrentPosition();
+            RaisePlaybackActivityChanged();
 
             return Task.FromResult<object>(null);
         }
@@ -143,6 +159,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Playback
             _status = PlaybackStatus.Stopped;
             _currentMusicId = null;
             _position = PlaybackPosition.Empty();
+            RaisePlaybackActivityChanged();
 
             return Task.FromResult<object>(null);
         }
@@ -181,6 +198,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Playback
         {
             _mediaPlayer.MediaEnded -= OnMediaEnded;
             _mediaPlayer.MediaFailed -= OnMediaFailed;
+            _mediaPlayer.PlaybackSession.PlaybackStateChanged -= OnPlaybackSessionStateChanged;
             _mediaPlayer.Dispose();
         }
 
@@ -229,6 +247,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Playback
         {
             _status = PlaybackStatus.Ended;
             _position = GetCurrentPosition();
+            RaisePlaybackActivityChanged();
 
             var handler = PlaybackEnded;
 
@@ -241,7 +260,8 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Playback
         private void OnMediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
         {
             _status = PlaybackStatus.Error;
-            
+            RaisePlaybackActivityChanged();
+
             var message = args == null ? "播放失败。" : args.ErrorMessage;
             
             if (string.IsNullOrWhiteSpace(message))
@@ -255,6 +275,16 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Playback
             {
                 handler(this, new PlaybackErrorEventArgs(_currentMusicId, message));
             }
+        }
+
+        private void OnPlaybackSessionStateChanged(MediaPlaybackSession sender, object args)
+        {
+            RaisePlaybackActivityChanged();
+        }
+
+        private void RaisePlaybackActivityChanged()
+        {
+            PlaybackActivityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }

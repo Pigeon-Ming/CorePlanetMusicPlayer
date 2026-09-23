@@ -20,6 +20,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.System
         private const string PlaybackModeKey = "Settings.Playback.PlaybackMode";
         private const string PlaybackRestoreQueueOnStartupKey = "Settings.Playback.RestoreQueueOnStartup";
         private const string PlaybackResumePositionOnStartupKey = "Settings.Playback.ResumePositionOnStartup";
+        private const string PlaybackEnableHistoryKey = "Settings.Playback.EnablePlaybackHistory";
 
         private const string LibraryAutoRefreshOnStartupKey = "Settings.Library.AutoRefreshOnStartup";
         private const string LibraryIncludeSubfoldersKey = "Settings.Library.IncludeSubfolders";
@@ -72,6 +73,11 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.System
                 values,
                 PlaybackResumePositionOnStartupKey,
                 settings.Playback.ResumePositionOnStartup);
+
+            settings.Playback.EnablePlaybackHistory = GetBoolean(
+                values,
+                PlaybackEnableHistoryKey,
+                settings.Playback.EnablePlaybackHistory);
 
             settings.Library.AutoRefreshOnStartup = GetBoolean(
                 values,
@@ -137,6 +143,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.System
             values[PlaybackModeKey] = (int)settings.Playback.PlaybackMode;
             values[PlaybackRestoreQueueOnStartupKey] = settings.Playback.RestoreQueueOnStartup;
             values[PlaybackResumePositionOnStartupKey] = settings.Playback.ResumePositionOnStartup;
+            values[PlaybackEnableHistoryKey] = settings.Playback.EnablePlaybackHistory;
 
             values[LibraryAutoRefreshOnStartupKey] = settings.Library.AutoRefreshOnStartup;
             values[LibraryIncludeSubfoldersKey] = settings.Library.IncludeSubfolders;
@@ -172,6 +179,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.System
             Remove(values, PlaybackModeKey);
             Remove(values, PlaybackRestoreQueueOnStartupKey);
             Remove(values, PlaybackResumePositionOnStartupKey);
+            Remove(values, PlaybackEnableHistoryKey);
 
             Remove(values, LibraryAutoRefreshOnStartupKey);
             Remove(values, LibraryIncludeSubfoldersKey);

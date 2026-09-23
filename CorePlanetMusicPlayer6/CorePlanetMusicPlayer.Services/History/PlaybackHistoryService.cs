@@ -13,7 +13,7 @@ namespace CorePlanetMusicPlayer.Services.History
     public sealed class PlaybackHistoryService : IPlaybackHistoryService
     {
         /// <summary>
-        /// 播放进度超过该阈值时，认为播放完成
+        /// 累计播放时长达到歌曲总时长的该比例时，认为播放完成。
         /// </summary>
         private const double CompletedThreshold = 0.8;
 
@@ -26,28 +26,58 @@ namespace CorePlanetMusicPlayer.Services.History
             _historyRepository = historyRepository;
         }
 
-        public async Task RecordPlaybackAsync(MusicId musicId, TimeSpan musicDuration, TimeSpan playedDuration, TimeSpan lastPosition)
+        public Task RecordPlaybackAsync(
+            PlaybackHistoryId historyId, 
+            MusicId musicId, 
+            DateTimeOffset playedAt, 
+            TimeSpan musicDuration, 
+            TimeSpan playedDuration, 
+            TimeSpan lastPosition,
+            string titleSnapshot,
+            string artistNameSnapshot,
+            string albumTitleSnapshot)
         {
+            if (historyId.IsEmpty)
+            {
+                throw new ArgumentException("历史记录 ID 不能为空。", nameof(historyId));
+            }
+
             ValidateMusicId(musicId);
 
+            if (playedAt == default(DateTimeOffset))
+            {
+                throw new ArgumentException("播放开始时间不能为空。", nameof(playedAt));
+            }
+
             Guard.NotNegative(musicDuration, nameof(musicDuration));
+
             Guard.NotNegative(playedDuration, nameof(playedDuration));
+
             Guard.NotNegative(lastPosition, nameof(lastPosition));
 
-            var normalizedLastPosition = NormalizePosition(lastPosition, musicDuration);
+            // 未产生有效播放时长时，不写入历史。
+            if (playedDuration == TimeSpan.Zero)
+            {
+                return Task.CompletedTask;
+            }
 
             var item = new PlaybackHistoryItem
             {
-                Id = PlaybackHistoryId.NewId(),
+                Id = historyId,
                 MusicId = musicId,
-                PlayedAt = DateTimeOffset.Now,
+                TitleSnapshot = titleSnapshot ?? string.Empty,
+                ArtistNameSnapshot = artistNameSnapshot ?? string.Empty,
+                AlbumTitleSnapshot = albumTitleSnapshot ?? string.Empty,
+                PlayedAt = playedAt,
                 MusicDuration = musicDuration,
                 PlayedDuration = playedDuration,
-                LastPosition = normalizedLastPosition,
+
+                LastPosition = NormalizePosition(lastPosition, musicDuration),
+
                 IsCompleted = IsCompleted(musicDuration, playedDuration)
             };
 
-            await _historyRepository.AddAsync(item);
+            return _historyRepository.UpsertAsync(item);
         }
 
         private void ValidateMusicId(MusicId musicId)
@@ -89,18 +119,14 @@ namespace CorePlanetMusicPlayer.Services.History
             return _historyRepository.GetByMusicIdAsync(musicId);
         }
 
-        public Task<IReadOnlyList<PlaybackHistoryItem>> GetByDateRangeAsync(
-            DateTimeOffset startTime,
-            DateTimeOffset endTime)
+        public Task<IReadOnlyList<PlaybackHistoryItem>> GetByDateRangeAsync(DateTimeOffset? startTime = null, DateTimeOffset? endTime = null)
         {
-            if (endTime < startTime)
+            if (startTime.HasValue && endTime.HasValue && endTime.Value < startTime.Value)
             {
-                throw new ArgumentException("End time cannot be earlier than start time.", nameof(endTime));
+                throw new ArgumentException("结束时间不能早于开始时间。", nameof(endTime));
             }
 
-            return _historyRepository.GetByDateRangeAsync(
-                startTime,
-                endTime);
+            return _historyRepository.GetByDateRangeAsync(startTime, endTime);
         }
 
         public Task DeleteAsync(PlaybackHistoryId historyId)

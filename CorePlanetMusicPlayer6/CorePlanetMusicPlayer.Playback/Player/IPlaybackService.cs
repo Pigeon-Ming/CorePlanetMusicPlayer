@@ -1,5 +1,6 @@
 ﻿using CorePlanetMusicPlayer.Core.Music;
 using CorePlanetMusicPlayer.Playback.Events;
+using CorePlanetMusicPlayer.Playback.Hisrory;
 using CorePlanetMusicPlayer.Playback.Modes;
 using CorePlanetMusicPlayer.Playback.Queue;
 using System;
@@ -16,6 +17,8 @@ namespace CorePlanetMusicPlayer.Playback.Player
 
         PlaybackQueueSnapshot QueueSnapshot { get; }
 
+        bool IsHistoryRecordingEnabled { get; }
+
         event EventHandler QueueChanged;
 
         event EventHandler PlaybackModeChanged;
@@ -27,6 +30,12 @@ namespace CorePlanetMusicPlayer.Playback.Player
         event EventHandler<PlaybackPositionChangedEventArgs> PositionChanged;
 
         event EventHandler<PlaybackErrorEventArgs> PlaybackError;
+
+        /// <summary>
+        /// 有历史快照等待保存。
+        /// 处理方法只应发送后台处理信号，不应直接执行数据库操作。
+        /// </summary>
+        event EventHandler HistorySnapshotAvailable;
 
         Task PlayAsync(MusicId musicId);
 
@@ -87,5 +96,38 @@ namespace CorePlanetMusicPlayer.Playback.Player
         /// 恢复队列和播放模式，不自动播放。
         /// </summary>
         Task RestoreQueueAsync(PlaybackQueueSnapshot snapshot, PlaybackMode mode);
+
+        /// <summary>
+        /// 修改历史记录开关，不改变音乐播放状态。
+        /// </summary>
+        void SetHistoryRecordingEnabled(bool enabled);
+
+        /// <summary>
+        /// 读取队首历史快照，不移除。
+        /// </summary>
+        bool TryPeekHistorySnapshot(out PlaybackHistorySnapshot snapshot);
+
+        /// <summary>
+        /// 保存成功后，确认并移除指定的队首快照。
+        /// 历史快照队列只允许一个保存服务消费。
+        /// </summary>
+        void AcknowledgeHistorySnapshot(PlaybackHistorySnapshot snapshot);
+
+
+        /// <summary>
+        /// 将当前播放过程的阶段快照加入保存队列。
+        /// 不结束本次记录，不改变计时状态。
+        /// </summary>
+        void CaptureHistorySnapshot();
+
+        /// <summary>
+        /// 应用挂起前暂停历史计时，并产生阶段快照。
+        /// </summary>
+        void SuspendHistoryTracking();
+
+        /// <summary>
+        /// 应用恢复后，根据实际播放状态恢复历史计时。
+        /// </summary>
+        void ResumeHistoryTracking();
     }
 }

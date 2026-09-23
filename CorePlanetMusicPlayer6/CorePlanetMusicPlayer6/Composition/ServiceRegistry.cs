@@ -120,7 +120,9 @@ namespace CorePlanetMusicPlayer6.Composition
                 new ReversePlaybackModeStrategy()
             };
 
-            services.PlaybackService = new PlaybackService(services.AudioPlayer, queue, strategies);
+            var musicResolver = new PlaybackMusicResolver(services.MusicRepository);
+
+            services.PlaybackService = new PlaybackService(services.AudioPlayer, queue, strategies, musicResolver);
         }
 
         private static void CreateBusinessServices(AppServices services)
@@ -160,6 +162,8 @@ namespace CorePlanetMusicPlayer6.Composition
             services.ArtworkService = new ArtworkService(services.MusicRepository);
 
             services.PlaybackHistoryService = new PlaybackHistoryService(services.PlaybackHistoryRepository);
+
+            services.PlaybackHistoryRecorder = new PlaybackHistoryRecorder(services.PlaybackService, services.PlaybackHistoryService);
 
             services.PlaybackStatisticsService = new PlaybackStatisticsService(services.PlaybackHistoryRepository, services.MusicRepository);
 

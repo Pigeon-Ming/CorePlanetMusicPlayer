@@ -72,9 +72,9 @@
                     <dev:PlaylistsControl />
                 </DataTemplate>
             </HubSection>
-            <HubSection Header="最近">
+            <HubSection Header="历史">
                 <DataTemplate>
-                    <TextBlock Text="占位" />
+                    <dev:PlayHistoryControl />
                 </DataTemplate>
             </HubSection>
             <HubSection Header="统计">
