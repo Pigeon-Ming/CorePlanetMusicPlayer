@@ -14,6 +14,12 @@ namespace CorePlanetMusicPlayer.Data.Entities
 
         public string MusicId { get; set; } = string.Empty;
 
+        public string TitleSnapshot { get; set; } = string.Empty;
+
+        public string ArtistNameSnapshot { get; set; } = string.Empty;
+
+        public string AlbumTitleSnapshot { get; set; } = string.Empty;
+
         public int Order { get; set; }
 
         public long AddedAtUnixTimeMilliseconds { get; set; }

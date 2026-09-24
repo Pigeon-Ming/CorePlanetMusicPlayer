@@ -11,9 +11,7 @@ namespace CorePlanetMusicPlayer.Data.Mapping
 {
     public static class PlaylistDataMapper
     {
-        public static Playlist ToModel(
-            PlaylistEntity playlistEntity,
-            IEnumerable<PlaylistItemEntity> itemEntities)
+        public static Playlist ToModel(PlaylistEntity playlistEntity, IEnumerable<PlaylistItemEntity> itemEntities)
         {
             if (playlistEntity == null)
             {
@@ -100,14 +98,15 @@ namespace CorePlanetMusicPlayer.Data.Mapping
             {
                 Id = entity.Id ?? string.Empty,
                 MusicId = new MusicId(entity.MusicId),
+                TitleSnapshot = entity.TitleSnapshot ?? string.Empty,
+                ArtistNameSnapshot = entity.ArtistNameSnapshot ?? string.Empty,
+                AlbumTitleSnapshot = entity.AlbumTitleSnapshot ?? string.Empty,
                 Order = entity.Order,
                 AddedAt = DataValueConverter.FromUnixTimeMilliseconds(entity.AddedAtUnixTimeMilliseconds)
             };
         }
 
-        public static PlaylistItemEntity ToItemEntity(
-            PlaylistId playlistId,
-            PlaylistItem item)
+        public static PlaylistItemEntity ToItemEntity(PlaylistId playlistId, PlaylistItem item)
         {
             if (item == null)
             {
@@ -119,6 +118,9 @@ namespace CorePlanetMusicPlayer.Data.Mapping
                 Id = item.Id ?? string.Empty,
                 PlaylistId = playlistId.ToString(),
                 MusicId = item.MusicId.ToString(),
+                TitleSnapshot = item.TitleSnapshot ?? string.Empty,
+                ArtistNameSnapshot = item.ArtistNameSnapshot ?? string.Empty,
+                AlbumTitleSnapshot = item.AlbumTitleSnapshot ?? string.Empty,
                 Order = item.Order,
                 AddedAtUnixTimeMilliseconds = DataValueConverter.ToUnixTimeMilliseconds(item.AddedAt)
             };

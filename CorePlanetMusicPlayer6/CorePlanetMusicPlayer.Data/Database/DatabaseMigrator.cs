@@ -143,6 +143,9 @@ namespace CorePlanetMusicPlayer.Data.Database
                     id TEXT PRIMARY KEY,
                     playlist_id TEXT NOT NULL,
                     music_id TEXT NOT NULL,
+                    title_snapshot TEXT NOT NULL DEFAULT '',
+                    artist_name_snapshot TEXT NOT NULL DEFAULT '',
+                    album_title_snapshot TEXT NOT NULL DEFAULT '',
                     item_order INTEGER NOT NULL,
                     added_at INTEGER NOT NULL
                 );");

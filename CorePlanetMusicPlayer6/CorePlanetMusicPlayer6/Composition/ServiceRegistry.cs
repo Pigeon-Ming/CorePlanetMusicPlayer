@@ -153,7 +153,7 @@ namespace CorePlanetMusicPlayer6.Composition
 
             services.MusicLibraryService = new MusicLibraryService(services.MusicRepository, services.LibraryFolderRepository, libraryScanner, musicIndexService);
 
-            services.PlaylistService = new PlaylistService(services.PlaylistRepository);
+            services.PlaylistService = new PlaylistService(services.PlaylistRepository, services.MusicRepository);
 
             services.LyricSearchService = new LyricSearchService();
 
