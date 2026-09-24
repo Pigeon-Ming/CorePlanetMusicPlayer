@@ -120,10 +120,16 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Artwork\AlbumArtworkService.cs" />
+    <Compile Include="Artwork\ArtworkChangedEventArgs.cs" />
+    <Compile Include="Artwork\ArtworkEditService.cs" />
     <Compile Include="Artwork\ArtworkReference.cs" />
+    <Compile Include="Artwork\ArtworkRequest.cs" />
     <Compile Include="Artwork\ArtworkService.cs" />
-    <Compile Include="Artwork\ArtworkSourceKind.cs" />
+    <Compile Include="Artwork\IAlbumArtworkService.cs" />
+    <Compile Include="Artwork\IArtworkEditService.cs" />
     <Compile Include="Artwork\IArtworkService.cs" />
+    <Compile Include="Artwork\IArtworkStore.cs" />
     <Compile Include="History\IPlaybackHistoryService.cs" />
     <Compile Include="History\PlaybackHistoryRecorder.cs" />
     <Compile Include="History\PlaybackHistoryService.cs" />

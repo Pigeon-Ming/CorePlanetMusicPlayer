@@ -110,6 +110,8 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                         ? "该专辑暂无歌曲。"
                         : $"已读取 {details.MusicItems.Count} 首歌曲。";
                 }
+
+                await LoadAlbumArtworkAsync(details, version);
             }
             catch (Exception ex)
             {
@@ -198,6 +200,8 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
             AlbumDescriptionTextBox.Text = string.Empty;
 
             AlbumMusicSource.Source = null;
+
+            AlbumArtworkControl.Request = null;
         }
 
         private void UpdateOperationState()
@@ -237,6 +241,38 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
             album.Description = description ?? string.Empty;
 
             return "专辑简介已保存。";
+        }
+
+        private async Task LoadAlbumArtworkAsync(
+            AlbumDetails details,
+            int version)
+        {
+            try
+            {
+                var service = AppRuntime.Services?.AlbumArtworkService;
+
+                if (service == null)
+                {
+                    throw new InvalidOperationException(
+                        "专辑封面服务尚未就绪。");
+                }
+
+                // 复用已读取的、按专辑顺序排列的歌曲。
+                var request = await service.CreateArtworkAsync(
+                    details.MusicItems);
+
+                if (version != _loadVersion)
+                {
+                    return;
+                }
+
+                AlbumArtworkControl.Request = request;
+            }
+            catch (Exception exception)
+            {
+                // 封面失败不影响专辑文字信息和歌曲列表。
+                Debug.WriteLine("读取专辑封面来源失败：" + exception);
+            }
         }
 
         private async Task RunOperationAsync(

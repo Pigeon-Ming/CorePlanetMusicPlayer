@@ -2,6 +2,7 @@
     x:Class="CorePlanetMusicPlayer6.Controls.Dev.TestControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:common="using:CorePlanetMusicPlayer6.Controls.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:CorePlanetMusicPlayer6.Controls.Dev"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -43,6 +44,17 @@
                 Content="扫描并保存已添加的音乐来源" />
 
             <TextBlock x:Name="LibraryRefreshCheckTextBlock" TextWrapping="Wrap" />
+
+            <Button
+                x:Name="LoadArtworkButton"
+                Click="LoadArtworkButton_Click"
+                Content="尝试加载图片" />
+
+            <common:ArtworkImageControl
+                x:Name="PreviewArtworkControl"
+                Width="160"
+                Height="160"
+                DecodePixelSize="256" />
         </StackPanel>
     </Grid>
 </UserControl>

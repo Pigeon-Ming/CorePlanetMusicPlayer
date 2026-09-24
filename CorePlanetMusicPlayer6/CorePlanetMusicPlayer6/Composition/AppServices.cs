@@ -42,6 +42,8 @@ namespace CorePlanetMusicPlayer6.Composition
 
         public ILyricRepository LyricRepository { get; set; }
 
+        public IArtworkRepository ArtworkRepository { get; set; }
+
         public IMusicIndexService MusicIndexService { get; set; }
 
         public IMusicQueryService MusicQueryService { get; set; }
@@ -71,6 +73,12 @@ namespace CorePlanetMusicPlayer6.Composition
         public ISettingsService SettingsService { get; set; }
 
         public IPlaybackService PlaybackService { get; set; }
+
+        public IArtworkStore ArtworkStore { get; set; }
+
+        public IArtworkEditService ArtworkEditService { get; set; }
+
+        public IAlbumArtworkService AlbumArtworkService { get; set; }
 
         public UwpFolderPickerService FolderPickerService { get; set; }
 

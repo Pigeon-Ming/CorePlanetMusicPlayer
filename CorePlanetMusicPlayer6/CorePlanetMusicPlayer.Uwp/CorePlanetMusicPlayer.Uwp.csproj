@@ -120,7 +120,11 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Platform\Imaging\ArtworkMemoryCache.cs" />
+    <Compile Include="Platform\Imaging\UwpArtworkLoader.Cache.cs" />
     <Compile Include="Platform\Imaging\UwpArtworkLoader.cs" />
+    <Compile Include="Platform\Imaging\UwpArtworkStore.cs" />
+    <Compile Include="Platform\Imaging\UwpRemoteArtworkLoader.cs" />
     <Compile Include="Platform\Imaging\UwpThumbnailLoader.cs" />
     <Compile Include="Platform\Library\UwpLibraryScanner.cs" />
     <Compile Include="Platform\Metadata\UwpMusicFileReader.cs" />

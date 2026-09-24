@@ -123,6 +123,9 @@
     <Compile Include="Composition\AppRuntime.cs" />
     <Compile Include="Composition\AppServices.cs" />
     <Compile Include="Composition\ServiceRegistry.cs" />
+    <Compile Include="Controls\Common\ArtworkImageControl.xaml.cs">
+      <DependentUpon>ArtworkImageControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Dev\AlbumControl.xaml.cs">
       <DependentUpon>AlbumControl.xaml</DependentUpon>
     </Compile>
@@ -213,6 +216,9 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\DefaultPlaylistArtwork.png" />
+    <Content Include="Assets\DefaultArtistArtwork.png" />
+    <Content Include="Assets\DefaultAlbumArtwork.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -227,6 +233,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\Common\ArtworkImageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Dev\AlbumControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

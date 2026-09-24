@@ -3,7 +3,9 @@ using CorePlanetMusicPlayer.Core.Music;
 using CorePlanetMusicPlayer.Data.Database;
 using CorePlanetMusicPlayer.Data.Mapping;
 using CorePlanetMusicPlayer.Data.Repositories.Sqlite;
+using CorePlanetMusicPlayer.Services.Artwork;
 using CorePlanetMusicPlayer.Services.Library;
+using CorePlanetMusicPlayer.Services.Library.MusicQueries;
 using CorePlanetMusicPlayer.Uwp.Platform.Library;
 using CorePlanetMusicPlayer.Uwp.Platform.Metadata;
 using CorePlanetMusicPlayer.Uwp.Platform.Storage;
@@ -32,6 +34,7 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
 {
     public sealed partial class TestControl : UserControl
     {
+
         public TestControl()
         {
             this.InitializeComponent();
@@ -582,6 +585,22 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
             finally
             {
                 CheckLibraryRefreshButton.IsEnabled = true;
+            }
+        }
+
+        private async void LoadArtworkButton_Click(object sender, RoutedEventArgs e)
+        {
+            var services = AppRuntime.Services;
+
+            var musicQueryService = services?.MusicQueryService;
+
+            var musicList = await musicQueryService.GetAllAsync();
+
+            if (musicList.Count > 0)
+            {
+                var reference = await services.ArtworkService.GetArtworkAsync(musicList[0]);
+
+                PreviewArtworkControl.Request = ArtworkRequest.FromReference(reference);
             }
         }
     }

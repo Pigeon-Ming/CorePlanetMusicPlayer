@@ -186,7 +186,36 @@ namespace CorePlanetMusicPlayer.Data.Database
                     created_at INTEGER NOT NULL,
                     updated_at INTEGER NOT NULL
                 );");
-            
+
+            ExecuteNonQuery(connection, @"
+                CREATE TABLE IF NOT EXISTS artwork_assignments (
+                    owner_kind INTEGER NOT NULL,
+                    owner_id TEXT NOT NULL,
+                    source_kind INTEGER NOT NULL,
+                    resource_key TEXT NOT NULL DEFAULT '',
+                    remote_url TEXT NOT NULL DEFAULT '',
+                    updated_at INTEGER NOT NULL,
+
+                    PRIMARY KEY (owner_kind, owner_id),
+
+                    CHECK (owner_kind IN (1, 2, 3)),
+                    CHECK (length(trim(owner_id)) > 0),
+
+                    CHECK (
+                        (
+                            source_kind = 2
+                            AND length(trim(resource_key)) > 0
+                            AND remote_url = ''
+                        )
+                        OR
+                        (
+                            source_kind = 3
+                            AND resource_key = ''
+                            AND length(trim(remote_url)) > 0
+                        )
+                    )
+                );");
+
             ExecuteNonQuery(connection, "CREATE INDEX IF NOT EXISTS idx_music_library_folder_id ON music(library_folder_id);");
             ExecuteNonQuery(connection, "CREATE INDEX IF NOT EXISTS idx_music_title ON music(title);");
             ExecuteNonQuery(connection, "CREATE INDEX IF NOT EXISTS idx_music_artist_name ON music(artist_name);");

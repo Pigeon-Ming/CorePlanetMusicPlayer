@@ -24,6 +24,8 @@ using CorePlanetMusicPlayer.Uwp.Platform.Metadata;
 using CorePlanetMusicPlayer.Uwp.Platform.Playback;
 using CorePlanetMusicPlayer.Uwp.Platform.Storage;
 using CorePlanetMusicPlayer.Uwp.Platform.System;
+using System;
+using System.Diagnostics;
 using Windows.Storage;
 
 namespace CorePlanetMusicPlayer6.Composition
@@ -39,6 +41,7 @@ namespace CorePlanetMusicPlayer6.Composition
             CreatePlatformServices(services);
             CreatePlaybackServices(services);
             CreateBusinessServices(services);
+            ConnectArtworkServices(services);
             ConnectSystemMediaControls(services);
 
             return services;
@@ -78,6 +81,8 @@ namespace CorePlanetMusicPlayer6.Composition
             services.LibraryFolderRepository = new SqliteLibraryFolderRepository(services.Database);
 
             services.LyricRepository = new SqliteLyricRepository(services.Database);
+
+            services.ArtworkRepository = new SqliteArtworkRepository(services.Database);
         }
 
         private static void CreatePlatformServices(AppServices services)
@@ -90,17 +95,23 @@ namespace CorePlanetMusicPlayer6.Composition
             
             services.StorageAccessService = new UwpStorageAccessService(services.FolderPickerService, services.StorageFileMapper);
 
+            services.DispatcherService = new UwpDispatcherService();
+
             services.ThumbnailLoader = new UwpThumbnailLoader();
 
-            services.ArtworkLoader = new UwpArtworkLoader(services.LibraryFolderRepository, services.StorageAccessService, services.ThumbnailLoader);
+            services.ArtworkStore = new UwpArtworkStore();
 
-            services.DispatcherService = new UwpDispatcherService();
+            var remoteArtworkLoader = new UwpRemoteArtworkLoader(services.ThumbnailLoader);
+
+            services.ArtworkLoader = new UwpArtworkLoader(services.LibraryFolderRepository, services.StorageAccessService, services.ThumbnailLoader, services.ArtworkStore, remoteArtworkLoader, services.DispatcherService);
 
             services.DeviceInfoService = new UwpDeviceInfoService();
 
             services.SettingsStore = new UwpSettingsStore();
 
             services.MusicMetadataWriter = new UwpMusicMetadataWriter(services.LibraryFolderRepository, services.StorageAccessService);
+
+            
         }
 
         private static void CreatePlaybackServices(AppServices services)
@@ -159,7 +170,11 @@ namespace CorePlanetMusicPlayer6.Composition
 
             services.LyricService = new LyricService(services.LyricRepository, lyricParserCollection, services.LyricSearchService);
 
-            services.ArtworkService = new ArtworkService(services.MusicRepository);
+            services.ArtworkService = new ArtworkService(services.MusicRepository, services.ArtistRepository, services.PlaylistRepository, services.ArtworkRepository);
+
+            services.AlbumArtworkService = new AlbumArtworkService(services.AlbumService, services.ArtworkService);
+
+            services.ArtworkEditService = new ArtworkEditService(services.ArtworkRepository, services.MusicRepository, services.ArtistRepository, services.PlaylistRepository, services.ArtworkStore);
 
             services.PlaybackHistoryService = new PlaybackHistoryService(services.PlaybackHistoryRepository);
 
@@ -207,6 +222,21 @@ namespace CorePlanetMusicPlayer6.Composition
             return System.IO.Path.Combine(
                 ApplicationData.Current.LocalFolder.Path,
                 "library.db");
+        }
+
+        private static void ConnectArtworkServices(AppServices services)
+        {
+            services.ArtworkEditService.ArtworkChanged += async (sender, args) =>
+            {
+                try
+                {
+                    await services.ArtworkLoader.InvalidateAsync(args.Owner);
+                }
+                catch (Exception exception)
+                {
+                    Debug.WriteLine("处理图片缓存失效失败：" + exception);
+                }
+            };
         }
     }
 }

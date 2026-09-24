@@ -1,4 +1,5 @@
-﻿using CorePlanetMusicPlayer.Core.Music;
+﻿using CorePlanetMusicPlayer.Core.Artwork;
+using CorePlanetMusicPlayer.Core.Music;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace CorePlanetMusicPlayer.Services.Artwork
     {
         public ArtworkSourceKind SourceKind { get; private set; }
 
-        public MusicId? MusicId { get; private set; }
+        public ArtworkOwner Owner { get; private set; }
 
         public string SourcePath { get; private set; }
 
@@ -19,208 +20,97 @@ namespace CorePlanetMusicPlayer.Services.Artwork
 
         public string LibraryFolderId { get; private set; }
 
-        public string CacheKey { get; private set; }
+        public string ResourceKey { get; private set; }
+
+        public string RemoteUrl { get; private set; }
+
+        public DateTimeOffset? SourceUpdatedAt { get; private set; }
+
+        public long? SourceSize { get; private set; }
 
         public string DefaultResourceName { get; private set; }
 
-        public bool CanUseCache { get; private set; }
-
-        public bool CanUseEmbedded { get; private set; }
-
-        public bool HasMusic
-        {
-            get
-            {
-                return MusicId.HasValue && !MusicId.Value.IsEmpty;
-            }
-        }
-
-        public bool HasSourcePath
-        {
-            get { return !string.IsNullOrWhiteSpace(SourcePath); }
-        }
-
-        public bool HasRelativePath
-        {
-            get { return !string.IsNullOrWhiteSpace(RelativePath); }
-        }
-
-        public bool HasLibraryFolder
-        {
-            get { return !string.IsNullOrWhiteSpace(LibraryFolderId); }
-        }
-
-        public bool IsDefault
-        {
-            get { return SourceKind == ArtworkSourceKind.Default; }
-        }
-
-        public bool IsAuto
-        {
-            get { return SourceKind == ArtworkSourceKind.Auto; }
-        }
-
-        public bool IsEmbedded
-        {
-            get { return SourceKind == ArtworkSourceKind.Embedded; }
-        }
-
-        public bool IsCache
-        {
-            get { return SourceKind == ArtworkSourceKind.Cache; }
-        }
-
-        public bool IsFile
-        {
-            get { return SourceKind == ArtworkSourceKind.File; }
-        }
-
         private ArtworkReference()
         {
-            SourceKind = ArtworkSourceKind.None;
+            SourceKind = ArtworkSourceKind.Default;
             SourcePath = string.Empty;
             RelativePath = string.Empty;
             LibraryFolderId = string.Empty;
-            CacheKey = string.Empty;
-            DefaultResourceName = string.Empty;
+            ResourceKey = string.Empty;
+            RemoteUrl = string.Empty;
+            DefaultResourceName = "DefaultAlbumArtwork";
         }
 
-        public static ArtworkReference None()
+        public static ArtworkReference FromMusicFile(Music music, string defaultResourceName = "DefaultAlbumArtwork")
         {
-            return new ArtworkReference
+            if (music == null)
             {
-                SourceKind = ArtworkSourceKind.None
-            };
-        }
-
-        public static ArtworkReference CreateAuto(Music music)
-        {
-            if (music == null || music.Id.IsEmpty)
-            {
-                return Default();
+                throw new ArgumentNullException(nameof(music));
             }
 
-            var reference = new ArtworkReference
+            if (music.Id.IsEmpty)
             {
-                SourceKind = ArtworkSourceKind.Auto,
-                MusicId = music.Id,
-                CacheKey = CreateCacheKey(music.Id),
-                DefaultResourceName = "DefaultAlbumArtwork",
-                CanUseCache = true,
-                CanUseEmbedded = true
-            };
-
-            if (music.FileInfo != null)
-            {
-                reference.SourcePath = music.FileInfo.Path ?? string.Empty;
-                reference.RelativePath = music.FileInfo.RelativePath ?? string.Empty;
-                reference.LibraryFolderId = music.FileInfo.LibraryFolderId ?? string.Empty;
+                throw new ArgumentException("Music id cannot be empty.", nameof(music));
             }
 
-            return reference;
-        }
-
-        public static ArtworkReference Embedded(Music music)
-        {
-            if (music == null || music.Id.IsEmpty)
+            if (music.SourceType != MusicSourceType.Local && music.SourceType != MusicSourceType.Temporary)
             {
-                return Default();
+                throw new ArgumentException("Music must have a local file source.", nameof(music));
             }
 
-            var reference = new ArtworkReference
-            {
-                SourceKind = ArtworkSourceKind.Embedded,
-                MusicId = music.Id,
-                CacheKey = CreateCacheKey(music.Id),
-                DefaultResourceName = "DefaultAlbumArtwork",
-                CanUseCache = false,
-                CanUseEmbedded = true
-            };
+            var owner = new ArtworkOwner(ArtworkOwnerKind.Music, music.Id.ToString());
 
-            if (music.FileInfo != null)
-            {
-                reference.SourcePath = music.FileInfo.Path ?? string.Empty;
-                reference.RelativePath = music.FileInfo.RelativePath ?? string.Empty;
-                reference.LibraryFolderId = music.FileInfo.LibraryFolderId ?? string.Empty;
-            }
+            var fileInfo = music.FileInfo;
 
-            return reference;
-        }
-
-        public static ArtworkReference Cache(MusicId musicId)
-        {
-            if (musicId.IsEmpty)
+            if (fileInfo == null || (!fileInfo.HasPath && !(fileInfo.HasRelativePath && fileInfo.HasLibraryFolder)))
             {
-                return Default();
+                return Default(defaultResourceName, owner);
             }
 
             return new ArtworkReference
             {
-                SourceKind = ArtworkSourceKind.Cache,
-                MusicId = musicId,
-                CacheKey = CreateCacheKey(musicId),
-                DefaultResourceName = "DefaultAlbumArtwork",
-                CanUseCache = true,
-                CanUseEmbedded = false
+                SourceKind = ArtworkSourceKind.MusicFile,
+                Owner = owner,
+                SourcePath = fileInfo.Path ?? string.Empty,
+                RelativePath = fileInfo.RelativePath ?? string.Empty,
+                LibraryFolderId = fileInfo.LibraryFolderId ?? string.Empty,
+                SourceUpdatedAt = fileInfo.LastModifiedAt,
+                SourceSize = fileInfo.Size,
+                DefaultResourceName = NormalizeDefaultResourceName(defaultResourceName)
             };
         }
 
-        public static ArtworkReference File(MusicId musicId, string sourcePath)
+        public static ArtworkReference FromAssignment(ArtworkAssignment assignment, string defaultResourceName = "DefaultAlbumArtwork")
         {
-            if (musicId.IsEmpty || string.IsNullOrWhiteSpace(sourcePath))
+            if (assignment == null)
             {
-                return Default();
+                throw new ArgumentNullException(nameof(assignment));
             }
 
             return new ArtworkReference
             {
-                SourceKind = ArtworkSourceKind.File,
-                MusicId = musicId,
-                SourcePath = sourcePath,
-                CacheKey = CreateCacheKey(musicId),
-                DefaultResourceName = "DefaultAlbumArtwork",
-                CanUseCache = false,
-                CanUseEmbedded = false
+                SourceKind = assignment.SourceKind,
+                Owner = assignment.Owner,
+                ResourceKey = assignment.ResourceKey,
+                RemoteUrl = assignment.RemoteUrl,
+                SourceUpdatedAt = assignment.UpdatedAt,
+                DefaultResourceName = NormalizeDefaultResourceName(defaultResourceName)
             };
         }
 
-        public static ArtworkReference Default()
+        public static ArtworkReference Default(string defaultResourceName = "DefaultAlbumArtwork", ArtworkOwner owner = null)
         {
             return new ArtworkReference
             {
                 SourceKind = ArtworkSourceKind.Default,
-                DefaultResourceName = "DefaultAlbumArtwork",
-                CanUseCache = false,
-                CanUseEmbedded = false
+                Owner = owner,
+                DefaultResourceName = NormalizeDefaultResourceName(defaultResourceName)
             };
         }
 
-        public static ArtworkReference Default(MusicId musicId)
+        private static string NormalizeDefaultResourceName(string name)
         {
-            if (musicId.IsEmpty)
-            {
-                return Default();
-            }
-
-            return new ArtworkReference
-            {
-                SourceKind = ArtworkSourceKind.Default,
-                MusicId = musicId,
-                CacheKey = CreateCacheKey(musicId),
-                DefaultResourceName = "DefaultAlbumArtwork",
-                CanUseCache = false,
-                CanUseEmbedded = false
-            };
-        }
-
-        private static string CreateCacheKey(MusicId musicId)
-        {
-            if (musicId.IsEmpty)
-            {
-                return string.Empty;
-            }
-
-            return "music-artwork-" + musicId.ToString();
+            return string.IsNullOrWhiteSpace(name) ? "DefaultAlbumArtwork" : name.Trim();
         }
     }
 }
