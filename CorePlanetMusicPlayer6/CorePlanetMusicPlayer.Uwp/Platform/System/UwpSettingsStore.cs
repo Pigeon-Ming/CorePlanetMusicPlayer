@@ -28,6 +28,8 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.System
         private const string LibraryLastRefreshAtKey = "Settings.Library.LastRefreshAt";
         private const string LibraryArtistGroupingKey = "Settings.Library.ArtistGrouping";
 
+        private const string LyricsExternalFileNameRegexKey = "Settings.Lyrics.ExternalFileNameRegex";
+
         private const string AppearanceThemeKey = "Settings.Appearance.Theme";
         private const string AppearanceUseAcrylicEffectKey = "Settings.Appearance.UseAcrylicEffect";
         private const string AppearanceShowNowPlayingBackgroundKey = "Settings.Appearance.ShowNowPlayingBackground";
@@ -103,6 +105,11 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.System
                 LibraryArtistGroupingKey,
                 (int)ArtistGroupingMode.Separate);
 
+            settings.Lyrics.ExternalFileNameRegex = GetString(
+                values,
+                LyricsExternalFileNameRegexKey,
+                settings.Lyrics.ExternalFileNameRegex);
+
             settings.Appearance.Theme = (AppThemeKind)GetInt32(
                 values,
                 AppearanceThemeKey,
@@ -149,6 +156,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.System
             values[LibraryIncludeSubfoldersKey] = settings.Library.IncludeSubfolders;
             values[LibrarySupportedExtensionsKey] = JoinStringList(settings.Library.SupportedExtensions); 
             values[LibraryArtistGroupingKey] = (int)settings.Library.ArtistGrouping;
+            values[LyricsExternalFileNameRegexKey] = settings.Lyrics.ExternalFileNameRegex;
 
             if (settings.Library.LastRefreshAt.HasValue)
             {
@@ -186,6 +194,8 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.System
             Remove(values, LibrarySupportedExtensionsKey);
             Remove(values, LibraryLastRefreshAtKey);
             Remove(values, LibraryArtistGroupingKey);
+
+            Remove(values, LyricsExternalFileNameRegexKey);
 
             Remove(values, AppearanceThemeKey);
             Remove(values, AppearanceUseAcrylicEffectKey);
@@ -357,6 +367,21 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.System
             }
 
             return result;
+        }
+
+        private static string GetString(
+            Windows.Foundation.Collections.IPropertySet values,
+            string key,
+            string defaultValue)
+        {
+            object value;
+
+            if (!values.TryGetValue(key, out value) || value == null)
+            {
+                return defaultValue ?? string.Empty;
+            }
+
+            return value.ToString();
         }
 
         private static string JoinStringList(List<string> values)

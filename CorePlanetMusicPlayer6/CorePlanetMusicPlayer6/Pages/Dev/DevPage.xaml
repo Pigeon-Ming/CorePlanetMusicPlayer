@@ -42,6 +42,16 @@
                     <dev:PlayQueueControl />
                 </DataTemplate>
             </HubSection>
+            <HubSection Header="歌词">
+                <DataTemplate>
+                    <dev:LyricControl />
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="歌词编辑">
+                <DataTemplate>
+                    <dev:LyricEditControl />
+                </DataTemplate>
+            </HubSection>
             <HubSection Header="音乐">
                 <DataTemplate>
                     <dev:MusicControl />

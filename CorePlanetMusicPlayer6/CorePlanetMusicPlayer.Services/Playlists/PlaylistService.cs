@@ -14,11 +14,15 @@ namespace CorePlanetMusicPlayer.Services.Playlists
     {
         private readonly IPlaylistRepository _playlistRepository;
 
-        public PlaylistService(IPlaylistRepository playlistRepository)
+        private readonly IMusicRepository _musicRepository;
+
+        public PlaylistService(IPlaylistRepository playlistRepository, IMusicRepository musicRepository)
         {
             Guard.NotNull(playlistRepository, nameof(playlistRepository));
+            Guard.NotNull(musicRepository, nameof(musicRepository));
 
             _playlistRepository = playlistRepository;
+            _musicRepository = musicRepository;
         }
 
         public Task<IReadOnlyList<Playlist>> GetAllAsync()
@@ -127,19 +131,17 @@ namespace CorePlanetMusicPlayer.Services.Playlists
                 throw new ArgumentException("Music id cannot be empty.", nameof(musicId));
             }
 
-            var playlist = await GetExistingPlaylistAsync(playlistId);
-            EnsureItems(playlist);
+            var music = await _musicRepository.GetByIdAsync(musicId);
 
-            var item = new PlaylistItem
+            if (music == null)
             {
-                Id = EntityId.New(),
-                MusicId = musicId,
-                Order = playlist.Items.Count,
-                AddedAt = DateTimeOffset.Now
-            };
+                throw new InvalidOperationException("歌曲已不在音乐库中，无法添加到播放列表。");
+            }
 
-            playlist.Items.Add(item);
-            playlist.UpdatedAt = DateTimeOffset.Now;
+            var playlist = await GetExistingPlaylistAsync(playlistId);
+
+            // 创建独立条目，并复制本次添加时的歌曲资料。
+            var item = playlist.AddMusic(music);
 
             await _playlistRepository.UpsertAsync(playlist);
 

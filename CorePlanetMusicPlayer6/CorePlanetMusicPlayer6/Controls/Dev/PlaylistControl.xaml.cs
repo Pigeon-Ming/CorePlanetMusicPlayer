@@ -30,13 +30,55 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
         {
             get
             {
-                return Music == null ? "歌曲已不在音乐库中" : Music.Title;
+                return GetDisplayText(
+                    Music == null
+                        ? Item?.TitleSnapshot
+                        : Music.Title,
+                    "未知歌曲");
             }
         }
 
         public string ArtistName
         {
-            get { return Music?.ArtistName ?? string.Empty; }
+            get
+            {
+                return GetDisplayText(
+                    Music == null
+                        ? Item?.ArtistNameSnapshot
+                        : Music.ArtistName,
+                    "未知艺术家");
+            }
+        }
+
+        public string AlbumTitle
+        {
+            get
+            {
+                return GetDisplayText(
+                    Music == null
+                        ? Item?.AlbumTitleSnapshot
+                        : Music.AlbumTitle,
+                    "未知专辑");
+            }
+        }
+
+        public string AvailabilityText
+        {
+            get
+            {
+                return IsMissing
+                    ? "对应歌曲已不在当前音乐库中，显示添加时保存的资料。"
+                    : string.Empty;
+            }
+        }
+
+        private static string GetDisplayText(
+            string value,
+            string fallback)
+        {
+            return string.IsNullOrWhiteSpace(value)
+                ? fallback
+                : value;
         }
     }
 

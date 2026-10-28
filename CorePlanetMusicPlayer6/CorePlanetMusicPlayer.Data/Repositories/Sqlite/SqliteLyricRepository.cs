@@ -96,6 +96,7 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
                         music_id,
                         source_type,
                         source_path,
+                        is_user_override,
                         raw_text,
                         lines_text,
                         created_at,
@@ -105,6 +106,7 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
                         $musicId,
                         $sourceType,
                         $sourcePath,
+                        $isUserOverride,
                         $rawText,
                         $linesText,
                         $createdAt,
@@ -115,6 +117,9 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
                 command.Parameters.AddWithValue("$musicId", entity.MusicId);
                 command.Parameters.AddWithValue("$sourceType", entity.SourceType);
                 command.Parameters.AddWithValue("$sourcePath", entity.SourcePath);
+                command.Parameters.AddWithValue(
+                    "$isUserOverride",
+                    entity.IsUserOverride ? 1 : 0);
                 command.Parameters.AddWithValue("$rawText", entity.RawText);
                 command.Parameters.AddWithValue("$linesText", entity.LinesText);
                 command.Parameters.AddWithValue("$createdAt", entity.CreatedAtUnixTimeMilliseconds);
@@ -171,6 +176,8 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
                 MusicId = reader.GetStringOrEmpty("music_id"),
                 SourceType = reader.GetInt32OrDefault("source_type"),
                 SourcePath = reader.GetStringOrEmpty("source_path"),
+                IsUserOverride = reader.GetBooleanFromInt32(
+                    "is_user_override"),
                 RawText = reader.GetStringOrEmpty("raw_text"),
                 LinesText = reader.GetStringOrEmpty("lines_text"),
                 CreatedAtUnixTimeMilliseconds = reader.GetInt64OrDefault("created_at"),

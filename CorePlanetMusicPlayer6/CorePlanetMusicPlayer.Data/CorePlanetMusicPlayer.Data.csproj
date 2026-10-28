@@ -127,6 +127,7 @@
     <Compile Include="Database\SqliteDataReaderExtensions.cs" />
     <Compile Include="Entities\AlbumEntity.cs" />
     <Compile Include="Entities\ArtistEntity.cs" />
+    <Compile Include="Entities\ArtworkAssignmentEntity.cs" />
     <Compile Include="Entities\LibraryFolderEntity.cs" />
     <Compile Include="Entities\LyricEntity.cs" />
     <Compile Include="Entities\MusicEntity.cs" />
@@ -135,6 +136,7 @@
     <Compile Include="Entities\PlaylistItemEntity.cs" />
     <Compile Include="Mapping\AlbumDataMapper.cs" />
     <Compile Include="Mapping\ArtistDataMapper.cs" />
+    <Compile Include="Mapping\ArtworkAssignmentDataMapper.cs" />
     <Compile Include="Mapping\DataValueConverter.cs" />
     <Compile Include="Mapping\LibraryFolderDataMapper.cs" />
     <Compile Include="Mapping\LyricDataMapper.cs" />
@@ -144,6 +146,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\IAlbumRepository.cs" />
     <Compile Include="Repositories\IArtistRepository.cs" />
+    <Compile Include="Repositories\IArtworkRepository.cs" />
     <Compile Include="Repositories\ILibraryFolderRepository.cs" />
     <Compile Include="Repositories\ILyricRepository.cs" />
     <Compile Include="Repositories\IMusicRepository.cs" />
@@ -151,6 +154,7 @@
     <Compile Include="Repositories\IPlaylistRepository.cs" />
     <Compile Include="Repositories\Sqlite\SqliteAlbumRepository.cs" />
     <Compile Include="Repositories\Sqlite\SqliteArtistRepository.cs" />
+    <Compile Include="Repositories\Sqlite\SqliteArtworkRepository.cs" />
     <Compile Include="Repositories\Sqlite\SqliteLibraryFolderRepository.cs" />
     <Compile Include="Repositories\Sqlite\SqliteLyricRepository.cs" />
     <Compile Include="Repositories\Sqlite\SqliteMusicRepository.cs" />

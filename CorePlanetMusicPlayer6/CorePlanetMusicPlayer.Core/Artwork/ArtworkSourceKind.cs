@@ -4,20 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CorePlanetMusicPlayer.Services.Artwork
+namespace CorePlanetMusicPlayer.Core.Artwork
 {
     public enum ArtworkSourceKind
     {
-        None = 0,
+        Default = 0,
 
-        Auto = 1,
+        MusicFile = 1,
 
-        Embedded = 2,
+        ManagedFile = 2,
 
-        Cache = 3,
-
-        File = 4,
-
-        Default = 5
+        RemoteUri = 3
     }
 }

@@ -126,6 +126,10 @@
     <Compile Include="Artists\ArtistGroupingMode.cs" />
     <Compile Include="Artists\ArtistId.cs" />
     <Compile Include="Artists\ArtistNameNormalizer.cs" />
+    <Compile Include="Artwork\ArtworkAssignment.cs" />
+    <Compile Include="Artwork\ArtworkOwner.cs" />
+    <Compile Include="Artwork\ArtworkOwnerKind.cs" />
+    <Compile Include="Artwork\ArtworkSourceKind.cs" />
     <Compile Include="Common\EntityId.cs" />
     <Compile Include="Common\Guard.cs" />
     <Compile Include="Common\Result.cs" />

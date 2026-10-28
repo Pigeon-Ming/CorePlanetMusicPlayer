@@ -123,6 +123,9 @@
     <Compile Include="Composition\AppRuntime.cs" />
     <Compile Include="Composition\AppServices.cs" />
     <Compile Include="Composition\ServiceRegistry.cs" />
+    <Compile Include="Controls\Common\ArtworkImageControl.xaml.cs">
+      <DependentUpon>ArtworkImageControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Dev\AlbumControl.xaml.cs">
       <DependentUpon>AlbumControl.xaml</DependentUpon>
     </Compile>
@@ -147,8 +150,17 @@
     <Compile Include="Controls\Dev\LibraryControl.xaml.cs">
       <DependentUpon>LibraryControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Dev\LyricControl.xaml.cs">
+      <DependentUpon>LyricControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Dev\LyricEditControl.xaml.cs">
+      <DependentUpon>LyricEditControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Dev\MusicControl.xaml.cs">
       <DependentUpon>MusicControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Dev\PlaybackAnalysisControl.xaml.cs">
+      <DependentUpon>PlaybackAnalysisControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Dev\PlayHistoryControl.xaml.cs">
       <DependentUpon>PlayHistoryControl.xaml</DependentUpon>
@@ -181,6 +193,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\SystemHelper.cs" />
+    <Compile Include="Models\LyricLineViewModel.cs" />
     <Compile Include="Pages\Common\AlbumsPage.xaml.cs">
       <DependentUpon>AlbumsPage.xaml</DependentUpon>
     </Compile>
@@ -213,6 +226,9 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\DefaultPlaylistArtwork.png" />
+    <Content Include="Assets\DefaultArtistArtwork.png" />
+    <Content Include="Assets\DefaultAlbumArtwork.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -227,6 +243,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\Common\ArtworkImageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Dev\AlbumControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -259,7 +279,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Dev\LyricControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Dev\LyricEditControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Dev\MusicControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Dev\PlaybackAnalysisControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,196 +1,137 @@
-﻿using CorePlanetMusicPlayer.Core.Library;
+﻿using CorePlanetMusicPlayer.Core.Artwork;
+using CorePlanetMusicPlayer.Core.Common;
+using CorePlanetMusicPlayer.Core.Library;
 using CorePlanetMusicPlayer.Data.Repositories;
 using CorePlanetMusicPlayer.Services.Artwork;
 using CorePlanetMusicPlayer.Uwp.Platform.Storage;
+using CorePlanetMusicPlayer.Uwp.Platform.System;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace CorePlanetMusicPlayer.Uwp.Platform.Imaging
 {
-    public sealed class UwpArtworkLoader
+    public sealed partial class UwpArtworkLoader
     {
-        private const string ArtworkCacheFolderName = "artworks";
         private const string DefaultArtworkResourceName = "DefaultAlbumArtwork";
         private const string DefaultArtworkUri = "ms-appx:///Assets/DefaultAlbumArtwork.png";
 
         private readonly ILibraryFolderRepository _libraryFolderRepository;
+        private readonly IArtworkStore _artworkStore;
+        private readonly UwpRemoteArtworkLoader _remoteArtworkLoader;
         private readonly UwpStorageAccessService _storageAccessService;
         private readonly UwpThumbnailLoader _thumbnailLoader;
 
-        public UwpArtworkLoader(ILibraryFolderRepository libraryFolderRepository, UwpStorageAccessService storageAccessService, UwpThumbnailLoader thumbnailLoader)
+        public UwpArtworkLoader(
+            ILibraryFolderRepository libraryFolderRepository, 
+            UwpStorageAccessService storageAccessService, 
+            UwpThumbnailLoader thumbnailLoader,
+            IArtworkStore artworkStore,
+            UwpRemoteArtworkLoader remoteArtworkLoader,
+            UwpDispatcherService dispatcherService)
         {
+            Guard.NotNull(libraryFolderRepository, nameof(libraryFolderRepository));
+
+            Guard.NotNull(storageAccessService, nameof(storageAccessService));
+
+            Guard.NotNull(thumbnailLoader, nameof(thumbnailLoader));
+
+            Guard.NotNull(artworkStore, nameof(artworkStore));
+
+            Guard.NotNull(remoteArtworkLoader, nameof(remoteArtworkLoader));
+
+            Guard.NotNull(dispatcherService, nameof(dispatcherService));
+
+            if (!dispatcherService.HasDispatcher)
+            {
+                throw new InvalidOperationException("图片加载器需要有效的 UI 调度器。");
+            }
+
             _libraryFolderRepository = libraryFolderRepository;
             _storageAccessService = storageAccessService;
             _thumbnailLoader = thumbnailLoader;
+            _artworkStore = artworkStore;
+            _remoteArtworkLoader = remoteArtworkLoader;
+            _dispatcherService = dispatcherService;
         }
 
-        public async Task<BitmapImage> LoadAsync(ArtworkReference reference)
+        private async Task<BitmapImage> LoadSourceAsync(ArtworkReference reference, int decodePixelSize, CancellationToken cancellationToken)
         {
-            if (reference == null)
+            cancellationToken.ThrowIfCancellationRequested();
+
+            BitmapImage image;
+
+            switch (reference.SourceKind)
             {
-                return LoadDefaultArtwork(DefaultArtworkResourceName);
+                case ArtworkSourceKind.Default:
+                    image = await LoadDefaultArtworkAsync(reference.DefaultResourceName, decodePixelSize);
+                    break;
+
+                case ArtworkSourceKind.MusicFile:
+                    image = await LoadMusicFileAsync(reference, decodePixelSize, cancellationToken);
+                    break;
+
+                case ArtworkSourceKind.ManagedFile:
+                    image = await LoadManagedFileAsync(reference, decodePixelSize, cancellationToken);
+                    break;
+
+                case ArtworkSourceKind.RemoteUri:
+                    image = await _remoteArtworkLoader.LoadAsync(reference.RemoteUrl, decodePixelSize, cancellationToken);
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(reference), "Unknown artwork source kind.");
             }
 
-            if (reference.SourceKind == ArtworkSourceKind.Auto)
-            {
-                return await LoadAutoAsync(reference);
-            }
+            cancellationToken.ThrowIfCancellationRequested();
 
-            if (reference.SourceKind == ArtworkSourceKind.Cache)
-            {
-                return await LoadCacheOrDefaultAsync(reference);
-            }
-
-            if (reference.SourceKind == ArtworkSourceKind.Embedded)
-            {
-                return await LoadEmbeddedOrDefaultAsync(reference);
-            }
-
-            if (reference.SourceKind == ArtworkSourceKind.File)
-            {
-                return await LoadFileOrDefaultAsync(reference);
-            }
-
-            if (reference.SourceKind == ArtworkSourceKind.Default)
-            {
-                return LoadDefaultArtwork(reference.DefaultResourceName);
-            }
-
-            return LoadDefaultArtwork(DefaultArtworkResourceName);
+            return image;
         }
 
-        private async Task<BitmapImage> LoadAutoAsync(
-            ArtworkReference reference)
+        private async Task<BitmapImage> LoadMusicFileAsync(ArtworkReference reference, int decodePixelSize, CancellationToken cancellationToken)
         {
-            BitmapImage image = null;
-
-            if (reference.CanUseCache)
+            try
             {
-                image = await LoadCacheAsync(reference);
+                cancellationToken.ThrowIfCancellationRequested();
 
-                if (image != null)
+                var musicFile = await ResolveMusicFileAsync(reference);
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                if (musicFile == null)
                 {
-                    return image;
+                    Debug.WriteLine(
+                        $"[本地封面] 无法取得文件：" +
+                        $"实体={reference.Owner?.Id}，" +
+                        $"路径={reference.SourcePath}，" +
+                        $"相对路径={reference.RelativePath}");
+
+                    return null;
                 }
+
+                Debug.WriteLine($"[本地封面] 已取得文件：{musicFile.Name}");
+
+                return await _thumbnailLoader.LoadMusicThumbnailAsync(musicFile, decodePixelSize);
             }
-
-            if (reference.CanUseEmbedded)
+            catch (OperationCanceledException)
             {
-                image = await LoadEmbeddedAsync(reference);
-
-                if (image != null)
-                {
-                    return image;
-                }
+                throw;
             }
-
-            return LoadDefaultArtwork(reference.DefaultResourceName);
-        }
-
-        private async Task<BitmapImage> LoadCacheOrDefaultAsync(
-            ArtworkReference reference)
-        {
-            var image = await LoadCacheAsync(reference);
-
-            if (image != null)
+            catch (Exception exception)
             {
-                return image;
-            }
-
-            return LoadDefaultArtwork(reference.DefaultResourceName);
-        }
-
-        private async Task<BitmapImage> LoadEmbeddedOrDefaultAsync(
-            ArtworkReference reference)
-        {
-            var image = await LoadEmbeddedAsync(reference);
-
-            if (image != null)
-            {
-                return image;
-            }
-
-            return LoadDefaultArtwork(reference.DefaultResourceName);
-        }
-
-        private async Task<BitmapImage> LoadFileOrDefaultAsync(
-            ArtworkReference reference)
-        {
-            var image = await LoadFileAsync(reference);
-
-            if (image != null)
-            {
-                return image;
-            }
-
-            return LoadDefaultArtwork(reference.DefaultResourceName);
-        }
-
-        private async Task<BitmapImage> LoadCacheAsync(
-            ArtworkReference reference)
-        {
-            if (reference == null ||
-                string.IsNullOrWhiteSpace(reference.CacheKey))
-            {
+                Debug.WriteLine("解析或读取音乐封面失败：" + exception);
                 return null;
             }
-
-            var cacheFile = await GetCacheFileAsync(reference.CacheKey);
-
-            if (cacheFile == null)
-            {
-                return null;
-            }
-
-            return await _thumbnailLoader.LoadImageFileAsync(cacheFile);
         }
 
-        private async Task<BitmapImage> LoadEmbeddedAsync(
-            ArtworkReference reference)
-        {
-            var musicFile = await ResolveMusicFileAsync(reference);
-
-            if (musicFile == null)
-            {
-                return null;
-            }
-
-            return await _thumbnailLoader.LoadMusicThumbnailAsync(musicFile);
-        }
-
-        private async Task<BitmapImage> LoadFileAsync(
-            ArtworkReference reference)
-        {
-            if (reference == null ||
-                string.IsNullOrWhiteSpace(reference.SourcePath))
-            {
-                return null;
-            }
-
-            if (_storageAccessService == null)
-            {
-                return null;
-            }
-
-            var file = await _storageAccessService.GetFileFromPathAsync(
-                reference.SourcePath);
-
-            if (file == null)
-            {
-                return null;
-            }
-
-            return await _thumbnailLoader.LoadImageFileAsync(file);
-        }
-
-        private async Task<StorageFile> ResolveMusicFileAsync(
-            ArtworkReference reference)
+        private async Task<StorageFile> ResolveMusicFileAsync(ArtworkReference reference)
         {
             if (reference == null)
             {
@@ -204,19 +145,15 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Imaging
 
             if (!string.IsNullOrWhiteSpace(reference.LibraryFolderId))
             {
-                var folderId = new LibraryFolderId(
-                    reference.LibraryFolderId);
+                var folderId = new LibraryFolderId(reference.LibraryFolderId);
 
-                if (!folderId.IsEmpty &&
-                    _libraryFolderRepository != null)
+                if (!folderId.IsEmpty && _libraryFolderRepository != null)
                 {
-                    var folder = await _libraryFolderRepository
-                        .GetByIdAsync(folderId);
+                    var folder = await _libraryFolderRepository.GetByIdAsync(folderId);
 
                     if (folder != null)
                     {
-                        if (folder.AccessKind ==
-                            LibraryFolderAccessKind.FutureAccessList)
+                        if (folder.AccessKind == LibraryFolderAccessKind.FutureAccessList)
                         {
                             return await _storageAccessService.GetStorageFileByFutureAccessAsync(folder, reference.RelativePath);
                         }
@@ -237,52 +174,70 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Imaging
             return null;
         }
 
-        private async Task<StorageFile> GetCacheFileAsync(
-            string cacheKey)
+        private async Task<BitmapImage> LoadManagedFileAsync(ArtworkReference reference, int decodePixelSize, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrWhiteSpace(cacheKey))
+            if (reference.Owner == null || string.IsNullOrWhiteSpace(reference.ResourceKey))
             {
                 return null;
             }
 
             try
             {
-                var cacheFolder = ApplicationData.Current.LocalCacheFolder;
-                var artworkFolder = await cacheFolder.GetFolderAsync(ArtworkCacheFolderName);
+                cancellationToken.ThrowIfCancellationRequested();
 
-                var fileName = CreateCacheFileName(cacheKey);
+                using (var stream = await _artworkStore.OpenReadAsync(reference.Owner.Kind, reference.ResourceKey))
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
 
-                return await artworkFolder.GetFileAsync(fileName);
+                    if (stream == null)
+                    {
+                        return null;
+                    }
+
+                    using (var randomStream = stream.AsRandomAccessStream())
+                    {
+                        return await _thumbnailLoader.LoadArtworkStreamAsync(randomStream, decodePixelSize);
+                    }
+                }
             }
-            catch
+            catch (OperationCanceledException)
             {
+                throw;
+            }
+            catch (Exception exception)
+            {
+                Debug.WriteLine("读取应用封面文件失败：" + exception);
                 return null;
             }
         }
 
-        private BitmapImage LoadDefaultArtwork(
-            string resourceName)
+        private async Task<BitmapImage> LoadDefaultArtworkAsync(string resourceName, int decodePixelSize)
         {
             var uriText = CreateDefaultArtworkUri(resourceName);
-            var image = _thumbnailLoader.LoadFromUri(uriText);
+
+            var image = await _thumbnailLoader.LoadPackageImageAsync(uriText, decodePixelSize);
 
             if (image != null)
             {
                 return image;
             }
 
-            image = _thumbnailLoader.LoadFromUri(DefaultArtworkUri);
-
-            if (image != null)
+            if (!string.Equals(uriText, DefaultArtworkUri, StringComparison.OrdinalIgnoreCase))
             {
-                return image;
+                image = await _thumbnailLoader.LoadPackageImageAsync(DefaultArtworkUri, decodePixelSize);
+
+                if (image != null)
+                {
+                    return image;
+                }
             }
 
-            return new BitmapImage();
+            Debug.WriteLine("默认封面资源无法加载。");
+
+            return null;
         }
 
-        private static string CreateDefaultArtworkUri(
-            string resourceName)
+        private static string CreateDefaultArtworkUri(string resourceName)
         {
             if (string.IsNullOrWhiteSpace(resourceName))
             {
@@ -291,9 +246,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Imaging
 
             var name = resourceName.Trim();
 
-            if (name.StartsWith(
-                "ms-appx:///",
-                StringComparison.OrdinalIgnoreCase))
+            if (name.StartsWith("ms-appx:///", StringComparison.OrdinalIgnoreCase))
             {
                 return name;
             }
@@ -306,8 +259,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Imaging
             return "ms-appx:///Assets/" + name;
         }
 
-        private static bool EndsWithImageExtension(
-            string value)
+        private static bool EndsWithImageExtension(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
             {
@@ -315,24 +267,6 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Imaging
             }
 
             return value.EndsWith(".png", StringComparison.OrdinalIgnoreCase) || value.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) || value.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase) || value.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase);
-        }
-
-        private static string CreateCacheFileName(string cacheKey)
-        {
-            var text = cacheKey ?? string.Empty;
-            var invalidChars = Path.GetInvalidFileNameChars();
-
-            for (int i = 0; i < invalidChars.Length; i++)
-            {
-                text = text.Replace(invalidChars[i], '_');
-            }
-
-            if (!EndsWithImageExtension(text))
-            {
-                text = text + ".png";
-            }
-
-            return text;
         }
     }
 }

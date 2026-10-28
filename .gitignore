@@ -370,3 +370,7 @@ FodyWeavers.xsd
 *.msixupload
 *.msixsym
 *.appinstaller
+
+# Obsidian local vault configuration and trash (including nested vaults)
+.obsidian/
+.trash/

@@ -24,13 +24,8 @@ namespace CorePlanetMusicPlayer.Core.Lyrics
         ExternalFile = 2,
 
         /// <summary>
-        /// 用户手动编辑或粘贴的歌词（待验证必要性）
-        /// </summary>
-        Manual = 3,
-
-        /// <summary>
         /// 网络来源
         /// </summary>
-        Online = 4
+        Online = 3
     }
 }

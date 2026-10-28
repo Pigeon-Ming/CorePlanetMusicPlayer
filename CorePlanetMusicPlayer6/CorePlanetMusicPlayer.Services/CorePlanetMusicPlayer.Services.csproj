@@ -120,10 +120,16 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Artwork\AlbumArtworkService.cs" />
+    <Compile Include="Artwork\ArtworkChangedEventArgs.cs" />
+    <Compile Include="Artwork\ArtworkEditService.cs" />
     <Compile Include="Artwork\ArtworkReference.cs" />
+    <Compile Include="Artwork\ArtworkRequest.cs" />
     <Compile Include="Artwork\ArtworkService.cs" />
-    <Compile Include="Artwork\ArtworkSourceKind.cs" />
+    <Compile Include="Artwork\IAlbumArtworkService.cs" />
+    <Compile Include="Artwork\IArtworkEditService.cs" />
     <Compile Include="Artwork\IArtworkService.cs" />
+    <Compile Include="Artwork\IArtworkStore.cs" />
     <Compile Include="History\IPlaybackHistoryService.cs" />
     <Compile Include="History\PlaybackHistoryRecorder.cs" />
     <Compile Include="History\PlaybackHistoryService.cs" />
@@ -150,11 +156,25 @@
     <Compile Include="Library\Years\IYearQueryService.cs" />
     <Compile Include="Library\Years\YearGroup.cs" />
     <Compile Include="Library\Years\YearQueryService.cs" />
+    <Compile Include="Lyrics\EmbeddedLyricAccessStatus.cs" />
+    <Compile Include="Lyrics\EmbeddedLyricReadResult.cs" />
+    <Compile Include="Lyrics\EmbeddedLyricWriteResult.cs" />
+    <Compile Include="Lyrics\ExternalLyricReadResult.cs" />
+    <Compile Include="Lyrics\ExternalLyricSearchOptions.cs" />
+    <Compile Include="Lyrics\ExternalLyricWriteResult.cs" />
+    <Compile Include="Lyrics\ExternalLyricWriteStatus.cs" />
+    <Compile Include="Lyrics\IExternalLyricReader.cs" />
+    <Compile Include="Lyrics\IEmbeddedLyricAccessor.cs" />
+    <Compile Include="Lyrics\IExternalLyricWriter.cs" />
+    <Compile Include="Lyrics\ILyricEditService.cs" />
     <Compile Include="Lyrics\ILyricParser.cs" />
     <Compile Include="Lyrics\ILyricService.cs" />
     <Compile Include="Lyrics\LrcParser.cs" />
+    <Compile Include="Lyrics\LyricEditService.cs" />
     <Compile Include="Lyrics\LyricParserCollection.cs" />
     <Compile Include="Lyrics\LyricSearchService.cs" />
+    <Compile Include="Lyrics\LyricSaveResult.cs" />
+    <Compile Include="Lyrics\LyricSaveTarget.cs" />
     <Compile Include="Lyrics\LyricService.cs" />
     <Compile Include="Metadata\IMusicMetadataEditService.cs" />
     <Compile Include="Metadata\IMusicMetadataWriter.cs" />

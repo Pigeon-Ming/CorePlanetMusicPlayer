@@ -1,5 +1,8 @@
-﻿using CorePlanetMusicPlayer.Core.Common;
+﻿using CorePlanetMusicPlayer.Core.Artists;
+using CorePlanetMusicPlayer.Core.Artwork;
+using CorePlanetMusicPlayer.Core.Common;
 using CorePlanetMusicPlayer.Core.Music;
+using CorePlanetMusicPlayer.Core.Playlists;
 using CorePlanetMusicPlayer.Data.Repositories;
 using System;
 using System.Collections.Generic;
@@ -11,14 +14,34 @@ namespace CorePlanetMusicPlayer.Services.Artwork
 {
     public sealed class ArtworkService : IArtworkService
     {
-        private readonly IMusicRepository _musicRepository;
+        private const string DefaultMusicResourceName = "DefaultAlbumArtwork";
 
-        public ArtworkService(IMusicRepository musicRepository)
+        private const string DefaultArtistResourceName = "DefaultArtistArtwork";
+
+        private const string DefaultPlaylistResourceName = "DefaultPlaylistArtwork";
+
+        private readonly IMusicRepository _musicRepository;
+        private readonly IArtistRepository _artistRepository;
+        private readonly IPlaylistRepository _playlistRepository;
+        private readonly IArtworkRepository _artworkRepository;
+
+        public ArtworkService(
+            IMusicRepository musicRepository,
+            IArtistRepository artistRepository,
+            IPlaylistRepository playlistRepository,
+            IArtworkRepository artworkRepository)
         {
             Guard.NotNull(musicRepository, nameof(musicRepository));
+            Guard.NotNull(artistRepository, nameof(artistRepository));
+            Guard.NotNull(playlistRepository, nameof(playlistRepository));
+            Guard.NotNull(artworkRepository, nameof(artworkRepository));
 
             _musicRepository = musicRepository;
+            _artistRepository = artistRepository;
+            _playlistRepository = playlistRepository;
+            _artworkRepository = artworkRepository;
         }
+
         public async Task<ArtworkReference> GetArtworkByMusicIdAsync(MusicId musicId)
         {
             ValidateMusicId(musicId);
@@ -27,100 +50,110 @@ namespace CorePlanetMusicPlayer.Services.Artwork
 
             if (music == null)
             {
-                return ArtworkReference.Default(musicId);
+                return await GetDefaultArtworkAsync(musicId);
             }
 
             return await GetArtworkAsync(music);
         }
 
-        public Task<ArtworkReference> GetArtworkAsync(Music music)
+        public async Task<ArtworkReference> GetArtworkAsync(Music music)
         {
             if (music == null || music.Id.IsEmpty)
             {
-                return Task.FromResult(ArtworkReference.Default());
+                return await GetDefaultArtworkAsync();
             }
 
-            if (CanUseEmbeddedArtwork(music))
+            if (music.SourceType == MusicSourceType.Local ||
+                music.SourceType == MusicSourceType.Temporary)
             {
-                return Task.FromResult(ArtworkReference.CreateAuto(music));
+                return ArtworkReference.FromMusicFile(
+                    music,
+                    DefaultMusicResourceName);
             }
 
-            return Task.FromResult(ArtworkReference.Default(music.Id));
+            if (music.SourceType == MusicSourceType.Stream)
+            {
+                var owner = new ArtworkOwner(ArtworkOwnerKind.Music, music.Id.ToString());
+
+                return await GetAssignedOrDefaultAsync(owner, DefaultMusicResourceName);
+            }
+
+            return await GetDefaultArtworkAsync(music.Id);
         }
 
-        public Task<ArtworkReference> GetCacheArtworkAsync(MusicId musicId)
+        public async Task<ArtworkReference> GetArtworkByArtistIdAsync(ArtistId artistId)
         {
-            ValidateMusicId(musicId);
+            if (artistId.IsEmpty)
+            {
+                throw new ArgumentException("艺术家 ID 不能为空。", nameof(artistId));
+            }
 
-            return Task.FromResult(ArtworkReference.Cache(musicId));
+            var owner = new ArtworkOwner(ArtworkOwnerKind.Artist, artistId.ToString());
+
+            var artist = await _artistRepository.GetByIdAsync(artistId);
+
+            if (artist == null)
+            {
+                return ArtworkReference.Default(DefaultArtistResourceName, owner);
+            }
+
+            return await GetAssignedOrDefaultAsync(owner, DefaultArtistResourceName);
         }
 
-        public Task<ArtworkReference> GetEmbeddedArtworkAsync(Music music)
+        public async Task<ArtworkReference> GetArtworkByPlaylistIdAsync(PlaylistId playlistId)
         {
-            if (music == null || music.Id.IsEmpty)
+            if (playlistId.IsEmpty)
             {
-                return Task.FromResult(ArtworkReference.Default());
+                throw new ArgumentException("播放列表 ID 不能为空。", nameof(playlistId));
             }
 
-            if (!CanUseEmbeddedArtwork(music))
+            var owner = new ArtworkOwner(ArtworkOwnerKind.Playlist, playlistId.ToString());
+
+            var playlist = await _playlistRepository.GetByIdAsync(playlistId);
+
+            if (playlist == null)
             {
-                return Task.FromResult(ArtworkReference.Default(music.Id));
+                return ArtworkReference.Default(DefaultPlaylistResourceName, owner);
             }
 
-            return Task.FromResult(ArtworkReference.Embedded(music));
+            return await GetAssignedOrDefaultAsync(owner, DefaultPlaylistResourceName);
         }
 
         public Task<ArtworkReference> GetDefaultArtworkAsync()
         {
-            return Task.FromResult(ArtworkReference.Default());
+            return Task.FromResult(ArtworkReference.Default(DefaultMusicResourceName));
         }
 
         public Task<ArtworkReference> GetDefaultArtworkAsync(MusicId musicId)
         {
             if (musicId.IsEmpty)
             {
-                return Task.FromResult(ArtworkReference.Default());
+                return GetDefaultArtworkAsync();
             }
 
-            return Task.FromResult(ArtworkReference.Default(musicId));
+            var owner = new ArtworkOwner(ArtworkOwnerKind.Music, musicId.ToString());
+
+            return Task.FromResult(ArtworkReference.Default(DefaultMusicResourceName, owner));
         }
 
-        private void ValidateMusicId(MusicId musicId)
+        private async Task<ArtworkReference> GetAssignedOrDefaultAsync(ArtworkOwner owner, string defaultResourceName)
+        {
+            var assignment = await _artworkRepository.GetByOwnerAsync(owner);
+
+            if (assignment == null)
+            {
+                return ArtworkReference.Default(defaultResourceName, owner);
+            }
+
+            return ArtworkReference.FromAssignment(assignment, defaultResourceName);
+        }
+
+        private static void ValidateMusicId(MusicId musicId)
         {
             if (musicId.IsEmpty)
             {
-                throw new ArgumentException("Music id cannot be empty.", nameof(musicId));
+                throw new ArgumentException("音乐 ID 不能为空。", nameof(musicId));
             }
-        }
-
-        private bool CanUseEmbeddedArtwork(Music music)
-        {
-            if (music == null)
-            {
-                return false;
-            }
-
-            if (music.SourceType != MusicSourceType.Local && music.SourceType != MusicSourceType.Temporary)
-            {
-                return false;
-            }
-
-            if (music.FileInfo == null)
-            {
-                return false;
-            }
-
-            if (music.FileInfo.HasPath)
-            {
-                return true;
-            }
-
-            if (music.FileInfo.HasRelativePath && music.FileInfo.HasLibraryFolder)
-            {
-                return true;
-            }
-
-            return false;
         }
     }
 }

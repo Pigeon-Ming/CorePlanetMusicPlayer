@@ -16,6 +16,8 @@ namespace CorePlanetMusicPlayer.Services.Settings
 
         public LibrarySettings Library { get; set; }
 
+        public LyricsSettings Lyrics { get; set; }
+
         public AppearanceSettings Appearance { get; set; }
 
         public DateTimeOffset UpdatedAt { get; set; }
@@ -27,6 +29,7 @@ namespace CorePlanetMusicPlayer.Services.Settings
                 Version = 1,
                 Playback = PlaybackSettings.CreateDefault(),
                 Library = LibrarySettings.CreateDefault(),
+                Lyrics = LyricsSettings.CreateDefault(),
                 Appearance = AppearanceSettings.CreateDefault(),
                 UpdatedAt = DateTimeOffset.Now
             };
@@ -64,6 +67,15 @@ namespace CorePlanetMusicPlayer.Services.Settings
             else
             {
                 Appearance.Normalize();
+            }
+
+            if (Lyrics == null)
+            {
+                Lyrics = LyricsSettings.CreateDefault();
+            }
+            else
+            {
+                Lyrics.Normalize();
             }
 
             if (UpdatedAt == default(DateTimeOffset))
@@ -192,6 +204,27 @@ namespace CorePlanetMusicPlayer.Services.Settings
                 ".wma",
                 ".ogg"
             };
+        }
+    }
+
+    public sealed class LyricsSettings
+    {
+        public string ExternalFileNameRegex { get; set; }
+
+        public static LyricsSettings CreateDefault()
+        {
+            return new LyricsSettings
+            {
+                ExternalFileNameRegex = string.Empty
+            };
+        }
+
+        public void Normalize()
+        {
+            ExternalFileNameRegex = string.IsNullOrWhiteSpace(
+                ExternalFileNameRegex)
+                ? string.Empty
+                : ExternalFileNameRegex.Trim();
         }
     }
 

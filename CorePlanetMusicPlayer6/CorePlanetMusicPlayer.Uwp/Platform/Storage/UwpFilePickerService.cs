@@ -34,5 +34,20 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Storage
 
             return picker;
         }
+
+        public async Task<StorageFile> PickArtworkFileAsync()
+        {
+            var picker = new FileOpenPicker
+            {
+                SuggestedStartLocation = PickerLocationId.PicturesLibrary,
+                ViewMode = PickerViewMode.Thumbnail
+            };
+
+            picker.FileTypeFilter.Add(".png");
+            picker.FileTypeFilter.Add(".jpg");
+            picker.FileTypeFilter.Add(".jpeg");
+
+            return await picker.PickSingleFileAsync();
+        }
     }
 }

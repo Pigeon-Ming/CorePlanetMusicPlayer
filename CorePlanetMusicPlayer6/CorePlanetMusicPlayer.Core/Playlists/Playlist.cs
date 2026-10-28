@@ -61,14 +61,16 @@ namespace CorePlanetMusicPlayer.Core.Playlists
             UpdatedAt = DateTimeOffset.Now;
         }
 
-        public PlaylistItem AddMusic(MusicId musicId)
+        public PlaylistItem AddMusic(Music.Music music)
         {
+            Guard.NotNull(music, nameof(music));
+
             if (Items == null)
             {
                 Items = new List<PlaylistItem>();
             }
 
-            var item = PlaylistItem.Create(musicId, Items.Count);
+            var item = PlaylistItem.Create(music, Items.Count);
 
             Items.Add(item);
             UpdatedAt = DateTimeOffset.Now;

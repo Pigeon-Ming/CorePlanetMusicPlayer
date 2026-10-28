@@ -208,12 +208,18 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
                     id,
                     playlist_id,
                     music_id,
+                    title_snapshot,
+                    artist_name_snapshot,
+                    album_title_snapshot,
                     item_order,
                     added_at
                 ) values (
                     $id,
                     $playlistId,
                     $musicId,
+                    $titleSnapshot,
+                    $artistNameSnapshot,
+                    $albumTitleSnapshot,
                     $itemOrder,
                     $addedAt
                 );";
@@ -221,6 +227,9 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
             command.Parameters.AddWithValue("$id", entity.Id);
             command.Parameters.AddWithValue("$playlistId", entity.PlaylistId);
             command.Parameters.AddWithValue("$musicId", entity.MusicId);
+            command.Parameters.AddWithValue("$titleSnapshot", entity.TitleSnapshot ?? string.Empty);
+            command.Parameters.AddWithValue("$artistNameSnapshot", entity.ArtistNameSnapshot ?? string.Empty);
+            command.Parameters.AddWithValue("$albumTitleSnapshot", entity.AlbumTitleSnapshot ?? string.Empty);
             command.Parameters.AddWithValue("$itemOrder", entity.Order);
             command.Parameters.AddWithValue("$addedAt", entity.AddedAtUnixTimeMilliseconds);
         }
@@ -244,6 +253,9 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
                 Id = reader.GetStringOrEmpty("id"),
                 PlaylistId = reader.GetStringOrEmpty("playlist_id"),
                 MusicId = reader.GetStringOrEmpty("music_id"),
+                TitleSnapshot = reader.GetStringOrEmpty("title_snapshot"),
+                ArtistNameSnapshot = reader.GetStringOrEmpty("artist_name_snapshot"),
+                AlbumTitleSnapshot = reader.GetStringOrEmpty("album_title_snapshot"),
                 Order = reader.GetInt32OrDefault("item_order"),
                 AddedAtUnixTimeMilliseconds = reader.GetInt64OrDefault("added_at")
             };
