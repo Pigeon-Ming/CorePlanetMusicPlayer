@@ -18,6 +18,8 @@ namespace CorePlanetMusicPlayer.Core.Lyrics
 
         public string SourcePath { get; set; } = string.Empty;
 
+        public bool IsUserOverride { get; set; }
+
         public string RawText { get; set; } = string.Empty;
 
         public List<LyricLine> Lines { get; set; } = new List<LyricLine>();

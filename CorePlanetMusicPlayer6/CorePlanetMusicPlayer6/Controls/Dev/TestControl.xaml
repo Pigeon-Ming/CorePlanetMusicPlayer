@@ -19,6 +19,13 @@
 
             <TextBlock x:Name="MusicRepositoryCheckTextBlock" TextWrapping="Wrap" />
 
+            <Button
+                x:Name="CheckLyricsButton"
+                Click="CheckLyricsButton_Click"
+                Content="验证歌词核心逻辑" />
+
+            <TextBlock x:Name="LyricsCheckTextBlock" TextWrapping="Wrap" />
+
             <TextBox
                 x:Name="MusicRelativePathTextBox"
                 Header="相对于所选目录的音乐路径"

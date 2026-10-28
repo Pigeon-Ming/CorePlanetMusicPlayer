@@ -62,6 +62,12 @@ namespace CorePlanetMusicPlayer6.Composition
 
         public ILyricService LyricService { get; set; }
 
+        public ILyricEditService LyricEditService { get; set; }
+
+        public IEmbeddedLyricAccessor EmbeddedLyricAccessor { get; set; }
+
+        public IExternalLyricWriter ExternalLyricWriter { get; set; }
+
         public IArtworkService ArtworkService { get; set; }
 
         public IPlaybackHistoryService PlaybackHistoryService { get; set; }

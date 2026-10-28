@@ -16,6 +16,8 @@ namespace CorePlanetMusicPlayer.Data.Entities
 
         public string SourcePath { get; set; } = string.Empty;
 
+        public bool IsUserOverride { get; set; }
+
         public string RawText { get; set; } = string.Empty;
 
         public string LinesText { get; set; } = string.Empty;

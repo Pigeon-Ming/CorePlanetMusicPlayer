@@ -20,6 +20,7 @@ using CorePlanetMusicPlayer.Services.Settings;
 using CorePlanetMusicPlayer.Services.Statistics;
 using CorePlanetMusicPlayer.Uwp.Platform.Imaging;
 using CorePlanetMusicPlayer.Uwp.Platform.Library;
+using CorePlanetMusicPlayer.Uwp.Platform.Lyrics;
 using CorePlanetMusicPlayer.Uwp.Platform.Metadata;
 using CorePlanetMusicPlayer.Uwp.Platform.Playback;
 using CorePlanetMusicPlayer.Uwp.Platform.Storage;
@@ -111,6 +112,14 @@ namespace CorePlanetMusicPlayer6.Composition
 
             services.MusicMetadataWriter = new UwpMusicMetadataWriter(services.LibraryFolderRepository, services.StorageAccessService);
 
+            services.EmbeddedLyricAccessor = new UwpEmbeddedLyricAccessor(
+                services.LibraryFolderRepository,
+                services.StorageAccessService);
+
+            services.ExternalLyricWriter = new UwpExternalLyricWriter(
+                services.LibraryFolderRepository,
+                services.StorageAccessService);
+
             
         }
 
@@ -168,7 +177,25 @@ namespace CorePlanetMusicPlayer6.Composition
 
             services.LyricSearchService = new LyricSearchService();
 
-            services.LyricService = new LyricService(services.LyricRepository, lyricParserCollection, services.LyricSearchService);
+            var externalLyricReader = new UwpExternalLyricReader(
+                services.LibraryFolderRepository,
+                services.StorageAccessService);
+
+            services.LyricService = new LyricService(
+                services.LyricRepository,
+                services.MusicRepository,
+                lyricParserCollection,
+                services.LyricSearchService,
+                externalLyricReader,
+                services.EmbeddedLyricAccessor,
+                services.SettingsService);
+
+            services.LyricEditService = new LyricEditService(
+                services.MusicRepository,
+                services.LyricService,
+                lyricParserCollection,
+                services.ExternalLyricWriter,
+                services.EmbeddedLyricAccessor);
 
             services.ArtworkService = new ArtworkService(services.MusicRepository, services.ArtistRepository, services.PlaylistRepository, services.ArtworkRepository);
 

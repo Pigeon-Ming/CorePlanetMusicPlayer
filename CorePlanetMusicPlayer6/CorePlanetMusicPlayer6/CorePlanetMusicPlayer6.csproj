@@ -150,8 +150,17 @@
     <Compile Include="Controls\Dev\LibraryControl.xaml.cs">
       <DependentUpon>LibraryControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Dev\LyricControl.xaml.cs">
+      <DependentUpon>LyricControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Dev\LyricEditControl.xaml.cs">
+      <DependentUpon>LyricEditControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Dev\MusicControl.xaml.cs">
       <DependentUpon>MusicControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Dev\PlaybackAnalysisControl.xaml.cs">
+      <DependentUpon>PlaybackAnalysisControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Dev\PlayHistoryControl.xaml.cs">
       <DependentUpon>PlayHistoryControl.xaml</DependentUpon>
@@ -184,6 +193,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\SystemHelper.cs" />
+    <Compile Include="Models\LyricLineViewModel.cs" />
     <Compile Include="Pages\Common\AlbumsPage.xaml.cs">
       <DependentUpon>AlbumsPage.xaml</DependentUpon>
     </Compile>
@@ -269,7 +279,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Dev\LyricControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Dev\LyricEditControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Dev\MusicControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Dev\PlaybackAnalysisControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

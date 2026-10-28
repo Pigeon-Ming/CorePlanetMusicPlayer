@@ -14,13 +14,11 @@ namespace CorePlanetMusicPlayer.Services.Lyrics
 
         Task<IReadOnlyList<LyricDocument>> GetAllByMusicIdAsync(MusicId musicId);
 
-        Task<LyricDocument> SaveManualLyricsAsync(MusicId musicId, string rawText);
-
-        Task<LyricDocument> SaveExternalLyricsAsync(MusicId musicId, string rawText);
-
-        Task<LyricDocument> SaveEmbeddedLyricsAsync(MusicId musicId, string rawText);
-
         Task<LyricDocument> SaveOnlineLyricsAsync(MusicId musicId, string rawText);
+
+        Task<LyricDocument> SaveUserOverrideAsync(MusicId musicId, LyricSourceType sourceType, string sourcePath, string rawText);
+
+        Task DeleteUserOverrideAsync(MusicId musicId);
 
         Task<LyricLine> GetCurrentLineAsync(MusicId musicId, TimeSpan position);
 

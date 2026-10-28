@@ -181,6 +181,7 @@ namespace CorePlanetMusicPlayer.Data.Database
                     music_id TEXT NOT NULL,
                     source_type INTEGER NOT NULL,
                     source_path TEXT NOT NULL,
+                    is_user_override INTEGER NOT NULL DEFAULT 0,
                     raw_text TEXT NOT NULL,
                     lines_text TEXT NOT NULL,
                     created_at INTEGER NOT NULL,
@@ -223,6 +224,10 @@ namespace CorePlanetMusicPlayer.Data.Database
             ExecuteNonQuery(connection, "CREATE INDEX IF NOT EXISTS idx_playback_history_music_id ON playback_history(music_id);");
             ExecuteNonQuery(connection, "CREATE INDEX IF NOT EXISTS idx_playback_history_played_at ON playback_history(played_at);");
             ExecuteNonQuery(connection, "CREATE INDEX IF NOT EXISTS idx_lyrics_music_id ON lyrics(music_id);");
+            ExecuteNonQuery(connection, @"
+                CREATE UNIQUE INDEX IF NOT EXISTS idx_lyrics_user_override_music_id
+                ON lyrics(music_id)
+                WHERE is_user_override = 1;");
         }
     }
 }

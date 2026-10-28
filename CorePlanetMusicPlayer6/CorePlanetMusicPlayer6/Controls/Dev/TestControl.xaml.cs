@@ -1,4 +1,5 @@
 ﻿using CorePlanetMusicPlayer.Core.Library;
+using CorePlanetMusicPlayer.Core.Lyrics;
 using CorePlanetMusicPlayer.Core.Music;
 using CorePlanetMusicPlayer.Data.Database;
 using CorePlanetMusicPlayer.Data.Mapping;
@@ -6,6 +7,7 @@ using CorePlanetMusicPlayer.Data.Repositories.Sqlite;
 using CorePlanetMusicPlayer.Services.Artwork;
 using CorePlanetMusicPlayer.Services.Library;
 using CorePlanetMusicPlayer.Services.Library.MusicQueries;
+using CorePlanetMusicPlayer.Services.Lyrics;
 using CorePlanetMusicPlayer.Uwp.Platform.Library;
 using CorePlanetMusicPlayer.Uwp.Platform.Metadata;
 using CorePlanetMusicPlayer.Uwp.Platform.Storage;
@@ -126,6 +128,169 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
             }
 
             await CheckFolderReplacementAsync(repository);
+        }
+
+        private void CheckLyricsButton_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            CheckLyricsButton.IsEnabled = false;
+            LyricsCheckTextBlock.Text = "正在验证……";
+
+            try
+            {
+                CheckLyrics();
+
+                LyricsCheckTextBlock.Text =
+                    "验证通过：时间标签、翻译合并、多时间标签、无效输入、来源优先级和冲突处理。";
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+
+                LyricsCheckTextBlock.Text =
+                    "验证失败：" + ex.Message;
+            }
+            finally
+            {
+                CheckLyricsButton.IsEnabled = true;
+            }
+        }
+
+        private static void CheckLyrics()
+        {
+            var parser = new LrcParser();
+
+            IReadOnlyList<LyricLine> sameTimeLines = parser.Parse(
+                "[00:03.89]Original\n[00:03.890]翻译");
+
+            VerifyLyricCondition(
+                sameTimeLines.Count == 1 &&
+                sameTimeLines[0].Text == "Original" &&
+                sameTimeLines[0].TranslationText == "翻译",
+                "相同时间标签的翻译行合并不正确。");
+
+            IReadOnlyList<LyricLine> inlineTranslationLines = parser.Parse(
+                "[00:10.00]Original 「行内翻译」");
+
+            VerifyLyricCondition(
+                inlineTranslationLines.Count == 1 &&
+                inlineTranslationLines[0].Text == "Original" &&
+                inlineTranslationLines[0].TranslationText == "行内翻译",
+                "行尾括号翻译解析不正确。");
+
+            IReadOnlyList<LyricLine> multipleTimeLines = parser.Parse(
+                "[00:01.2][00:02.34]Repeat");
+
+            VerifyLyricCondition(
+                multipleTimeLines.Count == 2 &&
+                multipleTimeLines[0].Time ==
+                    TimeSpan.FromMilliseconds(1200) &&
+                multipleTimeLines[1].Time ==
+                    TimeSpan.FromMilliseconds(2340),
+                "多时间标签或小数位时间解析不正确。");
+
+            VerifyLyricCondition(
+                !parser.CanParse("[ar:Artist]\n[ti:Title]"),
+                "元数据标签不应被识别为同步歌词。");
+
+            var searchService = new LyricSearchService();
+            DateTimeOffset now = DateTimeOffset.Now;
+            var documents = new List<LyricDocument>
+            {
+                CreateCheckLyricDocument(
+                    parser,
+                    "embedded",
+                    LyricSourceType.Embedded,
+                    false,
+                    string.Empty,
+                    now),
+                CreateCheckLyricDocument(
+                    parser,
+                    "online-old",
+                    LyricSourceType.Online,
+                    false,
+                    string.Empty,
+                    now.AddMinutes(-2)),
+                CreateCheckLyricDocument(
+                    parser,
+                    "external",
+                    LyricSourceType.ExternalFile,
+                    false,
+                    @"Album\Song.lrc",
+                    now.AddMinutes(-3)),
+                CreateCheckLyricDocument(
+                    parser,
+                    "application-cache",
+                    LyricSourceType.Embedded,
+                    true,
+                    string.Empty,
+                    now.AddMinutes(-4)),
+                CreateCheckLyricDocument(
+                    parser,
+                    "online-new",
+                    LyricSourceType.Online,
+                    false,
+                    string.Empty,
+                    now.AddMinutes(-1)),
+                new LyricDocument
+                {
+                    Id = "invalid",
+                    SourceType = LyricSourceType.Online,
+                    RawText = string.Empty,
+                    Lines = new List<LyricLine>(),
+                    UpdatedAt = now
+                }
+            };
+
+            IReadOnlyList<LyricDocument> orderedDocuments =
+                searchService.OrderByPreference(documents);
+
+            VerifyLyricCondition(
+                orderedDocuments.Count == 4 &&
+                orderedDocuments[0].Id == "application-cache" &&
+                orderedDocuments[1].Id == "external" &&
+                orderedDocuments[2].Id == "embedded" &&
+                orderedDocuments[3].Id == "online-new",
+                "歌词来源优先级、重复来源或无效来源处理不正确。");
+
+            VerifyLyricCondition(
+                ReferenceEquals(
+                    searchService.SelectPreferred(documents),
+                    orderedDocuments[0]),
+                "播放器首选歌词选择不正确。");
+        }
+
+        private static LyricDocument CreateCheckLyricDocument(
+            ILyricParser parser,
+            string id,
+            LyricSourceType sourceType,
+            bool isUserOverride,
+            string sourcePath,
+            DateTimeOffset updatedAt)
+        {
+            string rawText = "[00:01.00]" + id;
+
+            return new LyricDocument
+            {
+                Id = id,
+                SourceType = sourceType,
+                SourcePath = sourcePath ?? string.Empty,
+                IsUserOverride = isUserOverride,
+                RawText = rawText,
+                Lines = new List<LyricLine>(parser.Parse(rawText)),
+                UpdatedAt = updatedAt
+            };
+        }
+
+        private static void VerifyLyricCondition(
+            bool condition,
+            string errorMessage)
+        {
+            if (!condition)
+            {
+                throw new InvalidOperationException(errorMessage);
+            }
         }
 
         private static Music CreateCheckMusic(
