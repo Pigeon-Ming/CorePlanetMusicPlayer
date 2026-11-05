@@ -970,6 +970,8 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
         private bool CanWriteEmbeddedLyrics(Music music)
         {
             if (_services?.EmbeddedLyricAccessor == null ||
+                _services.MusicTagCapabilities == null ||
+                !_services.MusicTagCapabilities.CanWriteEmbeddedLyrics ||
                 music == null ||
                 music.FileInfo == null)
             {
@@ -1032,6 +1034,11 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                 !string.IsNullOrWhiteSpace(document.SourcePath))
             {
                 return LyricSaveTarget.ExternalFile;
+            }
+
+            if (!CanWriteEmbeddedLyrics(_currentMusic))
+            {
+                return LyricSaveTarget.DatabaseOverride;
             }
 
             var dialog = new ContentDialog

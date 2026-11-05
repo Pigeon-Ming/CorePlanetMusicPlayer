@@ -8,6 +8,7 @@ using CorePlanetMusicPlayer.Services.Artwork;
 using CorePlanetMusicPlayer.Services.Library;
 using CorePlanetMusicPlayer.Services.Library.MusicQueries;
 using CorePlanetMusicPlayer.Services.Lyrics;
+using CorePlanetMusicPlayer.Services.Settings;
 using CorePlanetMusicPlayer.Uwp.Platform.Library;
 using CorePlanetMusicPlayer.Uwp.Platform.Metadata;
 using CorePlanetMusicPlayer.Uwp.Platform.Storage;
@@ -36,10 +37,196 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
 {
     public sealed partial class TestControl : UserControl
     {
+        private bool _isLoadingMusicTagEngine;
 
         public TestControl()
         {
             this.InitializeComponent();
+        }
+
+        private async void TestControl_Loaded(
+            object sender,
+            RoutedEventArgs e)
+        {
+            await LoadMusicTagEngineAsync();
+        }
+
+        private async Task LoadMusicTagEngineAsync()
+        {
+            var services = AppRuntime.Services;
+
+            if (services == null ||
+                services.SettingsService == null)
+            {
+                MusicTagEngineComboBox.IsEnabled = false;
+                MusicTagEngineStatusTextBlock.Text =
+                    "设置服务不可用。";
+                return;
+            }
+
+            _isLoadingMusicTagEngine = true;
+
+            try
+            {
+                var settings =
+                    await services.SettingsService.LoadAsync();
+
+                bool isTagLibAvailable =
+                    services.MusicTagCapabilities != null &&
+                    services.MusicTagCapabilities.IsTagLibAvailable;
+
+                TagLibTagEngineItem.Visibility =
+                    isTagLibAvailable
+                        ? Visibility.Visible
+                        : Visibility.Collapsed;
+
+                HybridTagEngineItem.Visibility =
+                    isTagLibAvailable
+                        ? Visibility.Visible
+                        : Visibility.Collapsed;
+
+                MusicTagEngine engine =
+                    settings.Metadata.TagEngine;
+
+                if (!isTagLibAvailable &&
+                    engine != MusicTagEngine.WindowsApi)
+                {
+                    engine = MusicTagEngine.WindowsApi;
+                    settings.Metadata.TagEngine = engine;
+
+                    await services.SettingsService.SaveAsync(
+                        settings);
+                }
+
+                SelectMusicTagEngine(engine);
+                MusicTagEngineComboBox.IsEnabled = true;
+
+                if (isTagLibAvailable)
+                {
+                    MusicTagEngineStatusTextBlock.Text =
+                        "TagLib 扩展可用。";
+                }
+                else
+                {
+                    string reason =
+                        services.MusicTagCapabilities == null
+                            ? string.Empty
+                            : services.MusicTagCapabilities
+                                .UnavailableReason;
+
+                    MusicTagEngineStatusTextBlock.Text =
+                        string.IsNullOrWhiteSpace(reason)
+                            ? "当前环境不支持 TagLib 扩展。"
+                            : reason;
+                }
+            }
+            catch (Exception ex)
+            {
+                MusicTagEngineComboBox.IsEnabled = false;
+                MusicTagEngineStatusTextBlock.Text =
+                    "读取标签引擎设置失败：" + ex.Message;
+            }
+            finally
+            {
+                _isLoadingMusicTagEngine = false;
+            }
+        }
+
+        private void SelectMusicTagEngine(
+            MusicTagEngine engine)
+        {
+            switch (engine)
+            {
+                case MusicTagEngine.TagLib:
+                    MusicTagEngineComboBox.SelectedItem =
+                        TagLibTagEngineItem;
+                    break;
+
+                case MusicTagEngine.Hybrid:
+                    MusicTagEngineComboBox.SelectedItem =
+                        HybridTagEngineItem;
+                    break;
+
+                default:
+                    MusicTagEngineComboBox.SelectedItem =
+                        WindowsApiTagEngineItem;
+                    break;
+            }
+        }
+
+        private async void MusicTagEngineComboBox_SelectionChanged(
+            object sender,
+            SelectionChangedEventArgs e)
+        {
+            if (_isLoadingMusicTagEngine)
+            {
+                return;
+            }
+
+            var services = AppRuntime.Services;
+
+            if (services == null ||
+                services.SettingsService == null)
+            {
+                return;
+            }
+
+            MusicTagEngine selectedEngine;
+
+            if (MusicTagEngineComboBox.SelectedItem ==
+                TagLibTagEngineItem)
+            {
+                selectedEngine = MusicTagEngine.TagLib;
+            }
+            else if (MusicTagEngineComboBox.SelectedItem ==
+                     HybridTagEngineItem)
+            {
+                selectedEngine = MusicTagEngine.Hybrid;
+            }
+            else
+            {
+                selectedEngine = MusicTagEngine.WindowsApi;
+            }
+
+            bool isTagLibAvailable =
+                services.MusicTagCapabilities != null &&
+                services.MusicTagCapabilities.IsTagLibAvailable;
+
+            if (!isTagLibAvailable &&
+                selectedEngine != MusicTagEngine.WindowsApi)
+            {
+                _isLoadingMusicTagEngine = true;
+
+                try
+                {
+                    MusicTagEngineComboBox.SelectedItem =
+                        WindowsApiTagEngineItem;
+                }
+                finally
+                {
+                    _isLoadingMusicTagEngine = false;
+                }
+
+                return;
+            }
+
+            try
+            {
+                var settings =
+                    await services.SettingsService.LoadAsync();
+
+                settings.Metadata.TagEngine = selectedEngine;
+
+                await services.SettingsService.SaveAsync(settings);
+
+                MusicTagEngineStatusTextBlock.Text =
+                    "标签读取引擎设置已保存。";
+            }
+            catch (Exception ex)
+            {
+                MusicTagEngineStatusTextBlock.Text =
+                    "保存标签引擎设置失败：" + ex.Message;
+            }
         }
 
         private async void CheckMusicRepositoryButton_Click(object sender, RoutedEventArgs e)
@@ -367,6 +554,23 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
             }
         }
 
+        private static UwpMusicFileReader CreateMusicFileReader(
+            UwpStorageFileMapper mapper)
+        {
+            IUwpMusicTagAccessor tagAccessor =
+                AppRuntime.Services?.MusicTagAccessor;
+
+            if (tagAccessor == null)
+            {
+                throw new InvalidOperationException(
+                    "歌曲标签访问器尚未初始化。");
+            }
+
+            return new UwpMusicFileReader(
+                mapper,
+                tagAccessor);
+        }
+
         private async void CheckMusicFileButton_Click(object sender, RoutedEventArgs e)
         {
             string relativePath = MusicRelativePathTextBox.Text;
@@ -408,7 +612,7 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                         "无法找到文件，请检查相对路径和所选目录。");
                 }
 
-                var reader = new UwpMusicFileReader(mapper);
+                var reader = CreateMusicFileReader(mapper);
 
                 var music = await reader.ReadAsync(
                     file,
@@ -443,6 +647,8 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                     $"专辑：{music.AlbumTitle}\n" +
                     $"流派：{music.Metadata.Genre}\n" +
                     $"年份：{music.Metadata.Year}\n" +
+                    $"音轨号：{music.Metadata.TrackNumber}\n" +
+                    $"碟片号：{music.Metadata.DiscNumber}\n" +
                     $"时长：{music.Duration}\n" +
                     $"大小：{music.FileInfo.Size} 字节\n" +
                     $"相对路径：{music.FileInfo.RelativePath}";
@@ -484,7 +690,7 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                 new UwpFolderPickerService(),
                 mapper);
 
-            var reader = new UwpMusicFileReader(mapper);
+            var reader = CreateMusicFileReader(mapper);
 
             var scanner = new UwpLibraryScanner(
                 accessService,
@@ -517,6 +723,11 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                 foreach (string error in result.Errors)
                 {
                     output.AppendLine($"错误：{error}");
+                }
+
+                foreach (string warning in result.Warnings)
+                {
+                    output.AppendLine($"警告：{warning}");
                 }
 
                 output.AppendLine();
@@ -693,11 +904,17 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
 
                 output.AppendLine(
                     $"扫描歌曲：{result.ScannedMusicCount}，" +
-                    $"保存歌曲：{result.SavedMusicCount}");
+                    $"保存歌曲：{result.SavedMusicCount}，" +
+                    $"跳过文件：{result.SkippedMusicCount}");
 
                 foreach (string error in result.Errors)
                 {
                     output.AppendLine(error);
+                }
+
+                foreach (string warning in result.Warnings)
+                {
+                    output.AppendLine("警告：" + warning);
                 }
 
                 // 先显示刷新结果，避免后续查询失败时丢失这些信息。

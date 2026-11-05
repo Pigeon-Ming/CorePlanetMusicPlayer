@@ -99,6 +99,7 @@ namespace CorePlanetMusicPlayer.Core.Music
                 ArtistName = artistName ?? string.Empty,
                 AlbumTitle = albumTitle ?? string.Empty,
                 Duration = duration,
+                SourceType = MusicSourceType.Temporary,
                 Metadata = MusicMetadata.Empty,
                 FileInfo = fileInfo,
                 AddedAt = DateTimeOffset.Now

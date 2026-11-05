@@ -8,10 +8,33 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="300"
     d:DesignWidth="400"
+    Loaded="TestControl_Loaded"
     mc:Ignorable="d">
 
     <Grid>
         <StackPanel>
+            <ComboBox
+                x:Name="MusicTagEngineComboBox"
+                Header="歌曲标签读取引擎"
+                SelectionChanged="MusicTagEngineComboBox_SelectionChanged">
+                <ComboBoxItem
+                    x:Name="WindowsApiTagEngineItem"
+                    Content="Windows API" />
+                <ComboBoxItem
+                    x:Name="TagLibTagEngineItem"
+                    Content="TagLib"
+                    Visibility="Collapsed" />
+                <ComboBoxItem
+                    x:Name="HybridTagEngineItem"
+                    Content="混合引擎"
+                    Visibility="Collapsed" />
+            </ComboBox>
+
+            <TextBlock
+                x:Name="MusicTagEngineStatusTextBlock"
+                Margin="0,4,0,12"
+                TextWrapping="Wrap" />
+
             <Button
                 x:Name="CheckMusicRepositoryButton"
                 Click="CheckMusicRepositoryButton_Click"

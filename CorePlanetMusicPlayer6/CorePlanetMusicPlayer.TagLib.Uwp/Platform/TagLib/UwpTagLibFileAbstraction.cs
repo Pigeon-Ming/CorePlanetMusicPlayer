@@ -1,9 +1,13 @@
 using System;
 using System.IO;
 
-namespace CorePlanetMusicPlayer.Uwp.Platform.Lyrics
+namespace CorePlanetMusicPlayer.TagLib.Uwp.Platform.TagLib
 {
-    internal sealed class UwpTagLibFileAbstraction : TagLib.File.IFileAbstraction
+    /// <summary>
+    /// 将 UWP 文件流适配为 TagLibSharp 使用的文件抽象。
+    /// </summary>
+    internal sealed class UwpTagLibFileAbstraction
+        : global::TagLib.File.IFileAbstraction
     {
         private readonly Stream _stream;
 
@@ -30,7 +34,8 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Lyrics
             {
                 if (!_stream.CanRead)
                 {
-                    throw new NotSupportedException("文件流不支持读取。");
+                    throw new NotSupportedException(
+                        "文件流不支持读取。");
                 }
 
                 return _stream;
@@ -43,7 +48,8 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Lyrics
             {
                 if (!_stream.CanWrite)
                 {
-                    throw new NotSupportedException("文件流不支持写入。");
+                    throw new NotSupportedException(
+                        "文件流不支持写入。");
                 }
 
                 return _stream;

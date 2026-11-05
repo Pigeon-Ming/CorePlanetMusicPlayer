@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug_WithoutTagLib'">
+    <MSBuildProjectExtensionsPath>obj\$(Platform)\Debug_WithoutTagLib\</MSBuildProjectExtensionsPath>
+  </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -18,6 +21,7 @@
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
     <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
+    <EnableTagLib Condition="'$(EnableTagLib)' == ''">true</EnableTagLib>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -112,6 +116,67 @@
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
   </PropertyGroup>
+  <!-- Debug_WithoutTagLib | x86 -->
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug_WithoutTagLib|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug_WithoutTagLib\</OutputPath>
+    <IntermediateOutputPath>obj\x86\Debug_WithoutTagLib\</IntermediateOutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <EnableTagLib>false</EnableTagLib>
+  </PropertyGroup>
+  <!-- Debug_WithoutTagLib | x64 -->
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug_WithoutTagLib|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug_WithoutTagLib\</OutputPath>
+    <IntermediateOutputPath>obj\x64\Debug_WithoutTagLib\</IntermediateOutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <EnableTagLib>false</EnableTagLib>
+  </PropertyGroup>
+  <!-- Debug_WithoutTagLib | ARM -->
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug_WithoutTagLib|ARM'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\ARM\Debug_WithoutTagLib\</OutputPath>
+    <IntermediateOutputPath>obj\ARM\Debug_WithoutTagLib\</IntermediateOutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <EnableTagLib>false</EnableTagLib>
+  </PropertyGroup>
+  <!-- Debug_WithoutTagLib | ARM64 -->
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug_WithoutTagLib|ARM64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\ARM64\Debug_WithoutTagLib\</OutputPath>
+    <IntermediateOutputPath>obj\ARM64\Debug_WithoutTagLib\</IntermediateOutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>ARM64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+    <EnableTagLib>false</EnableTagLib>
+  </PropertyGroup>
+  <!-- 仅在启用 TagLib 时定义编译符号 -->
+  <PropertyGroup Condition="'$(EnableTagLib)' == 'true'">
+    <DefineConstants>$(DefineConstants);ENABLE_TAGLIB</DefineConstants>
+  </PropertyGroup>
   <PropertyGroup>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
@@ -155,6 +220,9 @@
     </Compile>
     <Compile Include="Controls\Dev\LyricEditControl.xaml.cs">
       <DependentUpon>LyricEditControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Dev\MusicTagEditControl.xaml.cs">
+      <DependentUpon>MusicTagEditControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Dev\MusicControl.xaml.cs">
       <DependentUpon>MusicControl.xaml</DependentUpon>
@@ -287,6 +355,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Dev\MusicTagEditControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Dev\MusicControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -373,7 +445,18 @@
       <Version>6.2.14</Version>
     </PackageReference>
   </ItemGroup>
+  <!-- TagLib 可选扩展项目 -->
+  <ItemGroup Condition="'$(EnableTagLib)' == 'true'">
+    <ProjectReference Include="..\CorePlanetMusicPlayer.TagLib.Uwp\CorePlanetMusicPlayer.TagLib.Uwp.csproj">
+      <Project>{4a3487d0-0ba0-41a7-a95e-2c614881bd75}</Project>
+      <Name>CorePlanetMusicPlayer.TagLib.Uwp</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
+    <!-- <ProjectReference Include="..\CorePlanetMusicPlayer.TagLib.Uwp\CorePlanetMusicPlayer.TagLib.Uwp.csproj">
+      <Project>{4a3487d0-0ba0-41a7-a95e-2c614881bd75}</Project>
+      <Name>CorePlanetMusicPlayer.TagLib.Uwp</Name>
+    </ProjectReference> -->
     <ProjectReference Include="..\CorePlanetMusicPlayer.Core\CorePlanetMusicPlayer.Core.csproj">
       <Project>{18a0c646-1bcd-4077-b569-cc05e6b0ecee}</Project>
       <Name>CorePlanetMusicPlayer.Core</Name>

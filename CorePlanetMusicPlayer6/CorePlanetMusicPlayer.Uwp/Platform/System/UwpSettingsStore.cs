@@ -28,6 +28,8 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.System
         private const string LibraryLastRefreshAtKey = "Settings.Library.LastRefreshAt";
         private const string LibraryArtistGroupingKey = "Settings.Library.ArtistGrouping";
 
+        private const string MetadataTagEngineKey = "Settings.Metadata.TagEngine";
+
         private const string LyricsExternalFileNameRegexKey = "Settings.Lyrics.ExternalFileNameRegex";
 
         private const string AppearanceThemeKey = "Settings.Appearance.Theme";
@@ -105,6 +107,11 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.System
                 LibraryArtistGroupingKey,
                 (int)ArtistGroupingMode.Separate);
 
+            settings.Metadata.TagEngine = (MusicTagEngine)GetInt32(
+                values,
+                MetadataTagEngineKey,
+                (int)settings.Metadata.TagEngine);
+
             settings.Lyrics.ExternalFileNameRegex = GetString(
                 values,
                 LyricsExternalFileNameRegexKey,
@@ -156,6 +163,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.System
             values[LibraryIncludeSubfoldersKey] = settings.Library.IncludeSubfolders;
             values[LibrarySupportedExtensionsKey] = JoinStringList(settings.Library.SupportedExtensions); 
             values[LibraryArtistGroupingKey] = (int)settings.Library.ArtistGrouping;
+            values[MetadataTagEngineKey] = (int)settings.Metadata.TagEngine;
             values[LyricsExternalFileNameRegexKey] = settings.Lyrics.ExternalFileNameRegex;
 
             if (settings.Library.LastRefreshAt.HasValue)
@@ -194,6 +202,8 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.System
             Remove(values, LibrarySupportedExtensionsKey);
             Remove(values, LibraryLastRefreshAtKey);
             Remove(values, LibraryArtistGroupingKey);
+
+            Remove(values, MetadataTagEngineKey);
 
             Remove(values, LyricsExternalFileNameRegexKey);
 

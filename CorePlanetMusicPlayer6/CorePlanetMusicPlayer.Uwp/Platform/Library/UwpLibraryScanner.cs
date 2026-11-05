@@ -56,6 +56,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Library
             }
 
             var collectedMusic = new List<Music>();
+            var warnings = new List<string>();
 
             try
             {
@@ -63,20 +64,39 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Library
 
                 if (rootFolder == null)
                 {
-                    return LibraryScanResult.Incomplete(collectedMusic, $"无法访问音乐来源“{folder.DisplayName}”，" + "目录可能已移动或授权已失效。");
+                    return LibraryScanResult.Incomplete(
+                        collectedMusic,
+                        $"无法访问音乐来源“{folder.DisplayName}”，" +
+                        "目录可能已移动或授权已失效。",
+                        warnings);
                 }
 
-                await ScanFolderAsync(rootFolder, folder, string.Empty, collectedMusic);
+                await ScanFolderAsync(
+                    rootFolder,
+                    folder,
+                    string.Empty,
+                    collectedMusic,
+                    warnings);
 
-                return LibraryScanResult.Completed(collectedMusic);
+                return LibraryScanResult.Completed(
+                    collectedMusic,
+                    warnings);
             }
             catch (Exception ex)
             {
-                return LibraryScanResult.Incomplete(collectedMusic, $"扫描“{folder.DisplayName}”失败：{ex.Message}");
+                return LibraryScanResult.Incomplete(
+                    collectedMusic,
+                    $"扫描“{folder.DisplayName}”失败：{ex.Message}",
+                    warnings);
             }
         }
 
-        private async Task ScanFolderAsync(StorageFolder storageFolder, LibraryFolder libraryFolder, string relativeFolderPath, List<Music> collectedMusic)
+        private async Task ScanFolderAsync(
+            StorageFolder storageFolder,
+            LibraryFolder libraryFolder,
+            string relativeFolderPath,
+            List<Music> collectedMusic,
+            List<string> warnings)
         {
             IReadOnlyList<StorageFile> files;
             IReadOnlyList<StorageFolder> childFolders;
@@ -113,6 +133,18 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Library
 
                     collectedMusic.Add(music);
                 }
+                catch (InvalidDataException ex)
+                {
+                    warnings.Add(
+                        $"已跳过无效音乐文件“{relativeFilePath}”：" +
+                        ex.Message);
+                }
+                catch (NotSupportedException ex)
+                {
+                    warnings.Add(
+                        $"已跳过不受支持的音乐文件“{relativeFilePath}”：" +
+                        ex.Message);
+                }
                 catch (Exception ex)
                 {
                     throw new IOException($"读取文件“{relativeFilePath}”失败：{ex.Message}", ex);
@@ -123,7 +155,12 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Library
             {
                 string childRelativePath = CombineRelativePath(relativeFolderPath, childFolder.Name);
 
-                await ScanFolderAsync(childFolder, libraryFolder, childRelativePath, collectedMusic);
+                await ScanFolderAsync(
+                    childFolder,
+                    libraryFolder,
+                    childRelativePath,
+                    collectedMusic,
+                    warnings);
             }
         }
 

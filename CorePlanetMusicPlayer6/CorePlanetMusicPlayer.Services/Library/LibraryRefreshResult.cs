@@ -13,6 +13,7 @@ namespace CorePlanetMusicPlayer.Services.Library
     public sealed class LibraryRefreshResult
     {
         private readonly List<string> _errors = new List<string>();
+        private readonly List<string> _warnings = new List<string>();
 
         /// <summary>
         /// 本次尝试刷新的目录数
@@ -35,9 +36,19 @@ namespace CorePlanetMusicPlayer.Services.Library
             get { return _errors.AsReadOnly(); }
         }
 
+        public IReadOnlyList<string> Warnings
+        {
+            get { return _warnings.AsReadOnly(); }
+        }
+
         public bool HasError
         {
             get { return _errors.Count > 0; }
+        }
+
+        public bool HasWarning
+        {
+            get { return _warnings.Count > 0; }
         }
 
         public void AddFolder()
@@ -79,6 +90,14 @@ namespace CorePlanetMusicPlayer.Services.Library
             if (!string.IsNullOrWhiteSpace(message))
             {
                 _errors.Add(message);
+            }
+        }
+
+        public void AddWarning(string message)
+        {
+            if (!string.IsNullOrWhiteSpace(message))
+            {
+                _warnings.Add(message);
             }
         }
     }
