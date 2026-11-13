@@ -220,6 +220,13 @@ namespace CorePlanetMusicPlayer.Services.Library
             }
 
             result.AddScannedMusic(scanResult.Items.Count);
+            result.AddSkippedMusic(scanResult.Warnings.Count);
+
+            foreach (string warning in scanResult.Warnings)
+            {
+                result.AddWarning(
+                    $"扫描“{folder.DisplayName}”：{warning}");
+            }
 
             if (!scanResult.IsComplete)
             {
@@ -319,6 +326,11 @@ namespace CorePlanetMusicPlayer.Services.Library
             for (int i = 0; i < source.Errors.Count; i++)
             {
                 target.AddError(source.Errors[i]);
+            }
+
+            for (int i = 0; i < source.Warnings.Count; i++)
+            {
+                target.AddWarning(source.Warnings[i]);
             }
 
             for (int i = 0; i < source.UpdatedFolderCount; i++)

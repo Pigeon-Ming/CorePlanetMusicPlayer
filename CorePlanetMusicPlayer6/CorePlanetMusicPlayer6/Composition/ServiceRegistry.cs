@@ -29,6 +29,10 @@ using System;
 using System.Diagnostics;
 using Windows.Storage;
 
+#if ENABLE_TAGLIB
+using CorePlanetMusicPlayer.TagLib.Uwp.Composition;
+#endif
+
 namespace CorePlanetMusicPlayer6.Composition
 {
     public sealed class ServiceRegistry
@@ -110,17 +114,62 @@ namespace CorePlanetMusicPlayer6.Composition
 
             services.SettingsStore = new UwpSettingsStore();
 
-            services.MusicMetadataWriter = new UwpMusicMetadataWriter(services.LibraryFolderRepository, services.StorageAccessService);
+            services.SettingsService =
+                new SettingsService(services.SettingsStore);
 
-            services.EmbeddedLyricAccessor = new UwpEmbeddedLyricAccessor(
-                services.LibraryFolderRepository,
-                services.StorageAccessService);
+            IUwpMusicTagAccessor tagLibMusicTagAccessor = null;
+
+#if ENABLE_TAGLIB
+            TagLibFeatureSet tagLibFeatures =
+                TagLibFeatureFactory.Create(
+                    services.LibraryFolderRepository,
+                    services.StorageAccessService,
+                    services.DeviceInfoService.GetDeviceFamily());
+
+            services.MusicTagCapabilities =
+                tagLibFeatures.Capabilities;
+            services.EmbeddedLyricAccessor =
+                tagLibFeatures.EmbeddedLyricAccessor;
+            tagLibMusicTagAccessor =
+                tagLibFeatures.MusicTagAccessor;
+#else
+            const string unavailableReason =
+                "当前构建未包含 TagLib 扩展。";
+
+            services.MusicTagCapabilities =
+                new MusicTagCapabilities
+                {
+                    IsTagLibExtensionInstalled = false,
+                    IsTagLibPlatformSupported = false,
+                    CanReadTagsWithTagLib = false,
+                    CanWriteTagsWithTagLib = false,
+                    CanReadEmbeddedLyrics = false,
+                    CanWriteEmbeddedLyrics = false,
+                    UnavailableReason = unavailableReason
+                };
+
+            services.EmbeddedLyricAccessor =
+                new UnsupportedEmbeddedLyricAccessor(
+                    unavailableReason);
+#endif
+
+            services.MusicTagAccessor =
+                new UwpConfiguredMusicTagAccessor(
+                    new UwpWindowsMusicTagAccessor(),
+                    tagLibMusicTagAccessor,
+                    services.MusicTagCapabilities,
+                    services.SettingsService);
+
+            services.MusicMetadataWriter =
+                new UwpMusicMetadataWriter(
+                    services.LibraryFolderRepository,
+                    services.StorageAccessService,
+                    services.MusicTagAccessor);
 
             services.ExternalLyricWriter = new UwpExternalLyricWriter(
                 services.LibraryFolderRepository,
                 services.StorageAccessService);
 
-            
         }
 
         private static void CreatePlaybackServices(AppServices services)
@@ -149,11 +198,11 @@ namespace CorePlanetMusicPlayer6.Composition
         {
             var lyricParserCollection = new LyricParserCollection(new ILyricParser[] {new LrcParser()});
 
-            var musicFileReader = new UwpMusicFileReader(services.StorageFileMapper);
+            var musicFileReader = new UwpMusicFileReader(
+                services.StorageFileMapper,
+                services.MusicTagAccessor);
 
             var libraryScanner = new UwpLibraryScanner(services.StorageAccessService, services.StorageFileMapper, musicFileReader);
-
-            services.SettingsService = new SettingsService(services.SettingsStore);
 
             var libraryWriteCoordinator = new LibraryWriteCoordinator();
 
@@ -188,6 +237,7 @@ namespace CorePlanetMusicPlayer6.Composition
                 services.LyricSearchService,
                 externalLyricReader,
                 services.EmbeddedLyricAccessor,
+                services.MusicTagCapabilities,
                 services.SettingsService);
 
             services.LyricEditService = new LyricEditService(

@@ -2,20 +2,21 @@ using CorePlanetMusicPlayer.Core.Library;
 using CorePlanetMusicPlayer.Core.Music;
 using CorePlanetMusicPlayer.Data.Repositories;
 using CorePlanetMusicPlayer.Services.Lyrics;
+using CorePlanetMusicPlayer.TagLib.Uwp.Platform.TagLib;
 using CorePlanetMusicPlayer.Uwp.Platform.Storage;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
 
-namespace CorePlanetMusicPlayer.Uwp.Platform.Lyrics
+namespace CorePlanetMusicPlayer.TagLib.Uwp.Platform.Lyrics
 {
-    public sealed class UwpEmbeddedLyricAccessor : IEmbeddedLyricAccessor
+    public sealed class TagLibEmbeddedLyricAccessor : IEmbeddedLyricAccessor
     {
         private readonly ILibraryFolderRepository _libraryFolderRepository;
         private readonly UwpStorageAccessService _storageAccessService;
 
-        public UwpEmbeddedLyricAccessor(
+        public TagLibEmbeddedLyricAccessor(
             ILibraryFolderRepository libraryFolderRepository,
             UwpStorageAccessService storageAccessService)
         {
@@ -55,13 +56,13 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Lyrics
                     EmbeddedLyricAccessStatus.AccessDenied,
                     "没有权限读取音乐文件中的内嵌歌词。");
             }
-            catch (TagLib.UnsupportedFormatException)
+            catch (global::TagLib.UnsupportedFormatException)
             {
                 return EmbeddedLyricReadResult.Failure(
                     EmbeddedLyricAccessStatus.Unsupported,
                     "当前音频格式不支持读取内嵌歌词。");
             }
-            catch (TagLib.CorruptFileException ex)
+            catch (global::TagLib.CorruptFileException ex)
             {
                 return EmbeddedLyricReadResult.Failure(
                     EmbeddedLyricAccessStatus.Failed,
@@ -152,13 +153,13 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Lyrics
                     EmbeddedLyricAccessStatus.AccessDenied,
                     "没有权限写入音乐文件中的内嵌歌词。");
             }
-            catch (TagLib.UnsupportedFormatException)
+            catch (global::TagLib.UnsupportedFormatException)
             {
                 return EmbeddedLyricWriteResult.Failure(
                     EmbeddedLyricAccessStatus.Unsupported,
                     "当前音频格式不支持写入内嵌歌词。");
             }
-            catch (TagLib.CorruptFileException ex)
+            catch (global::TagLib.CorruptFileException ex)
             {
                 return EmbeddedLyricWriteResult.Failure(
                     EmbeddedLyricAccessStatus.Failed,
@@ -234,7 +235,10 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Lyrics
         {
             var abstraction = new UwpTagLibFileAbstraction(fileName, stream);
 
-            using (TagLib.File tagFile = TagLib.File.Create(abstraction, TagLib.ReadStyle.None))
+            using (global::TagLib.File tagFile =
+                global::TagLib.File.Create(
+                    abstraction,
+                    global::TagLib.ReadStyle.None))
             {
                 return tagFile.Tag.Lyrics ?? string.Empty;
             }
@@ -244,7 +248,10 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Lyrics
         {
             var abstraction = new UwpTagLibFileAbstraction(fileName, stream);
 
-            using (TagLib.File tagFile = TagLib.File.Create(abstraction, TagLib.ReadStyle.None))
+            using (global::TagLib.File tagFile =
+                global::TagLib.File.Create(
+                    abstraction,
+                    global::TagLib.ReadStyle.None))
             {
                 tagFile.Tag.Lyrics = rawText;
                 tagFile.Save();

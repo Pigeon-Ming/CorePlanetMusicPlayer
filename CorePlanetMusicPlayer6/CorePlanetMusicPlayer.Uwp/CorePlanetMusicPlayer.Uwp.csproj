@@ -127,12 +127,14 @@
     <Compile Include="Platform\Imaging\UwpRemoteArtworkLoader.cs" />
     <Compile Include="Platform\Imaging\UwpThumbnailLoader.cs" />
     <Compile Include="Platform\Library\UwpLibraryScanner.cs" />
-    <Compile Include="Platform\Lyrics\UwpEmbeddedLyricAccessor.cs" />
     <Compile Include="Platform\Lyrics\UwpExternalLyricReader.cs" />
     <Compile Include="Platform\Lyrics\UwpExternalLyricWriter.cs" />
-    <Compile Include="Platform\Lyrics\UwpTagLibFileAbstraction.cs" />
+    <Compile Include="Platform\Metadata\IUwpMusicTagAccessor.cs" />
+    <Compile Include="Platform\Metadata\MusicMetadataWriteVerifier.cs" />
+    <Compile Include="Platform\Metadata\UwpConfiguredMusicTagAccessor.cs" />
     <Compile Include="Platform\Metadata\UwpMusicFileReader.cs" />
     <Compile Include="Platform\Metadata\UwpMusicMetadataWriter.cs" />
+    <Compile Include="Platform\Metadata\UwpWindowsMusicTagAccessor.cs" />
     <Compile Include="Platform\Playback\UwpAudioPlayer.cs" />
     <Compile Include="Platform\Playback\UwpMediaSourceFactory.cs" />
     <Compile Include="Platform\Playback\UwpPlaybackSessionStore.cs" />
@@ -150,9 +152,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.14</Version>
-    </PackageReference>
-    <PackageReference Include="TagLibSharp">
-      <Version>2.3.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

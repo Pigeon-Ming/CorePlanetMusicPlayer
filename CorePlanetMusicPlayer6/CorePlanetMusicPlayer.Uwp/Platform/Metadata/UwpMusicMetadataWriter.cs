@@ -1,4 +1,3 @@
-﻿using CorePlanetMusicPlayer.Core.Artists;
 using CorePlanetMusicPlayer.Core.Common;
 using CorePlanetMusicPlayer.Core.Library;
 using CorePlanetMusicPlayer.Core.Music;
@@ -6,12 +5,8 @@ using CorePlanetMusicPlayer.Data.Repositories;
 using CorePlanetMusicPlayer.Services.Metadata;
 using CorePlanetMusicPlayer.Uwp.Platform.Storage;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
-using Windows.Storage.FileProperties;
 
 namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
 {
@@ -19,14 +14,20 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
     {
         private readonly ILibraryFolderRepository _libraryFolderRepository;
         private readonly UwpStorageAccessService _storageAccessService;
+        private readonly IUwpMusicTagAccessor _musicTagAccessor;
 
-        public UwpMusicMetadataWriter(ILibraryFolderRepository libraryFolderRepository, UwpStorageAccessService storageAccessService)
+        public UwpMusicMetadataWriter(
+            ILibraryFolderRepository libraryFolderRepository,
+            UwpStorageAccessService storageAccessService,
+            IUwpMusicTagAccessor musicTagAccessor)
         {
             Guard.NotNull(libraryFolderRepository, nameof(libraryFolderRepository));
             Guard.NotNull(storageAccessService, nameof(storageAccessService));
+            Guard.NotNull(musicTagAccessor, nameof(musicTagAccessor));
 
             _libraryFolderRepository = libraryFolderRepository;
             _storageAccessService = storageAccessService;
+            _musicTagAccessor = musicTagAccessor;
         }
 
         public async Task<Result> WriteAsync(Music music, MusicMetadataUpdateRequest request)
@@ -47,24 +48,9 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
                     return Result.Failure("无法访问音乐文件，可能是文件已移动、目录授权失效，或应用没有文件访问权限。");
                 }
 
-                var propertiesToSave = CreatePropertiesToSave(request);
-
-                if (propertiesToSave.Count > 0)
-                {
-                    await file.Properties.SavePropertiesAsync(propertiesToSave);
-                }
-
-                if (request.HasArtistNames)
-                {
-                    bool matches = await VerifyArtistNamesAsync(file, request.ArtistNames);
-
-                    if (!matches)
-                    {
-                        return Result.Failure("文件写入后读取到的艺术家列表与请求不一致，数据库未更新。文件可能已经发生修改，请检查文件标签后重新扫描。");
-                    }
-                }
-
-                return Result.Success();
+                return await _musicTagAccessor.WriteAsync(
+                    file,
+                    request);
             }
             catch (UnauthorizedAccessException)
             {
@@ -103,95 +89,6 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
             }
 
             return await _storageAccessService.GetStorageFileAsync(music, folder);
-        }
-
-        private static Dictionary<string, object> CreatePropertiesToSave(MusicMetadataUpdateRequest request)
-        {
-            var values = new Dictionary<string, object>();
-
-            if (request.HasTitle)
-            {
-                values["System.Title"] = NormalizeText(request.Title);
-            }
-
-            if (request.HasArtistNames)
-            {
-                values["System.Music.Artist"] = request.ArtistNames.ToArray();
-            }
-
-            if (request.HasAlbumTitle)
-            {
-                values["System.Music.AlbumTitle"] = NormalizeText(request.AlbumTitle);
-            }
-
-            if (request.HasAlbumArtistName)
-            {
-                values["System.Music.AlbumArtist"] = NormalizeText(request.AlbumArtistName);
-            }
-
-            if (request.HasYear)
-            {
-                values["System.Media.Year"] = NormalizeUInt(request.Year);
-            }
-
-            if (request.HasTrackNumber)
-            {
-                values["System.Music.TrackNumber"] = NormalizeUInt(request.TrackNumber);
-            }
-
-            if (request.HasGenre)
-            {
-                values["System.Music.Genre"] = CreateSingleValueArray(request.Genre);
-            }
-
-            if (request.HasComposer)
-            {
-                values["System.Music.Composer"] = CreateSingleValueArray(request.Composer);
-            }
-
-            // 沿用当前行为：DiscNumber、Comment 暂时只更新数据库。
-            return values;
-        }
-
-        private static string[] CreateSingleValueArray(string value)
-        {
-            string normalized = NormalizeText(value);
-
-            return normalized.Length == 0
-                ? new string[0]
-                : new[] { normalized };
-        }
-
-        private static async Task<bool> VerifyArtistNamesAsync(StorageFile file, IReadOnlyList<string> expectedNames)
-        {
-            const string propertyName = "System.Music.Artist";
-
-            var values = await file.Properties.RetrievePropertiesAsync(new[] { propertyName });
-
-            object rawValue;
-            IEnumerable<string> names;
-
-            if (!values.TryGetValue(propertyName, out rawValue) || rawValue == null)
-            {
-                names = new string[0];
-            }
-            else if (rawValue is string)
-            {
-                names = new[] { (string)rawValue };
-            }
-            else
-            {
-                names = rawValue as IEnumerable<string>;
-
-                if (names == null)
-                {
-                    return false;
-                }
-            }
-
-            var actualNames = ArtistNameNormalizer.Normalize(names);
-
-            return actualNames.SequenceEqual(expectedNames, StringComparer.Ordinal);
         }
 
         private static Result Validate(Music music, MusicMetadataUpdateRequest request)
@@ -240,46 +137,5 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
             return Result.Success();
         }
 
-        private static string NormalizeText(string value)
-        {
-            if (value == null)
-            {
-                return string.Empty;
-            }
-
-            return value.Trim();
-        }
-
-        private static uint NormalizeUInt(int? value)
-        {
-            if (!value.HasValue)
-            {
-                return 0;
-            }
-
-            if (value.Value < 0)
-            {
-                return 0;
-            }
-
-            return (uint)value.Value;
-        }
-
-        private static void SetSingleValueList(IList<string> values, string value)
-        {
-            if (values == null)
-            {
-                return;
-            }
-
-            values.Clear();
-
-            var normalizedValue = NormalizeText(value);
-
-            if (!string.IsNullOrWhiteSpace(normalizedValue))
-            {
-                values.Add(normalizedValue);
-            }
-        }
     }
 }

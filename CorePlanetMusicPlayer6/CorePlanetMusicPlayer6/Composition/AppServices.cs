@@ -66,6 +66,10 @@ namespace CorePlanetMusicPlayer6.Composition
 
         public IEmbeddedLyricAccessor EmbeddedLyricAccessor { get; set; }
 
+        public MusicTagCapabilities MusicTagCapabilities { get; set; }
+
+        public IUwpMusicTagAccessor MusicTagAccessor { get; set; }
+
         public IExternalLyricWriter ExternalLyricWriter { get; set; }
 
         public IArtworkService ArtworkService { get; set; }

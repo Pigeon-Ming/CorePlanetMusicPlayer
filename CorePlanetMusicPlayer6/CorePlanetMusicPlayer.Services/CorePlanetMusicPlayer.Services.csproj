@@ -176,10 +176,13 @@
     <Compile Include="Lyrics\LyricSaveResult.cs" />
     <Compile Include="Lyrics\LyricSaveTarget.cs" />
     <Compile Include="Lyrics\LyricService.cs" />
+    <Compile Include="Lyrics\UnsupportedEmbeddedLyricAccessor.cs" />
     <Compile Include="Metadata\IMusicMetadataEditService.cs" />
     <Compile Include="Metadata\IMusicMetadataWriter.cs" />
     <Compile Include="Metadata\MusicMetadataEditService.cs" />
     <Compile Include="Metadata\MusicMetadataUpdateRequest.cs" />
+    <Compile Include="Metadata\MusicTagCapabilities.cs" />
+    <Compile Include="Metadata\MusicTagReadResult.cs" />
     <Compile Include="Playback\IPlaybackSessionStore.cs" />
     <Compile Include="Playback\PlaybackMusicResolver.cs" />
     <Compile Include="Playback\PlaybackSessionData.cs" />
@@ -190,6 +193,7 @@
     <Compile Include="Settings\AppSettings.cs" />
     <Compile Include="Settings\ISettingsService.cs" />
     <Compile Include="Settings\ISettingsStore.cs" />
+    <Compile Include="Settings\MusicTagEngine.cs" />
     <Compile Include="Settings\SettingsService.cs" />
     <Compile Include="Statistics\AlbumPlaybackStat.cs" />
     <Compile Include="Statistics\ArtistPlaybackStat.cs" />

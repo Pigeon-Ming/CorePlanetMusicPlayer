@@ -16,6 +16,8 @@ namespace CorePlanetMusicPlayer.Services.Settings
 
         public LibrarySettings Library { get; set; }
 
+        public MetadataSettings Metadata { get; set; }
+
         public LyricsSettings Lyrics { get; set; }
 
         public AppearanceSettings Appearance { get; set; }
@@ -29,6 +31,7 @@ namespace CorePlanetMusicPlayer.Services.Settings
                 Version = 1,
                 Playback = PlaybackSettings.CreateDefault(),
                 Library = LibrarySettings.CreateDefault(),
+                Metadata = MetadataSettings.CreateDefault(),
                 Lyrics = LyricsSettings.CreateDefault(),
                 Appearance = AppearanceSettings.CreateDefault(),
                 UpdatedAt = DateTimeOffset.Now
@@ -69,6 +72,15 @@ namespace CorePlanetMusicPlayer.Services.Settings
                 Appearance.Normalize();
             }
 
+            if (Metadata == null)
+            {
+                Metadata = MetadataSettings.CreateDefault();
+            }
+            else
+            {
+                Metadata.Normalize();
+            }
+
             if (Lyrics == null)
             {
                 Lyrics = LyricsSettings.CreateDefault();
@@ -81,6 +93,29 @@ namespace CorePlanetMusicPlayer.Services.Settings
             if (UpdatedAt == default(DateTimeOffset))
             {
                 UpdatedAt = DateTimeOffset.Now;
+            }
+        }
+    }
+
+    public sealed class MetadataSettings
+    {
+        public MusicTagEngine TagEngine { get; set; }
+
+        public static MetadataSettings CreateDefault()
+        {
+            return new MetadataSettings
+            {
+                TagEngine = MusicTagEngine.WindowsApi
+            };
+        }
+
+        public void Normalize()
+        {
+            if (!Enum.IsDefined(
+                typeof(MusicTagEngine),
+                TagEngine))
+            {
+                TagEngine = MusicTagEngine.WindowsApi;
             }
         }
     }

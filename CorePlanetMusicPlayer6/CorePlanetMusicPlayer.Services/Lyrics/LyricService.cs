@@ -2,6 +2,7 @@
 using CorePlanetMusicPlayer.Core.Lyrics;
 using CorePlanetMusicPlayer.Core.Music;
 using CorePlanetMusicPlayer.Data.Repositories;
+using CorePlanetMusicPlayer.Services.Metadata;
 using CorePlanetMusicPlayer.Services.Settings;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace CorePlanetMusicPlayer.Services.Lyrics
         private readonly LyricSearchService _searchService;
         private readonly IExternalLyricReader _externalLyricReader;
         private readonly IEmbeddedLyricAccessor _embeddedLyricAccessor;
+        private readonly MusicTagCapabilities _musicTagCapabilities;
         private readonly ISettingsService _settingsService;
 
         public LyricService(
@@ -27,12 +29,14 @@ namespace CorePlanetMusicPlayer.Services.Lyrics
             LyricSearchService searchService,
             IExternalLyricReader externalLyricReader,
             IEmbeddedLyricAccessor embeddedLyricAccessor,
+            MusicTagCapabilities musicTagCapabilities,
             ISettingsService settingsService)
         {
             Guard.NotNull(lyricRepository, nameof(lyricRepository));
             Guard.NotNull(musicRepository, nameof(musicRepository));
             Guard.NotNull(externalLyricReader, nameof(externalLyricReader));
             Guard.NotNull(embeddedLyricAccessor, nameof(embeddedLyricAccessor));
+            Guard.NotNull(musicTagCapabilities, nameof(musicTagCapabilities));
             Guard.NotNull(settingsService, nameof(settingsService));
 
             _lyricRepository = lyricRepository;
@@ -47,6 +51,7 @@ namespace CorePlanetMusicPlayer.Services.Lyrics
             _searchService = searchService ?? new LyricSearchService();
             _externalLyricReader = externalLyricReader;
             _embeddedLyricAccessor = embeddedLyricAccessor;
+            _musicTagCapabilities = musicTagCapabilities;
             _settingsService = settingsService;
         }
 
@@ -276,7 +281,8 @@ namespace CorePlanetMusicPlayer.Services.Lyrics
         {
             try
             {
-                if (music == null)
+                if (music == null ||
+                    !_musicTagCapabilities.CanReadEmbeddedLyrics)
                 {
                     return null;
                 }
