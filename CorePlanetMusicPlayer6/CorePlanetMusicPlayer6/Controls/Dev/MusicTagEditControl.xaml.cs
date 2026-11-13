@@ -23,6 +23,41 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
     public sealed partial class MusicTagEditControl
         : UserControl
     {
+        private static readonly string[] GenreSuggestions =
+        {
+            "Alternative",
+            "Ambient",
+            "Blues",
+            "Classical",
+            "Country",
+            "Dance",
+            "Disco",
+            "Electronic",
+            "Folk",
+            "Funk",
+            "Game",
+            "Hip-Hop",
+            "House",
+            "Instrumental",
+            "Jazz",
+            "J-Pop",
+            "K-Pop",
+            "Latin",
+            "Metal",
+            "New Age",
+            "Pop",
+            "Punk",
+            "R&B",
+            "Rap",
+            "Reggae",
+            "Rock",
+            "Soul",
+            "Soundtrack",
+            "Techno",
+            "Trance",
+            "Vocal"
+        };
+
         private AppServices _services;
         private IPlaybackService _playbackService;
 
@@ -31,6 +66,7 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
         private bool _isDirty;
         private bool _isApplyingFields;
         private bool _canEditDiscNumber;
+        private bool _canEditComment;
 
         private int _lifetimeVersion;
         private int _loadVersion;
@@ -42,6 +78,7 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
         public MusicTagEditControl()
         {
             this.InitializeComponent();
+            GenreAutoSuggestBox.ItemsSource = GenreSuggestions;
         }
 
         private async void UserControl_Loaded(
@@ -86,6 +123,7 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
             _isBusy = false;
             _isDirty = false;
             _canEditDiscNumber = false;
+            _canEditComment = false;
 
             _lifetimeVersion++;
             _loadVersion++;
@@ -263,6 +301,45 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
             object sender,
             TextChangedEventArgs e)
         {
+            MarkEditorDirty();
+        }
+
+        private void GenreAutoSuggestBox_TextChanged(
+            AutoSuggestBox sender,
+            AutoSuggestBoxTextChangedEventArgs e)
+        {
+            if (e.Reason ==
+                AutoSuggestionBoxTextChangeReason.UserInput)
+            {
+                string query = NormalizeText(sender.Text);
+
+                sender.ItemsSource = query.Length == 0
+                    ? GenreSuggestions
+                    : GenreSuggestions
+                        .Where(value =>
+                            value.IndexOf(
+                                query,
+                                StringComparison.OrdinalIgnoreCase) >= 0)
+                        .ToArray();
+            }
+
+            MarkEditorDirty();
+        }
+
+        private void GenreAutoSuggestBox_SuggestionChosen(
+            AutoSuggestBox sender,
+            AutoSuggestBoxSuggestionChosenEventArgs e)
+        {
+            string selectedGenre = e.SelectedItem as string;
+
+            if (selectedGenre != null)
+            {
+                sender.Text = selectedGenre;
+            }
+        }
+
+        private void MarkEditorDirty()
+        {
             if (_isApplyingFields || !_isAttached ||
                 _currentMusic == null)
             {
@@ -285,6 +362,7 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
             _currentMusicId = musicId;
             _currentMusic = null;
             _canEditDiscNumber = false;
+            _canEditComment = false;
 
             if (!musicId.HasValue || musicId.Value.IsEmpty)
             {
@@ -328,6 +406,9 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                     music,
                     settings);
                 _canEditDiscNumber = CanEditDiscNumber(
+                    music,
+                    _effectiveTagEngine);
+                _canEditComment = CanEditComment(
                     music,
                     _effectiveTagEngine);
 
@@ -381,6 +462,8 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                     "保存目标：应用数据库";
                 DiscNumberHintTextBlock.Text =
                     "非本地音乐不会写入文件，碟片号可以保存到数据库。";
+                CommentHintTextBlock.Text =
+                    "非本地音乐不会写入文件，备注可以保存到数据库。";
                 return;
             }
 
@@ -392,6 +475,11 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                 _canEditDiscNumber
                     ? "碟片号将由 TagLib 写入音乐文件。"
                     : "Windows API 不支持读取或写入碟片号。";
+
+            CommentHintTextBlock.Text =
+                _canEditComment
+                    ? "备注将由 TagLib 写入音乐文件。"
+                    : "Windows API 模式不支持读取或写入备注。";
         }
 
         private void ApplyMusicToFields(Music music)
@@ -414,7 +502,8 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                     music.AlbumTitle ?? string.Empty;
                 AlbumArtistNameTextBox.Text =
                     metadata.AlbumArtistName ?? string.Empty;
-                GenreTextBox.Text = metadata.Genre ?? string.Empty;
+                GenreAutoSuggestBox.Text =
+                    metadata.Genre ?? string.Empty;
                 YearTextBox.Text = ToNullableText(metadata.Year);
                 TrackNumberTextBox.Text =
                     ToNullableText(metadata.TrackNumber);
@@ -438,12 +527,14 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
             _currentMusic = null;
             _currentMusicId = null;
             _canEditDiscNumber = false;
+            _canEditComment = false;
             _isDirty = false;
 
             MusicTitleTextBlock.Text = "尚未播放";
             SourceTypeTextBlock.Text = string.Empty;
             TagEngineTextBlock.Text = string.Empty;
             DiscNumberHintTextBlock.Text = string.Empty;
+            CommentHintTextBlock.Text = string.Empty;
 
             _isApplyingFields = true;
 
@@ -453,7 +544,7 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                 ArtistNamesTextBox.Text = string.Empty;
                 AlbumTitleTextBox.Text = string.Empty;
                 AlbumArtistNameTextBox.Text = string.Empty;
-                GenreTextBox.Text = string.Empty;
+                GenreAutoSuggestBox.Text = string.Empty;
                 YearTextBox.Text = string.Empty;
                 TrackNumberTextBox.Text = string.Empty;
                 DiscNumberTextBox.Text = string.Empty;
@@ -480,7 +571,8 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                 AlbumTitleTextBox.Text);
             string albumArtistName = NormalizeText(
                 AlbumArtistNameTextBox.Text);
-            string genre = NormalizeText(GenreTextBox.Text);
+            string genre = NormalizeText(
+                GenreAutoSuggestBox.Text);
             int? year = ParseNullablePositiveInt(
                 YearTextBox.Text,
                 "年份");
@@ -494,8 +586,9 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                 : metadata.DiscNumber;
             string composer = NormalizeText(
                 ComposerTextBox.Text);
-            string comment = NormalizeText(
-                CommentTextBox.Text);
+            string comment = _canEditComment
+                ? NormalizeText(CommentTextBox.Text)
+                : NormalizeText(metadata.Comment);
 
             var request = MusicMetadataUpdateRequest.ForMusic(
                 music.Id);
@@ -528,6 +621,14 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
 
             if (genre != NormalizeText(metadata.Genre))
             {
+                if (genre.Length > 0 &&
+                    genre.All(char.IsDigit))
+                {
+                    throw new FormatException(
+                        "流派不能只包含数字；数字会被 ID3 " +
+                        "解释为预定义流派编号，请直接输入流派名称。");
+                }
+
                 request.WithGenre(genre);
             }
 
@@ -552,7 +653,8 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                 request.WithComposer(composer);
             }
 
-            if (comment != NormalizeText(metadata.Comment))
+            if (_canEditComment &&
+                comment != NormalizeText(metadata.Comment))
             {
                 request.WithComment(comment);
             }
@@ -633,6 +735,19 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                    CanWriteWithTagLib();
         }
 
+        private bool CanEditComment(
+            Music music,
+            MusicTagEngine engine)
+        {
+            if (!IsFileBacked(music))
+            {
+                return true;
+            }
+
+            return engine != MusicTagEngine.WindowsApi &&
+                   CanWriteWithTagLib();
+        }
+
         private bool CanWriteWithTagLib()
         {
             MusicTagCapabilities capabilities =
@@ -653,13 +768,14 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
             ArtistNamesTextBox.IsEnabled = canEdit;
             AlbumTitleTextBox.IsEnabled = canEdit;
             AlbumArtistNameTextBox.IsEnabled = canEdit;
-            GenreTextBox.IsEnabled = canEdit;
+            GenreAutoSuggestBox.IsEnabled = canEdit;
             YearTextBox.IsEnabled = canEdit;
             TrackNumberTextBox.IsEnabled = canEdit;
             DiscNumberTextBox.IsEnabled =
                 canEdit && _canEditDiscNumber;
             ComposerTextBox.IsEnabled = canEdit;
-            CommentTextBox.IsEnabled = canEdit;
+            CommentTextBox.IsEnabled =
+                canEdit && _canEditComment;
 
             SaveButton.IsEnabled = canEdit && _isDirty;
             ReloadButton.IsEnabled =

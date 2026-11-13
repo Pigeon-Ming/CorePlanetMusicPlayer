@@ -87,11 +87,13 @@
                     IsEnabled="False"
                     TextChanged="EditorField_TextChanged" />
 
-                <TextBox
-                    Name="GenreTextBox"
+                <AutoSuggestBox
+                    Name="GenreAutoSuggestBox"
                     Header="流派"
                     IsEnabled="False"
-                    TextChanged="EditorField_TextChanged" />
+                    PlaceholderText="输入或选择流派"
+                    SuggestionChosen="GenreAutoSuggestBox_SuggestionChosen"
+                    TextChanged="GenreAutoSuggestBox_TextChanged" />
 
                 <TextBox
                     Name="YearTextBox"
@@ -125,10 +127,15 @@
                 <TextBox
                     Name="CommentTextBox"
                     AcceptsReturn="True"
-                    Header="注释"
+                    Header="备注"
                     IsEnabled="False"
                     MinHeight="80"
                     TextChanged="EditorField_TextChanged"
+                    TextWrapping="Wrap" />
+
+                <TextBlock
+                    Name="CommentHintTextBlock"
+                    Opacity="0.7"
                     TextWrapping="Wrap" />
             </StackPanel>
         </ScrollViewer>

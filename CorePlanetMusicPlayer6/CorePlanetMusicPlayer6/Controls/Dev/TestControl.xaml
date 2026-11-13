@@ -12,7 +12,17 @@
     mc:Ignorable="d">
 
     <Grid>
-        <StackPanel>
+        <StackPanel Spacing="8">
+            <Button
+                x:Name="CheckMusicRepositoryButton"
+                Click="CheckMusicRepositoryButton_Click"
+                Content="验证歌曲数据库读写" />
+
+            <Button
+                x:Name="CheckLyricsButton"
+                Click="CheckLyricsButton_Click"
+                Content="验证歌词核心逻辑" />
+
             <ComboBox
                 x:Name="MusicTagEngineComboBox"
                 Header="歌曲标签读取引擎"
@@ -30,25 +40,6 @@
                     Visibility="Collapsed" />
             </ComboBox>
 
-            <TextBlock
-                x:Name="MusicTagEngineStatusTextBlock"
-                Margin="0,4,0,12"
-                TextWrapping="Wrap" />
-
-            <Button
-                x:Name="CheckMusicRepositoryButton"
-                Click="CheckMusicRepositoryButton_Click"
-                Content="验证歌曲数据库读写" />
-
-            <TextBlock x:Name="MusicRepositoryCheckTextBlock" TextWrapping="Wrap" />
-
-            <Button
-                x:Name="CheckLyricsButton"
-                Click="CheckLyricsButton_Click"
-                Content="验证歌词核心逻辑" />
-
-            <TextBlock x:Name="LyricsCheckTextBlock" TextWrapping="Wrap" />
-
             <TextBox
                 x:Name="MusicRelativePathTextBox"
                 Header="相对于所选目录的音乐路径"
@@ -59,21 +50,20 @@
                 Click="CheckMusicFileButton_Click"
                 Content="选择目录并验证单文件读取" />
 
-            <TextBlock x:Name="MusicFileCheckTextBlock" TextWrapping="Wrap" />
+            <Button
+                x:Name="CheckMusicTagEnginesButton"
+                Click="CheckMusicTagEnginesButton_Click"
+                Content="验证三种标签读取引擎" />
 
             <Button
                 x:Name="CheckLibraryScanButton"
                 Click="CheckLibraryScanButton_Click"
                 Content="选择目录并验证递归扫描" />
 
-            <TextBlock x:Name="LibraryScanCheckTextBlock" TextWrapping="Wrap" />
-
             <Button
                 x:Name="CheckLibraryRefreshButton"
                 Click="CheckLibraryRefreshButton_Click"
                 Content="扫描并保存已添加的音乐来源" />
-
-            <TextBlock x:Name="LibraryRefreshCheckTextBlock" TextWrapping="Wrap" />
 
             <Button
                 x:Name="LoadArtworkButton"
@@ -85,6 +75,17 @@
                 Width="160"
                 Height="160"
                 DecodePixelSize="256" />
+
+            <TextBox
+                x:Name="TestOutputTextBox"
+                AcceptsReturn="True"
+                Header="验证输出"
+                IsReadOnly="True"
+                MinHeight="240"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                Text="尚未执行验证。"
+                TextWrapping="Wrap" />
         </StackPanel>
     </Grid>
 </UserControl>

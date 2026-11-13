@@ -38,6 +38,7 @@ namespace CorePlanetMusicPlayer.TagLib.Uwp.Platform.TagLib
                         "文件流不支持读取。");
                 }
 
+                ResetPosition();
                 return _stream;
             }
         }
@@ -52,6 +53,7 @@ namespace CorePlanetMusicPlayer.TagLib.Uwp.Platform.TagLib
                         "文件流不支持写入。");
                 }
 
+                ResetPosition();
                 return _stream;
             }
         }
@@ -59,6 +61,14 @@ namespace CorePlanetMusicPlayer.TagLib.Uwp.Platform.TagLib
         public void CloseStream(Stream stream)
         {
             // 流由调用方管理。TagLib 在读取和保存之间会重复请求同一个流。
+        }
+
+        private void ResetPosition()
+        {
+            if (_stream.CanSeek)
+            {
+                _stream.Position = 0;
+            }
         }
     }
 }

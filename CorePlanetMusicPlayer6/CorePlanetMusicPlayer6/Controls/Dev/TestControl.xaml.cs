@@ -8,6 +8,7 @@ using CorePlanetMusicPlayer.Services.Artwork;
 using CorePlanetMusicPlayer.Services.Library;
 using CorePlanetMusicPlayer.Services.Library.MusicQueries;
 using CorePlanetMusicPlayer.Services.Lyrics;
+using CorePlanetMusicPlayer.Services.Metadata;
 using CorePlanetMusicPlayer.Services.Settings;
 using CorePlanetMusicPlayer.Uwp.Platform.Library;
 using CorePlanetMusicPlayer.Uwp.Platform.Metadata;
@@ -44,6 +45,41 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
             this.InitializeComponent();
         }
 
+        private void ShowTestOutput(
+            string title,
+            string message)
+        {
+            string normalizedTitle =
+                string.IsNullOrWhiteSpace(title)
+                    ? "验证输出"
+                    : title.Trim();
+
+            TestOutputTextBox.Text =
+                "[" + normalizedTitle + "]" +
+                Environment.NewLine +
+                (message ?? string.Empty);
+
+            TestOutputTextBox.SelectionStart =
+                TestOutputTextBox.Text.Length;
+        }
+
+        private void AppendTestOutput(string message)
+        {
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(TestOutputTextBox.Text))
+            {
+                TestOutputTextBox.Text += Environment.NewLine;
+            }
+
+            TestOutputTextBox.Text += message;
+            TestOutputTextBox.SelectionStart =
+                TestOutputTextBox.Text.Length;
+        }
+
         private async void TestControl_Loaded(
             object sender,
             RoutedEventArgs e)
@@ -59,8 +95,9 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                 services.SettingsService == null)
             {
                 MusicTagEngineComboBox.IsEnabled = false;
-                MusicTagEngineStatusTextBlock.Text =
-                    "设置服务不可用。";
+                ShowTestOutput(
+                    "标签引擎设置",
+                    "设置服务不可用。");
                 return;
             }
 
@@ -103,8 +140,9 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
 
                 if (isTagLibAvailable)
                 {
-                    MusicTagEngineStatusTextBlock.Text =
-                        "TagLib 扩展可用。";
+                    ShowTestOutput(
+                        "标签引擎设置",
+                        "TagLib 扩展可用。");
                 }
                 else
                 {
@@ -114,17 +152,19 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                             : services.MusicTagCapabilities
                                 .UnavailableReason;
 
-                    MusicTagEngineStatusTextBlock.Text =
+                    ShowTestOutput(
+                        "标签引擎设置",
                         string.IsNullOrWhiteSpace(reason)
                             ? "当前环境不支持 TagLib 扩展。"
-                            : reason;
+                            : reason);
                 }
             }
             catch (Exception ex)
             {
                 MusicTagEngineComboBox.IsEnabled = false;
-                MusicTagEngineStatusTextBlock.Text =
-                    "读取标签引擎设置失败：" + ex.Message;
+                ShowTestOutput(
+                    "标签引擎设置",
+                    "读取标签引擎设置失败：" + ex.Message);
             }
             finally
             {
@@ -207,6 +247,10 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                     _isLoadingMusicTagEngine = false;
                 }
 
+                ShowTestOutput(
+                    "标签引擎设置",
+                    "当前环境不支持所选 TagLib 标签引擎。");
+
                 return;
             }
 
@@ -219,32 +263,41 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
 
                 await services.SettingsService.SaveAsync(settings);
 
-                MusicTagEngineStatusTextBlock.Text =
-                    "标签读取引擎设置已保存。";
+                ShowTestOutput(
+                    "标签引擎设置",
+                    "标签读取引擎设置已保存：" +
+                    GetMusicTagEngineText(selectedEngine) + "。");
             }
             catch (Exception ex)
             {
-                MusicTagEngineStatusTextBlock.Text =
-                    "保存标签引擎设置失败：" + ex.Message;
+                ShowTestOutput(
+                    "标签引擎设置",
+                    "保存标签引擎设置失败：" + ex.Message);
             }
         }
 
         private async void CheckMusicRepositoryButton_Click(object sender, RoutedEventArgs e)
         {
             CheckMusicRepositoryButton.IsEnabled = false;
-            MusicRepositoryCheckTextBlock.Text = "正在验证……";
+            ShowTestOutput(
+                "歌曲数据库读写",
+                "正在验证……");
 
             try
             {
                 await CheckMusicRepositoryAsync();
 
-                MusicRepositoryCheckTextBlock.Text = "验证通过：单条写入、按 ID 读取、批量新增和更新、列表读取。";
+                ShowTestOutput(
+                    "歌曲数据库读写",
+                    "验证通过：单条写入、按 ID 读取、批量新增和更新、列表读取。");
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex);
 
-                MusicRepositoryCheckTextBlock.Text = $"验证失败：{ex.Message}";
+                ShowTestOutput(
+                    "歌曲数据库读写",
+                    $"验证失败：{ex.Message}");
             }
             finally
             {
@@ -322,21 +375,25 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
             RoutedEventArgs e)
         {
             CheckLyricsButton.IsEnabled = false;
-            LyricsCheckTextBlock.Text = "正在验证……";
+            ShowTestOutput(
+                "歌词核心逻辑",
+                "正在验证……");
 
             try
             {
                 CheckLyrics();
 
-                LyricsCheckTextBlock.Text =
-                    "验证通过：时间标签、翻译合并、多时间标签、无效输入、来源优先级和冲突处理。";
+                ShowTestOutput(
+                    "歌词核心逻辑",
+                    "验证通过：时间标签、翻译合并、多时间标签、无效输入、来源优先级和冲突处理。");
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex);
 
-                LyricsCheckTextBlock.Text =
-                    "验证失败：" + ex.Message;
+                ShowTestOutput(
+                    "歌词核心逻辑",
+                    "验证失败：" + ex.Message);
             }
             finally
             {
@@ -577,12 +634,16 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
 
             if (string.IsNullOrWhiteSpace(relativePath))
             {
-                MusicFileCheckTextBlock.Text = "请先输入音乐文件的相对路径。";
+                ShowTestOutput(
+                    "单文件读取",
+                    "请先输入音乐文件的相对路径。");
                 return;
             }
 
             CheckMusicFileButton.IsEnabled = false;
-            MusicFileCheckTextBlock.Text = "请选择音乐来源目录。";
+            ShowTestOutput(
+                "单文件读取",
+                "请选择音乐来源目录。");
 
             var mapper = new UwpStorageFileMapper();
 
@@ -598,7 +659,9 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
 
                 if (folder == null)
                 {
-                    MusicFileCheckTextBlock.Text = "已取消。";
+                    ShowTestOutput(
+                        "单文件读取",
+                        "已取消。");
                     return;
                 }
 
@@ -640,7 +703,8 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                         "音乐信息已读取，但无法根据来源和相对路径重新打开文件。");
                 }
 
-                MusicFileCheckTextBlock.Text =
+                ShowTestOutput(
+                    "单文件读取",
                     $"读取及重新定位成功。\n" +
                     $"标题：{music.Title}\n" +
                     $"艺术家：{music.ArtistName}\n" +
@@ -651,12 +715,14 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                     $"碟片号：{music.Metadata.DiscNumber}\n" +
                     $"时长：{music.Duration}\n" +
                     $"大小：{music.FileInfo.Size} 字节\n" +
-                    $"相对路径：{music.FileInfo.RelativePath}";
+                    $"相对路径：{music.FileInfo.RelativePath}");
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex);
-                MusicFileCheckTextBlock.Text = $"验证失败：{ex.Message}";
+                ShowTestOutput(
+                    "单文件读取",
+                    $"验证失败：{ex.Message}");
             }
             finally
             {
@@ -677,12 +743,413 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
             }
         }
 
+        private async void CheckMusicTagEnginesButton_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            string relativePath = MusicRelativePathTextBox.Text;
+
+            if (string.IsNullOrWhiteSpace(relativePath))
+            {
+                ShowTestOutput(
+                    "三种标签读取引擎",
+                    "请先输入音乐文件的相对路径。");
+                return;
+            }
+
+            AppServices services = AppRuntime.Services;
+
+            if (services == null ||
+                services.SettingsService == null ||
+                services.MusicTagAccessor == null)
+            {
+                ShowTestOutput(
+                    "三种标签读取引擎",
+                    "标签读取验收所需服务尚未就绪。");
+                return;
+            }
+
+            CheckMusicTagEnginesButton.IsEnabled = false;
+            CheckMusicFileButton.IsEnabled = false;
+            CheckLibraryScanButton.IsEnabled = false;
+            CheckLibraryRefreshButton.IsEnabled = false;
+            MusicTagEngineComboBox.IsEnabled = false;
+            ShowTestOutput(
+                "三种标签读取引擎",
+                "请选择音乐来源目录。");
+
+            var mapper = new UwpStorageFileMapper();
+            var accessService = new UwpStorageAccessService(
+                new UwpFolderPickerService(),
+                mapper);
+            var output = new StringBuilder();
+
+            LibraryFolder folder = null;
+            AppSettings settings = null;
+            MusicTagEngine originalEngine =
+                MusicTagEngine.WindowsApi;
+            bool shouldRestoreSettings = false;
+            bool settingsRestored = true;
+
+            try
+            {
+                folder = await accessService
+                    .PickerAndCreateFutureAccessFolderAsync();
+
+                if (folder == null)
+                {
+                    output.AppendLine("已取消。");
+                    return;
+                }
+
+                StorageFile file = await accessService
+                    .GetStorageFileByFutureAccessAsync(
+                        folder,
+                        relativePath);
+
+                if (file == null)
+                {
+                    throw new InvalidOperationException(
+                        "无法找到文件，请检查相对路径和所选目录。");
+                }
+
+                var basicProperties =
+                    await file.GetBasicPropertiesAsync();
+
+                if (basicProperties.Size == 0)
+                {
+                    throw new InvalidDataException(
+                        "音乐文件为空。");
+                }
+
+                settings =
+                    await services.SettingsService.LoadAsync();
+                originalEngine = settings.Metadata.TagEngine;
+                shouldRestoreSettings = true;
+
+                MusicTagReadResult windowsResult =
+                    await ReadTagsWithEngineAsync(
+                        services,
+                        settings,
+                        file,
+                        MusicTagEngine.WindowsApi);
+
+                AppendTagReadResult(
+                    output,
+                    "Windows API",
+                    windowsResult);
+
+                bool canReadWithTagLib =
+                    services.MusicTagCapabilities != null &&
+                    services.MusicTagCapabilities
+                        .IsTagLibAvailable &&
+                    services.MusicTagCapabilities
+                        .CanReadTagsWithTagLib;
+
+                if (!canReadWithTagLib)
+                {
+                    output.AppendLine();
+                    output.AppendLine(
+                        "TagLib 当前不可用，仅完成 Windows API 验收。");
+                    return;
+                }
+
+                MusicTagReadResult tagLibResult =
+                    await ReadTagsWithEngineAsync(
+                        services,
+                        settings,
+                        file,
+                        MusicTagEngine.TagLib);
+
+                AppendTagReadResult(
+                    output,
+                    "TagLib",
+                    tagLibResult);
+
+                MusicTagReadResult hybridResult =
+                    await ReadTagsWithEngineAsync(
+                        services,
+                        settings,
+                        file,
+                        MusicTagEngine.Hybrid);
+
+                AppendTagReadResult(
+                    output,
+                    "混合引擎",
+                    hybridResult);
+
+                VerifyHybridReadResult(
+                    windowsResult,
+                    tagLibResult,
+                    hybridResult);
+
+                output.AppendLine();
+                output.AppendLine(
+                    "验证通过：混合引擎的基础标签和时长来自 Windows API，" +
+                    "碟片号和备注来自 TagLib。");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+                output.AppendLine();
+                output.AppendLine("验证失败：" + ex.Message);
+            }
+            finally
+            {
+                if (shouldRestoreSettings && settings != null)
+                {
+                    try
+                    {
+                        settings.Metadata.TagEngine = originalEngine;
+
+                        await services.SettingsService.SaveAsync(
+                            settings);
+                    }
+                    catch (Exception ex)
+                    {
+                        settingsRestored = false;
+                        System.Diagnostics.Debug.WriteLine(ex);
+                        output.AppendLine();
+                        output.AppendLine(
+                            "警告：恢复原标签引擎设置失败：" +
+                            ex.Message);
+                    }
+                }
+
+                if (folder != null)
+                {
+                    try
+                    {
+                        accessService.RemoveFutureAccess(folder);
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine(ex);
+                    }
+                }
+
+                if (shouldRestoreSettings && settingsRestored)
+                {
+                    _isLoadingMusicTagEngine = true;
+
+                    try
+                    {
+                        SelectMusicTagEngine(originalEngine);
+                    }
+                    finally
+                    {
+                        _isLoadingMusicTagEngine = false;
+                    }
+                }
+
+                ShowTestOutput(
+                    "三种标签读取引擎",
+                    output.ToString());
+                CheckMusicTagEnginesButton.IsEnabled = true;
+                CheckMusicFileButton.IsEnabled = true;
+                CheckLibraryScanButton.IsEnabled = true;
+                CheckLibraryRefreshButton.IsEnabled = true;
+                MusicTagEngineComboBox.IsEnabled = settingsRestored;
+            }
+        }
+
+        private static async Task<MusicTagReadResult>
+            ReadTagsWithEngineAsync(
+                AppServices services,
+                AppSettings settings,
+                StorageFile file,
+                MusicTagEngine engine)
+        {
+            settings.Metadata.TagEngine = engine;
+
+            await services.SettingsService.SaveAsync(settings);
+
+            MusicTagReadResult result =
+                await services.MusicTagAccessor.ReadAsync(file);
+
+            if (result == null || result.Metadata == null)
+            {
+                throw new InvalidOperationException(
+                    GetMusicTagEngineText(engine) +
+                    " 没有返回有效的标签读取结果。");
+            }
+
+            return result;
+        }
+
+        private static void VerifyHybridReadResult(
+            MusicTagReadResult windowsResult,
+            MusicTagReadResult tagLibResult,
+            MusicTagReadResult hybridResult)
+        {
+            MusicMetadata windows = windowsResult.Metadata;
+            MusicMetadata tagLib = tagLibResult.Metadata;
+            MusicMetadata hybrid = hybridResult.Metadata;
+
+            bool baseTagsMatch =
+                TextEquals(hybrid.Title, windows.Title) &&
+                TextEquals(hybrid.ArtistName, windows.ArtistName) &&
+                ValuesEqual(
+                    hybrid.ArtistNames,
+                    windows.ArtistNames) &&
+                TextEquals(
+                    hybrid.AlbumTitle,
+                    windows.AlbumTitle) &&
+                TextEquals(
+                    hybrid.AlbumArtistName,
+                    windows.AlbumArtistName) &&
+                TextEquals(hybrid.Genre, windows.Genre) &&
+                hybrid.Year == windows.Year &&
+                hybrid.TrackNumber == windows.TrackNumber &&
+                TextEquals(hybrid.Composer, windows.Composer) &&
+                hybridResult.Duration == windowsResult.Duration;
+
+            if (!baseTagsMatch)
+            {
+                throw new InvalidOperationException(
+                    "混合引擎的基础标签或时长与 Windows API 结果不一致。");
+            }
+
+            if (hybrid.DiscNumber != tagLib.DiscNumber)
+            {
+                throw new InvalidOperationException(
+                    "混合引擎的碟片号与 TagLib 结果不一致。");
+            }
+
+            if (!TextEquals(hybrid.Comment, tagLib.Comment))
+            {
+                throw new InvalidOperationException(
+                    "混合引擎的备注与 TagLib 结果不一致。");
+            }
+        }
+
+        private static void AppendTagReadResult(
+            StringBuilder output,
+            string engineName,
+            MusicTagReadResult result)
+        {
+            MusicMetadata metadata = result.Metadata;
+
+            output.AppendLine();
+            output.AppendLine("[" + engineName + "]");
+            output.AppendLine(
+                "标题：" + DisplayText(metadata.Title));
+            output.AppendLine(
+                "艺术家：" + DisplayValues(metadata.ArtistNames));
+            output.AppendLine(
+                "专辑：" + DisplayText(metadata.AlbumTitle));
+            output.AppendLine(
+                "专辑艺术家：" +
+                DisplayText(metadata.AlbumArtistName));
+            output.AppendLine(
+                "流派：" + DisplayText(metadata.Genre));
+            output.AppendLine(
+                "年份：" + DisplayNumber(metadata.Year));
+            output.AppendLine(
+                "音轨号：" + DisplayNumber(metadata.TrackNumber));
+            output.AppendLine(
+                "碟片号：" + DisplayNumber(metadata.DiscNumber));
+            output.AppendLine(
+                "作曲家：" + DisplayText(metadata.Composer));
+            output.AppendLine(
+                "备注：" + DisplayText(metadata.Comment));
+            output.AppendLine(
+                "时长：" + result.Duration);
+        }
+
+        private static bool TextEquals(
+            string left,
+            string right)
+        {
+            return string.Equals(
+                NormalizeTagText(left),
+                NormalizeTagText(right),
+                StringComparison.Ordinal);
+        }
+
+        private static bool ValuesEqual(
+            IEnumerable<string> left,
+            IEnumerable<string> right)
+        {
+            string[] leftValues = NormalizeTagValues(left);
+            string[] rightValues = NormalizeTagValues(right);
+
+            return leftValues.SequenceEqual(
+                rightValues,
+                StringComparer.Ordinal);
+        }
+
+        private static string[] NormalizeTagValues(
+            IEnumerable<string> values)
+        {
+            if (values == null)
+            {
+                return new string[0];
+            }
+
+            return values
+                .Select(NormalizeTagText)
+                .Where(value => value.Length > 0)
+                .ToArray();
+        }
+
+        private static string NormalizeTagText(string value)
+        {
+            return value == null
+                ? string.Empty
+                : value.Trim();
+        }
+
+        private static string DisplayText(string value)
+        {
+            string normalized = NormalizeTagText(value);
+
+            return normalized.Length == 0
+                ? "（空）"
+                : normalized;
+        }
+
+        private static string DisplayValues(
+            IEnumerable<string> values)
+        {
+            string[] normalized = NormalizeTagValues(values);
+
+            return normalized.Length == 0
+                ? "（空）"
+                : string.Join("; ", normalized);
+        }
+
+        private static string DisplayNumber(int? value)
+        {
+            return value.HasValue
+                ? value.Value.ToString()
+                : "（空）";
+        }
+
+        private static string GetMusicTagEngineText(
+            MusicTagEngine engine)
+        {
+            switch (engine)
+            {
+                case MusicTagEngine.TagLib:
+                    return "TagLib";
+
+                case MusicTagEngine.Hybrid:
+                    return "混合引擎";
+
+                default:
+                    return "Windows API";
+            }
+        }
+
         private async void CheckLibraryScanButton_Click(
     object sender,
     RoutedEventArgs e)
         {
             CheckLibraryScanButton.IsEnabled = false;
-            LibraryScanCheckTextBlock.Text = "请选择音乐来源目录。";
+            ShowTestOutput(
+                "递归扫描",
+                "请选择音乐来源目录。");
 
             var mapper = new UwpStorageFileMapper();
 
@@ -705,11 +1172,15 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
 
                 if (folder == null)
                 {
-                    LibraryScanCheckTextBlock.Text = "已取消。";
+                    ShowTestOutput(
+                        "递归扫描",
+                        "已取消。");
                     return;
                 }
 
-                LibraryScanCheckTextBlock.Text = "正在扫描目录及子目录……";
+                ShowTestOutput(
+                    "递归扫描",
+                    "正在扫描目录及子目录……");
 
                 var result = await scanner.ScanAsync(folder);
 
@@ -739,12 +1210,16 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                         $"{music.Title} | {music.FileInfo.RelativePath}");
                 }
 
-                LibraryScanCheckTextBlock.Text = output.ToString();
+                ShowTestOutput(
+                    "递归扫描",
+                    output.ToString());
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex);
-                LibraryScanCheckTextBlock.Text = $"验证失败：{ex.Message}";
+                ShowTestOutput(
+                    "递归扫描",
+                    $"验证失败：{ex.Message}");
             }
             finally
             {
@@ -873,12 +1348,16 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
 
             if (service == null || musicQueryService == null || albumService == null || artistService == null)
             {
-                LibraryRefreshCheckTextBlock.Text = "所需服务尚未就绪。";
+                ShowTestOutput(
+                    "音乐库刷新",
+                    "所需服务尚未就绪。");
                 return;
             }
 
             CheckLibraryRefreshButton.IsEnabled = false;
-            LibraryRefreshCheckTextBlock.Text = "正在扫描并保存……";
+            ShowTestOutput(
+                "音乐库刷新",
+                "正在扫描并保存……");
 
             try
             {
@@ -886,8 +1365,9 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
 
                 if (folders.Count == 0)
                 {
-                    LibraryRefreshCheckTextBlock.Text =
-                        "请先在音乐库来源控件中添加测试目录。";
+                    ShowTestOutput(
+                        "音乐库刷新",
+                        "请先在音乐库来源控件中添加测试目录。");
                     return;
                 }
 
@@ -918,7 +1398,9 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                 }
 
                 // 先显示刷新结果，避免后续查询失败时丢失这些信息。
-                LibraryRefreshCheckTextBlock.Text = output.ToString();
+                ShowTestOutput(
+                    "音乐库刷新",
+                    output.ToString());
 
                 var music = await musicQueryService.GetAllAsync();
                 var albums = await albumService.GetAllAsync();
@@ -955,14 +1437,16 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
                         $"专辑数：{artist.AlbumIds.Count}");
                 }
 
-                LibraryRefreshCheckTextBlock.Text = output.ToString();
+                ShowTestOutput(
+                    "音乐库刷新",
+                    output.ToString());
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex);
 
-                LibraryRefreshCheckTextBlock.Text +=
-                    $"\n验证未完整完成：{ex.Message}";
+                AppendTestOutput(
+                    $"验证未完整完成：{ex.Message}");
             }
             finally
             {
@@ -973,16 +1457,56 @@ namespace CorePlanetMusicPlayer6.Controls.Dev
         private async void LoadArtworkButton_Click(object sender, RoutedEventArgs e)
         {
             var services = AppRuntime.Services;
-
             var musicQueryService = services?.MusicQueryService;
 
-            var musicList = await musicQueryService.GetAllAsync();
-
-            if (musicList.Count > 0)
+            if (musicQueryService == null ||
+                services.ArtworkService == null)
             {
-                var reference = await services.ArtworkService.GetArtworkAsync(musicList[0]);
+                ShowTestOutput(
+                    "封面加载",
+                    "封面加载所需服务尚未就绪。");
+                return;
+            }
+
+            LoadArtworkButton.IsEnabled = false;
+            ShowTestOutput(
+                "封面加载",
+                "正在加载第一首歌曲的封面……");
+
+            try
+            {
+                var musicList =
+                    await musicQueryService.GetAllAsync();
+
+                if (musicList.Count == 0)
+                {
+                    ShowTestOutput(
+                        "封面加载",
+                        "音乐库中没有可用于验证封面的歌曲。");
+                    return;
+                }
+
+                var reference =
+                    await services.ArtworkService
+                        .GetArtworkAsync(musicList[0]);
 
                 PreviewArtworkControl.Request = ArtworkRequest.FromReference(reference);
+
+                ShowTestOutput(
+                    "封面加载",
+                    "已提交第一首歌曲的封面加载请求：" +
+                    musicList[0].Title);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+                ShowTestOutput(
+                    "封面加载",
+                    "验证失败：" + ex.Message);
+            }
+            finally
+            {
+                LoadArtworkButton.IsEnabled = true;
             }
         }
     }

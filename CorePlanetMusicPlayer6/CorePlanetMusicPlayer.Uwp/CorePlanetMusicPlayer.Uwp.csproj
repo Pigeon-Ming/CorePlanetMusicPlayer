@@ -130,6 +130,7 @@
     <Compile Include="Platform\Lyrics\UwpExternalLyricReader.cs" />
     <Compile Include="Platform\Lyrics\UwpExternalLyricWriter.cs" />
     <Compile Include="Platform\Metadata\IUwpMusicTagAccessor.cs" />
+    <Compile Include="Platform\Metadata\MusicMetadataWriteVerifier.cs" />
     <Compile Include="Platform\Metadata\UwpConfiguredMusicTagAccessor.cs" />
     <Compile Include="Platform\Metadata\UwpMusicFileReader.cs" />
     <Compile Include="Platform\Metadata\UwpMusicMetadataWriter.cs" />

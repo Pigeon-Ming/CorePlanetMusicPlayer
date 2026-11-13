@@ -31,9 +31,6 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
             List<string> artistNames =
                 await ReadArtistNamesAsync(properties);
 
-            string comment =
-                await ReadCommentAsync(properties);
-
             var metadata = new MusicMetadata
             {
                 Title = NormalizeText(properties.Title),
@@ -47,7 +44,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
                 TrackNumber = ToNullableInt(properties.TrackNumber),
                 DiscNumber = null,
                 Composer = JoinValues(properties.Composers),
-                Comment = comment
+                Comment = string.Empty
             };
 
             return new MusicTagReadResult(
@@ -76,6 +73,13 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
                     "Windows API 标签引擎不支持写入碟片号。");
             }
 
+            if (request.HasComment)
+            {
+                return Result.Failure(
+                    "Windows API 标签引擎不支持写入备注。" +
+                    "请使用 TagLib 或混合引擎。");
+            }
+
             try
             {
                 Dictionary<string, object> values =
@@ -83,16 +87,32 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
 
                 if (values.Count > 0)
                 {
-                    await file.Properties.SavePropertiesAsync(values);
+                    MusicProperties properties =
+                        await file.Properties
+                            .GetMusicPropertiesAsync();
+
+                    await SavePropertiesIndividuallyAsync(
+                        properties,
+                        values);
                 }
 
-                MusicTagReadResult readResult =
-                    await ReadAsync(file);
+                StorageFile verificationFile =
+                    await ReopenFileAsync(file);
 
-                return Matches(request, readResult.Metadata)
+                MusicTagReadResult readResult =
+                    await ReadAsync(verificationFile);
+
+                string mismatch =
+                    MusicMetadataWriteVerifier
+                        .GetMismatchDescription(
+                            request,
+                            readResult.Metadata);
+
+                return string.IsNullOrEmpty(mismatch)
                     ? Result.Success()
                     : Result.Failure(
-                        "Windows API 写入后的标签校验失败。");
+                        "Windows API 写入后的标签校验失败：" +
+                        mismatch);
             }
             catch (UnauthorizedAccessException)
             {
@@ -104,6 +124,86 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
                 return Result.Failure(
                     "Windows API 写入音乐文件标签失败：" +
                     ex.Message);
+            }
+        }
+
+        private static async Task SavePropertiesIndividuallyAsync(
+            MusicProperties properties,
+            Dictionary<string, object> values)
+        {
+            foreach (KeyValuePair<string, object> item in values)
+            {
+                var singleProperty =
+                    new Dictionary<string, object>
+                    {
+                        { item.Key, item.Value }
+                    };
+
+                try
+                {
+                    await properties.SavePropertiesAsync(
+                        singleProperty);
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException(
+                        "无法写入" +
+                        GetPropertyDisplayName(item.Key) +
+                        "属性：" + ex.Message,
+                        ex);
+                }
+            }
+        }
+
+        private static async Task<StorageFile> ReopenFileAsync(
+            StorageFile file)
+        {
+            StorageFolder parentFolder =
+                await file.GetParentAsync();
+
+            if (parentFolder == null)
+            {
+                return file;
+            }
+
+            return await parentFolder.GetFileAsync(file.Name);
+        }
+
+        private static string GetPropertyDisplayName(
+            string propertyName)
+        {
+            switch (propertyName)
+            {
+                case "System.Title":
+                    return "标题";
+
+                case "System.Music.Artist":
+                    return "艺术家";
+
+                case "System.Music.AlbumTitle":
+                    return "专辑";
+
+                case "System.Music.AlbumArtist":
+                    return "专辑艺术家";
+
+                case "System.Music.Genre":
+                    return "流派";
+
+                case "System.Media.Year":
+                    return "年份";
+
+                case "System.Music.TrackNumber":
+                    return "音轨号";
+
+                case "System.Music.Composer":
+                    return "作曲家";
+
+                default:
+                    return propertyName;
             }
         }
 
@@ -140,25 +240,6 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
 
             throw new InvalidOperationException(
                 "艺术家属性的数据类型不受支持。");
-        }
-
-        private static async Task<string> ReadCommentAsync(
-            MusicProperties properties)
-        {
-            const string propertyName = "System.Comment";
-
-            var values = await properties.RetrievePropertiesAsync(
-                new[] { propertyName });
-
-            object rawValue;
-
-            if (!values.TryGetValue(propertyName, out rawValue) ||
-                rawValue == null)
-            {
-                return string.Empty;
-            }
-
-            return NormalizeText(rawValue.ToString());
         }
 
         private static Dictionary<string, object>
@@ -215,68 +296,7 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
                     CreateSingleValueArray(request.Composer);
             }
 
-            if (request.HasComment)
-            {
-                values["System.Comment"] =
-                    NormalizeText(request.Comment);
-            }
-
             return values;
-        }
-
-        private static bool Matches(
-            MusicMetadataUpdateRequest request,
-            MusicMetadata actual)
-        {
-            if (actual == null)
-            {
-                return false;
-            }
-
-            if (request.HasTitle &&
-                NormalizeText(actual.Title) !=
-                NormalizeText(request.Title))
-            {
-                return false;
-            }
-
-            if (request.HasArtistNames)
-            {
-                List<string> expectedNames =
-                    ArtistNameNormalizer.Normalize(
-                        request.ArtistNames);
-                List<string> actualNames =
-                    ArtistNameNormalizer.Normalize(
-                        actual.ArtistNames ??
-                        new List<string>());
-
-                if (!actualNames.SequenceEqual(
-                    expectedNames,
-                    StringComparer.Ordinal))
-                {
-                    return false;
-                }
-            }
-
-            return (!request.HasAlbumTitle ||
-                    NormalizeText(actual.AlbumTitle) ==
-                    NormalizeText(request.AlbumTitle)) &&
-                   (!request.HasAlbumArtistName ||
-                    NormalizeText(actual.AlbumArtistName) ==
-                    NormalizeText(request.AlbumArtistName)) &&
-                   (!request.HasGenre ||
-                    NormalizeText(actual.Genre) ==
-                    NormalizeText(request.Genre)) &&
-                   (!request.HasYear ||
-                    actual.Year == request.Year) &&
-                   (!request.HasTrackNumber ||
-                    actual.TrackNumber == request.TrackNumber) &&
-                   (!request.HasComposer ||
-                    NormalizeText(actual.Composer) ==
-                    NormalizeText(request.Composer)) &&
-                   (!request.HasComment ||
-                    NormalizeText(actual.Comment) ==
-                    NormalizeText(request.Comment));
         }
 
         private static string[] CreateSingleValueArray(

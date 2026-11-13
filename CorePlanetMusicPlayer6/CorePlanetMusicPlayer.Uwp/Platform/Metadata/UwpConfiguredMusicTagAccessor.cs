@@ -1,11 +1,7 @@
-using CorePlanetMusicPlayer.Core.Artists;
 using CorePlanetMusicPlayer.Core.Common;
-using CorePlanetMusicPlayer.Core.Music;
 using CorePlanetMusicPlayer.Services.Metadata;
 using CorePlanetMusicPlayer.Services.Settings;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
 
@@ -97,6 +93,14 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
                     "Windows API 标签引擎不支持写入碟片号。");
             }
 
+            if (engine == MusicTagEngine.WindowsApi &&
+                request.HasComment)
+            {
+                return Result.Failure(
+                    "Windows API 标签引擎不支持写入备注。" +
+                    "请使用 TagLib 或混合引擎。");
+            }
+
             StorageFile temporaryFile = null;
             bool originalFileReplaced = false;
 
@@ -129,19 +133,28 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
                         "标签访问器没有返回写入结果。");
                 }
 
+                StorageFile temporaryVerificationFile =
+                    await ReopenFileAsync(temporaryFile);
+
                 MusicTagReadResult temporaryReadResult =
                     await ReadWithEngineAsync(
-                        temporaryFile,
+                        temporaryVerificationFile,
                         engine);
 
-                if (!Matches(
-                    request,
-                    temporaryReadResult == null
-                        ? null
-                        : temporaryReadResult.Metadata))
+                string temporaryMismatch =
+                    MusicMetadataWriteVerifier
+                        .GetMismatchDescription(
+                            request,
+                            temporaryReadResult == null
+                                ? null
+                                : temporaryReadResult.Metadata);
+
+                if (!string.IsNullOrEmpty(temporaryMismatch))
                 {
                     return Result.Failure(
-                        "写入临时文件后的标签校验失败，原文件未修改。");
+                        "写入临时文件后的标签校验失败，" +
+                        "原文件未修改：" +
+                        temporaryMismatch);
                 }
 
                 await temporaryFile.MoveAndReplaceAsync(file);
@@ -156,14 +169,19 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
                         replacedFile,
                         engine);
 
-                if (!Matches(
-                    request,
-                    finalReadResult == null
-                        ? null
-                        : finalReadResult.Metadata))
+                string finalMismatch =
+                    MusicMetadataWriteVerifier
+                        .GetMismatchDescription(
+                            request,
+                            finalReadResult == null
+                                ? null
+                                : finalReadResult.Metadata);
+
+                if (!string.IsNullOrEmpty(finalMismatch))
                 {
                     return Result.Failure(
-                        "替换原文件后的标签校验失败。");
+                        "替换原文件后的标签校验失败：" +
+                        finalMismatch);
                 }
 
                 return Result.Success();
@@ -222,15 +240,15 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
                         }
                     }
 
-                    MusicMetadataUpdateRequest discRequest =
-                        CreateDiscRequest(request);
+                    MusicMetadataUpdateRequest tagLibRequest =
+                        CreateTagLibRequest(request);
 
-                    if (discRequest.HasAnyChange)
+                    if (tagLibRequest.HasAnyChange)
                     {
                         Result tagLibResult =
                             await _tagLibAccessor.WriteAsync(
                                 file,
-                                discRequest);
+                                tagLibRequest);
 
                         if (tagLibResult == null ||
                             tagLibResult.IsFailure)
@@ -282,11 +300,13 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
                 {
                     windowsResult.Metadata.DiscNumber =
                         tagLibResult.Metadata.DiscNumber;
+                    windowsResult.Metadata.Comment =
+                        tagLibResult.Metadata.Comment;
                 }
             }
             catch (Exception)
             {
-                // 混合引擎中 TagLib 只负责增强碟片号，失败时保留 Windows API 结果。
+                // 混合引擎中 TagLib 负责增强碟片号和备注，失败时保留 Windows API 结果。
             }
 
             return windowsResult;
@@ -365,15 +385,10 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
                 result.WithComposer(source.Composer);
             }
 
-            if (source.HasComment)
-            {
-                result.WithComment(source.Comment);
-            }
-
             return result;
         }
 
-        private static MusicMetadataUpdateRequest CreateDiscRequest(
+        private static MusicMetadataUpdateRequest CreateTagLibRequest(
             MusicMetadataUpdateRequest source)
         {
             MusicMetadataUpdateRequest result =
@@ -384,71 +399,12 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
                 result.WithDiscNumber(source.DiscNumber);
             }
 
+            if (source.HasComment)
+            {
+                result.WithComment(source.Comment);
+            }
+
             return result;
-        }
-
-        private static bool Matches(
-            MusicMetadataUpdateRequest request,
-            MusicMetadata actual)
-        {
-            if (actual == null)
-            {
-                return false;
-            }
-
-            if (request.HasTitle &&
-                NormalizeText(actual.Title) !=
-                NormalizeText(request.Title))
-            {
-                return false;
-            }
-
-            if (request.HasArtistNames)
-            {
-                List<string> expectedNames =
-                    ArtistNameNormalizer.Normalize(
-                        request.ArtistNames);
-                List<string> actualNames =
-                    ArtistNameNormalizer.Normalize(
-                        actual.ArtistNames ??
-                        new List<string>());
-
-                if (!actualNames.SequenceEqual(
-                    expectedNames,
-                    StringComparer.Ordinal))
-                {
-                    return false;
-                }
-            }
-
-            return (!request.HasAlbumTitle ||
-                    NormalizeText(actual.AlbumTitle) ==
-                    NormalizeText(request.AlbumTitle)) &&
-                   (!request.HasAlbumArtistName ||
-                    NormalizeText(actual.AlbumArtistName) ==
-                    NormalizeText(request.AlbumArtistName)) &&
-                   (!request.HasGenre ||
-                    NormalizeText(actual.Genre) ==
-                    NormalizeText(request.Genre)) &&
-                   (!request.HasYear ||
-                    actual.Year == request.Year) &&
-                   (!request.HasTrackNumber ||
-                    actual.TrackNumber == request.TrackNumber) &&
-                   (!request.HasDiscNumber ||
-                    actual.DiscNumber == request.DiscNumber) &&
-                   (!request.HasComposer ||
-                    NormalizeText(actual.Composer) ==
-                    NormalizeText(request.Composer)) &&
-                   (!request.HasComment ||
-                    NormalizeText(actual.Comment) ==
-                    NormalizeText(request.Comment));
-        }
-
-        private static string NormalizeText(string value)
-        {
-            return value == null
-                ? string.Empty
-                : value.Trim();
         }
 
         private static string CreateTemporaryFileName(
@@ -458,6 +414,20 @@ namespace CorePlanetMusicPlayer.Uwp.Platform.Metadata
                    ".metadata-" +
                    Guid.NewGuid().ToString("N") +
                    file.FileType;
+        }
+
+        private static async Task<StorageFile> ReopenFileAsync(
+            StorageFile file)
+        {
+            StorageFolder parentFolder =
+                await file.GetParentAsync();
+
+            if (parentFolder == null)
+            {
+                return file;
+            }
+
+            return await parentFolder.GetFileAsync(file.Name);
         }
 
         private static bool IsFileBusy(Exception exception)
