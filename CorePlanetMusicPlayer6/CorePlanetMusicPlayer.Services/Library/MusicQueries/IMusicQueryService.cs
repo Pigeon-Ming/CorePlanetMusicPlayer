@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CorePlanetMusicPlayer.Services.Library.MusicQueries
@@ -25,6 +26,7 @@ namespace CorePlanetMusicPlayer.Services.Library.MusicQueries
         /// 保留重复项，跳过不存在的歌曲。
         /// </summary>
         Task<IReadOnlyList<Music>> GetByIdsAsync(
-            IEnumerable<MusicId> musicIds);
+            IEnumerable<MusicId> musicIds,
+            CancellationToken cancellationToken = default(CancellationToken));
     }
 }

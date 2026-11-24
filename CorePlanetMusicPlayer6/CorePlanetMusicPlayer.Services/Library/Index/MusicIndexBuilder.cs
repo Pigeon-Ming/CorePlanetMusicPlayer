@@ -16,9 +16,9 @@ namespace CorePlanetMusicPlayer.Services.Library.Index
     {
         public IReadOnlyList<Album> BuildAlbums(IEnumerable<Music> musicList)
         {
-            var albums = new Dictionary<Tuple<string, string>, Album>();
+            var albums = new Dictionary<string, Album>(StringComparer.Ordinal);
 
-            var albumMusic = new Dictionary<Tuple<string, string>, List<Music>>();
+            var albumMusic = new Dictionary<string, List<Music>>(StringComparer.Ordinal);
 
             if (musicList == null)
             {
@@ -45,7 +45,7 @@ namespace CorePlanetMusicPlayer.Services.Library.Index
                     artistName = "未知艺术家";
                 }
 
-                var key = CreateAlbumKey(albumTitle, artistName);
+                var key = CreateAlbumKey(albumTitle);
 
                 Album album;
 
@@ -233,9 +233,9 @@ namespace CorePlanetMusicPlayer.Services.Library.Index
             return value == null ? string.Empty : value.Trim();
         }
 
-        internal static Tuple<string, string> CreateAlbumKey(string albumTitle, string artistName)
+        internal static string CreateAlbumKey(string albumTitle)
         {
-            return Tuple.Create(NormalizeAlbumTitle(albumTitle), NormalizeArtistName(artistName));
+            return NormalizeAlbumTitle(albumTitle);
         }
 
         private static string NormalizeAlbumTitle(string value)

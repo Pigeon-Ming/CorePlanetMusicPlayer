@@ -249,7 +249,10 @@ namespace CorePlanetMusicPlayer6.Composition
 
             services.ArtworkService = new ArtworkService(services.MusicRepository, services.ArtistRepository, services.PlaylistRepository, services.ArtworkRepository);
 
-            services.AlbumArtworkService = new AlbumArtworkService(services.AlbumService, services.ArtworkService);
+            services.AlbumArtworkService = new AlbumArtworkService(
+                services.AlbumService,
+                services.MusicQueryService,
+                services.ArtworkService);
 
             services.ArtworkEditService = new ArtworkEditService(services.ArtworkRepository, services.MusicRepository, services.ArtistRepository, services.PlaylistRepository, services.ArtworkStore);
 

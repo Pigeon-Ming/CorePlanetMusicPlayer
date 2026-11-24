@@ -9,12 +9,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
 {
     public sealed class SqliteMusicRepository : IMusicRepository
     {
+        private const int GetByIdsBatchSize = 500;
+
         private readonly LibraryDatabase _database;
 
         public SqliteMusicRepository(LibraryDatabase libraryDatabase)
@@ -61,6 +64,77 @@ namespace CorePlanetMusicPlayer.Data.Repositories.Sqlite
             }
 
             return Task.FromResult<Music>(null);
+        }
+
+        public Task<IReadOnlyList<Music>> GetByIdsAsync(
+            IReadOnlyCollection<MusicId> ids,
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            if (ids == null)
+            {
+                throw new ArgumentNullException(nameof(ids));
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (ids.Count == 0)
+            {
+                return Task.FromResult((IReadOnlyList<Music>)new List<Music>().AsReadOnly());
+            }
+
+            var uniqueIds = new List<MusicId>(ids.Count);
+            var knownIds = new HashSet<MusicId>();
+
+            foreach (var id in ids)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                if (knownIds.Add(id))
+                {
+                    uniqueIds.Add(id);
+                }
+            }
+
+            var result = new List<Music>(uniqueIds.Count);
+
+            using (var connection = _database.CreateOpenConnection())
+            {
+                for (int offset = 0; offset < uniqueIds.Count; offset += GetByIdsBatchSize)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    int count = Math.Min(GetByIdsBatchSize, uniqueIds.Count - offset);
+
+                    using (var command = connection.CreateCommand())
+                    {
+                        var parameterNames = new string[count];
+
+                        for (int index = 0; index < count; index++)
+                        {
+                            string parameterName = "$id" + index;
+
+                            parameterNames[index] = parameterName;
+                            command.Parameters.AddWithValue(
+                                parameterName,
+                                uniqueIds[offset + index].ToString());
+                        }
+
+                        command.CommandText =
+                            $"select * from music where id in ({string.Join(", ", parameterNames)});";
+
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                cancellationToken.ThrowIfCancellationRequested();
+                                result.Add(MusicDataMapper.ToModel(ReadEntity(reader)));
+                            }
+                        }
+                    }
+                }
+            }
+
+            return Task.FromResult((IReadOnlyList<Music>)result.AsReadOnly());
         }
 
         public Task<IReadOnlyList<Music>> SearchAsync(string keyword)

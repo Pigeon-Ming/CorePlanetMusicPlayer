@@ -423,7 +423,7 @@ namespace CorePlanetMusicPlayer.Services.Statistics
                     ? "未知艺术家"
                     : NormalizeText(music.ArtistName, "未知艺术家");
 
-                var albumKey = albumTitle + "|" + artistName;
+                var albumKey = albumTitle;
 
                 AlbumPlaybackStat stat;
 

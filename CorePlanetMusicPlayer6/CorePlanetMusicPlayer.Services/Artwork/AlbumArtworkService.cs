@@ -2,6 +2,7 @@
 using CorePlanetMusicPlayer.Core.Common;
 using CorePlanetMusicPlayer.Core.Music;
 using CorePlanetMusicPlayer.Services.Library.Albums;
+using CorePlanetMusicPlayer.Services.Library.MusicQueries;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,14 +18,20 @@ namespace CorePlanetMusicPlayer.Services.Artwork
             "DefaultAlbumArtwork";
 
         private readonly IAlbumService _albumService;
+        private readonly IMusicQueryService _musicQueryService;
         private readonly IArtworkService _artworkService;
 
-        public AlbumArtworkService(IAlbumService albumService, IArtworkService artworkService)
+        public AlbumArtworkService(
+            IAlbumService albumService,
+            IMusicQueryService musicQueryService,
+            IArtworkService artworkService)
         {
             Guard.NotNull(albumService, nameof(albumService));
+            Guard.NotNull(musicQueryService, nameof(musicQueryService));
             Guard.NotNull(artworkService, nameof(artworkService));
 
             _albumService = albumService;
+            _musicQueryService = musicQueryService;
             _artworkService = artworkService;
         }
 
@@ -37,16 +44,42 @@ namespace CorePlanetMusicPlayer.Services.Artwork
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var details = await _albumService.GetDetailsAsync(albumId);
+            var album = await _albumService.GetByIdAsync(albumId);
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (details == null)
+            if (album == null)
             {
                 return new ArtworkRequest(new ArtworkReference[0], DefaultResourceName);
             }
 
-            return await CreateArtworkAsync(details.MusicItems, cancellationToken);
+            return await GetArtworkAsync(album, cancellationToken);
+        }
+
+        public async Task<ArtworkRequest> GetArtworkAsync(
+            Album album,
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            Guard.NotNull(album, nameof(album));
+
+            if (album.Id.IsEmpty)
+            {
+                throw new ArgumentException("专辑 ID 不能为空。", nameof(album));
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var musicIds = album.MusicIds == null
+                ? new List<MusicId>()
+                : album.MusicIds.ToList();
+
+            var musicItems = await _musicQueryService.GetByIdsAsync(
+                musicIds,
+                cancellationToken);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return await CreateArtworkAsync(musicItems, cancellationToken);
         }
 
         public async Task<ArtworkRequest> CreateArtworkAsync(IEnumerable<Music> orderedMusic, CancellationToken cancellationToken = default(CancellationToken))

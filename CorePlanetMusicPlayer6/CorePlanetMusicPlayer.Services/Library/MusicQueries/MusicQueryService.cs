@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CorePlanetMusicPlayer.Services.Library.MusicQueries
@@ -51,7 +52,9 @@ namespace CorePlanetMusicPlayer.Services.Library.MusicQueries
             return _musicRepository.GetByLibraryFolderIdAsync(folderId);
         }
 
-        public async Task<IReadOnlyList<Music>> GetByIdsAsync(IEnumerable<MusicId> musicIds)
+        public async Task<IReadOnlyList<Music>> GetByIdsAsync(
+            IEnumerable<MusicId> musicIds,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             if (musicIds == null)
             {
@@ -66,24 +69,25 @@ namespace CorePlanetMusicPlayer.Services.Library.MusicQueries
                 throw new ArgumentException("歌曲 ID 列表包含空 ID。", nameof(musicIds));
             }
 
-            var result = new List<Music>();
+            cancellationToken.ThrowIfCancellationRequested();
 
-            // 只在本次调用内缓存，避免重复查询相同 ID。
-            var queriedMusic = new Dictionary<MusicId, Music>();
+            var queriedMusic = await _musicRepository.GetByIdsAsync(
+                requestedIds,
+                cancellationToken);
 
+            // Repository 不保证顺序，也不会保留重复项。
+            var musicById = queriedMusic.ToDictionary(music => music.Id);
+
+            var result = new List<Music>(requestedIds.Count);
+
+            // 按调用者的输入重新组织结果。
             foreach (var musicId in requestedIds)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 Music music;
 
-                if (!queriedMusic.TryGetValue(musicId, out music))
-                {
-                    music = await _musicRepository.GetByIdAsync(musicId);
-
-                    // 不存在的结果也记住，避免重复查询。
-                    queriedMusic.Add(musicId, music);
-                }
-
-                if (music != null)
+                if (musicById.TryGetValue(musicId, out music))
                 {
                     result.Add(music);
                 }

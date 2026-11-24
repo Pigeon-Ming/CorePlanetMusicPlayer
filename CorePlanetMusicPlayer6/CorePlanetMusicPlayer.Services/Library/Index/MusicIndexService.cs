@@ -54,7 +54,18 @@ namespace CorePlanetMusicPlayer.Services.Library.Index
             var existingAlbums = await _albumRepository.GetAllAsync();
             var existingArtists = await _artistRepository.GetAllAsync();
 
-            var existingAlbumsByKey = existingAlbums.ToDictionary(album => MusicIndexBuilder.CreateAlbumKey(album.Title, album.ArtistName));
+            var existingAlbumsByKey = existingAlbums
+                .GroupBy(
+                    album => MusicIndexBuilder.CreateAlbumKey(album.Title),
+                    StringComparer.Ordinal)
+                .ToDictionary(
+                    group => group.Key,
+                    group => group
+                        .OrderBy(album => string.IsNullOrWhiteSpace(album.Description))
+                        .ThenBy(album => album.AddedAt ?? DateTimeOffset.MaxValue)
+                        .ThenBy(album => album.Id.ToString(), StringComparer.Ordinal)
+                        .First(),
+                    StringComparer.Ordinal);
 
             var existingArtistsByName = existingArtists.ToDictionary(artist => MusicIndexBuilder.NormalizeArtistName(artist.Name), StringComparer.Ordinal);
 
@@ -62,7 +73,7 @@ namespace CorePlanetMusicPlayer.Services.Library.Index
 
             foreach (var album in albums)
             {
-                var key = MusicIndexBuilder.CreateAlbumKey(album.Title, album.ArtistName);
+                var key = MusicIndexBuilder.CreateAlbumKey(album.Title);
 
                 Album existing;
 

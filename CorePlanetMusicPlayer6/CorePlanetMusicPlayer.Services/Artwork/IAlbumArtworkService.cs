@@ -13,6 +13,8 @@ namespace CorePlanetMusicPlayer.Services.Artwork
     {
         Task<ArtworkRequest> GetArtworkByAlbumIdAsync(AlbumId albumId, CancellationToken cancellationToken = default(CancellationToken));
 
+        Task<ArtworkRequest> GetArtworkAsync(Album album, CancellationToken cancellationToken = default(CancellationToken));
+
         // 调用方须提供已经按专辑顺序排列的歌曲。
         Task<ArtworkRequest> CreateArtworkAsync(IEnumerable<Music> orderedMusic, CancellationToken cancellationToken = default(CancellationToken));
     }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CorePlanetMusicPlayer.Data.Repositories
@@ -22,6 +23,17 @@ namespace CorePlanetMusicPlayer.Data.Repositories
         /// <param name="id">要查找的目标音乐Id</param>
         /// <returns>获取结果</returns>
         Task<Music> GetByIdAsync(MusicId id);
+
+        /// <summary>
+        /// 根据一组 MusicId 批量获取音乐。
+        /// 返回结果不保证与输入顺序一致，且不包含重复项或未找到的音乐。
+        /// </summary>
+        /// <param name="ids">要查找的目标音乐 ID 集合</param>
+        /// <param name="cancellationToken">取消标记</param>
+        /// <returns>数据库中存在的音乐列表</returns>
+        Task<IReadOnlyList<Music>> GetByIdsAsync(
+            IReadOnlyCollection<MusicId> ids,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// 按关键词搜索音乐。
